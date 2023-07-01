@@ -1,3 +1,16 @@
+# nette default extensions
+application:
+    errorPresenter: StaticPage:Error
+    mapping:
+        Admin: App\*\Presenters\Admin\*Presenter
+        *: App\*\Presenters\*Presenter
+
+
+
+
+
+# custom extensions
+
 extensions:
     console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
     doctrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
@@ -8,6 +21,10 @@ extensions:
     doctrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension
     doctrine.cache: Nettrine\Cache\DI\CacheExtension
     nettrine.migrations: Nettrine\Migrations\DI\MigrationsExtension
+
+    # Project
+    app: App\DI\AppExtension
+
 
 doctrine.orm.annotations:
     mapping:
@@ -25,6 +42,7 @@ doctrine.dbal:
 
 nettrine.migrations:
     directory: %srcDir%/Migrations
+    namespace: App\Migrations
 
 
 
@@ -32,58 +50,6 @@ nettrine.migrations:
 
 
 
-
-
-
-
-
-
-
-
-#extensions:
-#    monolog: Contributte\Monolog\DI\MonologExtension
-#    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
-#    dbal: Nettrine\DBAL\DI\DbalExtension
-#    nettrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
-#    nettrine.cache: Nettrine\Cache\DI\CacheExtension
-#    orm: Nettrine\ORM\DI\OrmExtension
-#    orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
-#    orm.console: Nettrine\ORM\DI\OrmConsoleExtension
-#    migrations: Nettrine\Migrations\DI\MigrationsExtension
-#
-#dbal:
-#    debug:
-#        panel: %debugMode%
-#    connection:
-#        host: %database.host%
-#        driver: pdo_mysql
-#        dbname: %database.database%
-#        user: %database.user%
-#        password: %database.password%
-#        charset: utf8mb4
-#
-#orm:
-#    configuration:
-#        proxyDir: '%tempDir%/proxies'
-#        proxyNamespace: 'App\Proxy'
-#        metadataDriverImpl: @orm.annotations.annotationDriver
-#        entityNamespaces: []
-#        customStringFunctions: []
-#        customNumericFunctions: []
-#        customDatetimeFunctions: []
-#        customHydrationModes: []
-#        namingStrategy: Doctrine\ORM\Mapping\UnderscoreNamingStrategy
-#        defaultQueryHints: []
-#
-#orm.annotations:
-#    mapping: [
-#        App\Entity: %srcDir%/Entity
-#    ]
-#
-#migrations:
-#    directory: %srcDir%/Migrations
-#    table: doctrine_migrations
-#    namespace: App\Migrations
 
 
 

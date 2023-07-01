@@ -1,0 +1,4 @@
+services:
+    - App\User\Action\RegisterAction
+    - App\User\ORM\UserRepository
+    - App\User\Authenticator

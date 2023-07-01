@@ -7,4 +7,13 @@ search:
 
 
 services:
-	- App\Router\RouterFactory::createRouter
+    templateDecorator: App\Template\TemplateDecorator(debugMode: %debugMode%)
+
+    - App\Router\RouterFactory::createRouter
+    - App\Utils\SrcDir(dir: '%srcDir%')
+
+
+
+includes:
+    - services/user.neon
+

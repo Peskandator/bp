@@ -18,10 +18,6 @@ class User
      */
     private int $id;
     /**
-     * @ORM\Column(name="username", type="string", unique=true)
-     */
-    private string $username;
-    /**
      * @ORM\Column(name="email", type="string", unique=true)
      */
     private string $email;
@@ -29,10 +25,6 @@ class User
      * @ORM\Column(name="password", type="string", nullable=true)
      */
     private ?string $password;
-    /**
-     * @ORM\Column(name="reset_password_token_expires_at", type="datetime", nullable=true)
-     */
-    private ?DateTimeInterface $resetPasswordTokenExpiresAt;
     /**
      * @ORM\Column(name="registration_date", type="datetime", nullable=true)
      */
@@ -51,7 +43,6 @@ class User
     private ?string $lastName;
 
     public function __construct(
-        string $username,
         string $email,
         string $password,
         string $firstName,
@@ -59,7 +50,6 @@ class User
         DateTimeInterface $registrationDate
     )
     {
-        $this->username = $username;
         $this->email = $email;
         $this->password = $password;
         $this->registrationDate = $registrationDate;
@@ -75,11 +65,6 @@ class User
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function getUsername(): string
-    {
-        return $this->username;
     }
 
     public function getEmail(): string

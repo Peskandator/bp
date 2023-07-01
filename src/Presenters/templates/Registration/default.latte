@@ -1,0 +1,42 @@
+{layout $baselayoutPath}
+
+{block content}
+    <div class="modal-dialog register-form-box" role="document">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+                <h1 class="fw-bold mb-0 fs-3">Registrujte se</h1>
+            </div>
+            <div class="modal-body p-5 pt-0">
+                {form registrationForm}
+                    <div class="form-floating mb-3">
+                        <input n:name="name" type="text" class="form-control rounded-3" id="floatingName" placeholder="">
+                        <label for="floatingName">Jméno</label>
+                        <small class="form-error" n:ifcontent>{inputError name}</small>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input n:name="surname" type="text" class="form-control rounded-3" id="floatingSurname" placeholder="">
+                        <label for="floatingSurname">Příjmení</label>
+                        <small class="form-error" n:ifcontent>{inputError surname}</small>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input n:name="email" type="email" class="form-control rounded-3" id="floatingEmail" placeholder="">
+                        <label for="floatingEmail">E-mailová adresa</label>
+                        <small class="form-error" n:ifcontent>{inputError email}</small>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input n:name="password" type="password" class="form-control rounded-3" id="floatingPass" placeholder="Password">
+                        <label for="floatingPass">Heslo</label>
+                        <small class="form-error" n:ifcontent>{inputError password}</small>
+                    </div>
+                    <input n:name="send" class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">
+                {/form}
+
+                <hr class="my-4">
+                <h2 class="fs-5 fw-bold mb-3">Už máte účet?</h2>
+                <a n:href="Home:default" class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3">
+                    Přihlášení
+                </a>
+            </div>
+        </div>
+    </div>
+{/block}
