@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +43,11 @@ class User
      * @ORM\Column(name="last_name", type="string", nullable=true)
      */
     private ?string $lastName;
+    /**
+     * @ORM\OneToMany(targetEntity="EntityUser", mappedBy="user")
+     */
+    private Collection $entityUsers;
+
 
     public function __construct(
         string $email,
@@ -55,6 +62,7 @@ class User
         $this->registrationDate = $registrationDate;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
+        $this->entityUsers = new ArrayCollection();
     }
 
     public function authenticate(string $password, callable $verifyPassword): bool
@@ -127,5 +135,10 @@ class User
         foreach ($roles as $role) {
             $this->addRole($role);
         }
+    }
+
+    public function getEntityUsers(): Collection
+    {
+        return $this->entityUsers;
     }
 }
