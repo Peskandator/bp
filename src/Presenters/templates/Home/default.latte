@@ -8,6 +8,9 @@
             </div>
             <div class="modal-body p-5 pt-0">
                 {form signInForm}
+                    <div class="form-errors" n:ifcontent>
+                        <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                    </div>
                     <div class="form-floating mb-3">
                         <input n:name="email" type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
                         <label for="floatingInput">E-mailová adresa</label>

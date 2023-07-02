@@ -11,10 +11,14 @@
 
 <body>
 
-
-
-{*	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>*}
-
+	{foreach $flashes as $flash}
+		<div class="alert alert-{$flash->type} alert-dismissible fade show flash-message" role="alert">
+			<div class="flash-message-text">
+				{$flash->message}
+			</div>
+			<span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+		</div>
+	{/foreach}
 
 	{block body}
 		{block content}
@@ -29,7 +33,8 @@
 {*	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>*}
 
 	<script src="{$basePath}/assets/js/jquery-3.7.0.min.js"></script>
-	<script src="{$basePath}/assets/js/custom.js"></script>
 	<script src="{$basePath}/assets/bootstrap/bootstrap.min.js"></script>
+	<script src="{$basePath}/assets/js/custom.js"></script>
+
 </body>
 </html>

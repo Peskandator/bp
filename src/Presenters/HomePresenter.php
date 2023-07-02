@@ -58,7 +58,6 @@ final class HomePresenter extends BasePresenter
             try {
                 $identity = $this->authenticator->authenticate($values->email, $values->password);
                 $this->userManager->login($identity);
-                bdump('¨přihlášenej idiot');
             } catch (AuthenticationException $e) {
                 $errorType = $e->getMessage();
 
@@ -70,13 +69,7 @@ final class HomePresenter extends BasePresenter
                 return;
             }
 
-//            $presenter = $form->getPresenter();
-//            $backlink = $presenter->getParameter('backlink');
-//            if (null !== $backlink) {
-//                $presenter->restoreRequest($backlink);
-//            }
-
-            $this->flashMessage('Byl jste úspěšně přihlášen.');
+            $this->flashMessage('Přihlášení proběhlo úspěšně.');
             $this->redirect('this');
         };
 

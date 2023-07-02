@@ -18,8 +18,7 @@ main {
 }
 
 .main-content {
-    padding-top: 50px;
-    padding-bottom: 30px;
+    padding: 40px;
 }
 
 .homepage-bg {
@@ -45,3 +44,44 @@ main {
 .form-error {
     color: red;
 }
+
+.custom-alert {
+    padding: 0.5rem 1rem;
+}
+
+.flash-message {
+    position: fixed;
+    width: 450px;
+    margin: 25px auto;
+    left: 0;
+    right: 0;
+    padding: 0.3rem 1.5rem;
+    z-index: 10;
+    display: flex;
+}
+
+.flash-message .btn-close {
+    padding: 0.9rem 1rem;
+}
+
+.alert .close {
+    margin-left: auto;
+    font-size: 28px;
+}
+
+.flash-message-text {
+    margin-top: 10px;
+}
+
+.menu-signout a {
+    padding: .1875rem .5rem;
+    margin-left: 20px;
+    margin-top: 2px;
+}
+
+
+
+
+
+
+
