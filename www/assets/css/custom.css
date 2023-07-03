@@ -79,6 +79,24 @@ main {
     margin-top: 2px;
 }
 
+h1 {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    margin-bottom: 4px;
+    margin-top: 7px;
+    margin-left: 2px;
+}
+
+.main-content {
+    width: 100%;
+}
+
+.card-active {
+    border: #28a745 2px solid;
+}
+
 
 
 

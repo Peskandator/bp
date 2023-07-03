@@ -2,7 +2,7 @@
 {block body}
     <main class="d-flex flex-nowrap">
         <div class="flex-shrink-0 p-3 sidebar" style="width: 280px;">
-            <a n:href=":Home:default" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+            <a n:href=":Admin:Dashboard:default" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
 {*                <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg>*}
                 <span class="fs-5 fw-semibold sidebar-title">Domů</span>
             </a>
@@ -38,7 +38,7 @@
                     </button>
                     <div class="collapse" id="orders-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
+                            <li><a n:href=":Admin:Dashboard:default, currentEntityId: 2" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
                             <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Shipped</a></li>
                             <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Returned</a></li>
                         </ul>
@@ -48,7 +48,7 @@
                 <li class="mb-1">
                     <div class="menu-signout d-flex flex-column">
                         <a n:href=":Admin:Dashboard:default" class="link-dark d-inline-flex text-decoration-none rounded">Profil</a>
-                        <a n:href=":Admin:Dashboard:default" class="link-dark d-inline-flex text-decoration-none rounded">Účetní jednotky</a>
+                        <a n:href=":Admin:EntitiesOverview:default" class="link-dark d-inline-flex text-decoration-none rounded">Účetní jednotky</a>
                     </div>
                 </li>
                 <li class="border-bottom my-3"></li>
@@ -61,7 +61,9 @@
         </div>
 
         <div class="main-content">
-            {include content}
+            <div class="container-fluid">
+                {include content}
+            </div>
         </div>
     </main>
 {/block}

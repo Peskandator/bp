@@ -1,0 +1,52 @@
+{define formRow}
+    {if $el instanceof Nette\Forms\Controls\TextInput}
+        {var $component = $el}
+    {else}
+        {var $component = $tform->getComponent($el, false)}
+    {/if}
+
+    {if $component}
+        {var $data = $data ?? []}
+        {var $err = $component->hasErrors()}
+        {var $class = []}
+        {if $err}
+            {php $class[] = 'form-errors'}
+        {/if}
+
+        {if $component instanceof \Nette\Forms\Controls\TextInput || $component instanceof \Nette\Forms\Controls\SelectBox}
+            {php $class[] = 'form-control'}
+            {label $el, class => 'col-form-label'}
+                {_$component->caption}
+{*                {if $component->required} <small>({_'forms.common.required'})</small>{/if}*}
+            {/label}
+            {input $el, class => $class, required => false, (expand)$data}
+            <em n:if="$err" class="error invalid-feedback">
+                {inputError $el}
+            </em>
+        {elseif $component instanceof \Nette\Forms\Controls\Checkbox}
+            <div class="icheck-primary">
+                {input $el:, class => (array_merge($class, ['form-check-input'])), required => false, (expand)$data}
+                {label $el:, class => (array_merge($class, ['form-check-label']))}
+                    {_$component->caption}
+                {/label}
+            </div>
+        {/if}
+    {/if}
+{/define}
+
+{define formErrors}
+{*    <ul n:if="$tform->getOwnErrors()" class="list-group">*}
+        {foreach $tform->getOwnErrors() as $error}
+{*            <li class="error list-group-item">*}
+{*                {$error}*}
+{*            </li>*}
+            <div class="alert alert-danger" role="alert">
+                {$error}
+            </div>
+        {/foreach}
+{*    </ul>*}
+{/define}
+
+{define formSubmit}
+    {input $el, class => 'btn btn-primary btn-lg'}
+{/define}

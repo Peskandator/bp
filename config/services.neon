@@ -12,6 +12,8 @@ services:
     - App\Router\RouterFactory::createRouter
     - App\Utils\SrcDir(dir: '%srcDir%')
 
+    - App\Majetek\ORM\AccountingEntityRepository
+    - App\Majetek\Action\CreateEntityAction
 
 
 includes:

@@ -2,10 +2,8 @@
 application:
     errorPresenter: StaticPage:Error
     mapping:
-        Admin: App\*\Presenters\Admin\*Presenter
+        Admin: App\Presenters\Admin\*Presenter
         *: App\*\Presenters\*Presenter
-
-
 
 
 

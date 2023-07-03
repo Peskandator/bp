@@ -1,0 +1,30 @@
+{layout $adminlayoutPath}
+
+{block content}
+
+    <h1>Účetní jednotky</h1>
+
+    <a class="btn btn-primary" n:href=":Admin:EntitiesOverview:createNew">Nová účetní jednotka</a>
+
+    <div class="row mt-4">
+        {foreach $entities as $entity}
+            <div class="col-sm-6">
+                <div class="card {if $entity->getId() === $currentEntityId}card-active{/if}">
+                    <div class="card-body">
+                        <h4 class="card-title">{$entity->getName()}</h4>
+                        <p class="card-text">{$entity->getAddress()}</p>
+
+                        {if $entity->getId() !== $currentEntityId}
+                            <a n:href=":Admin:EntitiesOverview:default, currentEntityId: $entity->getId()" class="btn btn-primary">Přepnout</a>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        {/foreach}
+
+
+    </div>
+
+
+{/block}
+
