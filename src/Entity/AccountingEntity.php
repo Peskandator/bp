@@ -52,15 +52,20 @@ class AccountingEntity
     public function __construct(
         CreateEntityRequest $request,
     ){
+
+        $this->update($request);
+        $this->entityUsers = new ArrayCollection();
+    }
+
+    public function update(CreateEntityRequest $request)
+    {
         $this->name = $request->name;
         $this->companyId = $request->companyId;
         $this->country = $request->country;
         $this->city = $request->city;
         $this->zipCode = $request->zipCode;
         $this->street = $request->street;
-        $this->entityUsers = new ArrayCollection();
     }
-
 
     public function getId(): int
     {

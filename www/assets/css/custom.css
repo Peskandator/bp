@@ -95,11 +95,13 @@ h1 {
 
 .card-active {
     border: #28a745 2px solid;
+    min-height: 146px;
 }
 
+.entity-card {
+    margin-bottom: 20px;
+}
 
-
-
-
-
-
+.ml-2 {
+    margin-left: 0.7rem;
+}

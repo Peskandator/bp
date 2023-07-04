@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters;
+use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 use Nette\Security\AuthenticationException;
 use Nette\Security\Authenticator;
@@ -69,7 +70,7 @@ final class HomePresenter extends BasePresenter
                 return;
             }
 
-            $this->flashMessage('Přihlášení proběhlo úspěšně.');
+            $this->flashMessage('Přihlášení proběhlo úspěšně.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 

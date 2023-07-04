@@ -20,7 +20,7 @@ class CreateEntityAction
         $this->currentUser = $currentUser;
     }
 
-    public function __invoke(CreateEntityRequest $request)
+    public function __invoke(CreateEntityRequest $request): int
     {
         $user = $this->currentUser->getCurrentLoggedInUser();
 
@@ -34,5 +34,7 @@ class CreateEntityAction
         $entity->getEntityUsers()->add($entityUser);
 
         $this->entityManager->flush();
+
+        return $entity->getId();
     }
 }

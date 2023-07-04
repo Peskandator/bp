@@ -1,0 +1,50 @@
+{layout $adminlayoutPath}
+
+{block content}
+    <h1>Úprava účetní jednotky <b>{$entity->getName()}</b></h1>
+
+    {form editAccountingEntityForm}
+        <div class="row"><div class="col-md-8 col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-errors" n:ifcontent>
+                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEntityName">Název</label>
+                            <input n:name="name" type="text" class="form-control" id="newEntityName">
+                            <small class="form-error" n:ifcontent>{inputError name}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEntityCompanyId">IČO <small>(nepovinné)</small></label>
+                            <input n:name="company_id" type="text" class="form-control" id="newEntityCompanyId">
+                            <small class="form-error" n:ifcontent>{inputError company_id}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEntityCountry">Stát</label>
+                            <input n:name="country" type="text" class="form-control" id="newEntityCountry">
+                            <small class="form-error" n:ifcontent>{inputError country}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEntityCity">Město</label>
+                            <input n:name="city" type="text" class="form-control" id="newEntityCity">
+                            <small class="form-error" n:ifcontent>{inputError city}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEntityZipcode">PSČ</label>
+                            <input n:name="zip_code" type="text" class="form-control" id="newEntityZipcode">
+                            <small class="form-error" n:ifcontent>{inputError zip_code}</small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="newEntityStreet">Ulice a číslo popisné</label>
+                            <input n:name="street" type="text" class="form-control" id="newEntityStreet">
+                            <small class="form-error" n:ifcontent>{inputError street}</small>
+                        </div>
+
+                    </div>
+                </div>
+                <input n:name="send" class="mt-4 btn btn-lg rounded-3 btn-primary" type="submit">
+            </div></div>
+
+    {/form}
+{/block}
