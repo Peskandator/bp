@@ -4,6 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>{ifset title}{include title|stripHtml} | {/ifset}BP</title>
+
+	<link href="{$basePath}/assets/css/fontawesome/css/all.css" rel="stylesheet">
 	<link rel="stylesheet" href="{$basePath}/assets/bootstrap/bootstrap.min.css">
 	<link rel="stylesheet" href="{$basePath}/assets/bootstrap/sidebars.css">
 	<link rel="stylesheet" href="{$basePath}/assets/css/custom.css">
@@ -12,7 +14,7 @@
 <body>
 
 	{foreach $flashes as $flash}
-		<div class="alert alert-{$flash->type} alert-dismissible fade show flash-message" role="alert">
+		<div class="alert alert-{$flash->type} alert-dismissible fade show flash-message flash-message-alert" role="alert">
 			<div class="flash-message-text">
 				{$flash->message}
 			</div>
@@ -26,14 +28,16 @@
 		{/block}
 	{/block}
 
+	{block modals}
+	{/block}
+
 	{block scripts}
 
 	{/block}
 
-{*	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>*}
-
 	<script src="{$basePath}/assets/js/jquery-3.7.0.min.js"></script>
-	<script src="{$basePath}/assets/bootstrap/bootstrap.min.js"></script>
+	<script src="{$basePath}/assets/bootstrap/bootstrap.bundle.min.js"></script>
+	<script src="{$basePath}/assets/js/modals.js"></script>
 	<script src="{$basePath}/assets/js/custom.js"></script>
 
 </body>

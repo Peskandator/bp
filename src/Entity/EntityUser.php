@@ -26,14 +26,19 @@ class EntityUser
      * @ORM\JoinColumn(nullable=false)
      */
     private User $user;
-
+    /**
+     * @ORM\Column(name="is_entity_admin", type="boolean")
+     */
+    private bool $isEntityAdmin;
 
     public function __construct(
         User $user,
         AccountingEntity $accountingEntity,
+        bool $isEntityAdmin
     ) {
         $this->accountingEntity = $accountingEntity;
         $this->user = $user;
+        $this->isEntityAdmin = $isEntityAdmin;
     }
 
 
@@ -50,5 +55,15 @@ class EntityUser
     public function getEntity(): AccountingEntity
     {
         return $this->accountingEntity;
+    }
+
+    public function isEntityAdmin(): bool
+    {
+        return $this->isEntityAdmin;
+    }
+
+    public function setIsEntityAdmin(bool $isEntityAdmin): void
+    {
+        $this->isEntityAdmin = $isEntityAdmin;
     }
 }

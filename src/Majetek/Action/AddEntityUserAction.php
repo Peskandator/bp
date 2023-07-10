@@ -4,37 +4,27 @@ namespace App\Majetek\Action;
 
 use App\Entity\AccountingEntity;
 use App\Entity\EntityUser;
-use App\Utils\CurrentUser;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
-class CreateEntityAction
+class AddEntityUserAction
 {
     private EntityManagerInterface $entityManager;
-    private CurrentUser $currentUser;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CurrentUser $currentUser
     ) {
         $this->entityManager = $entityManager;
-        $this->currentUser = $currentUser;
     }
 
-    public function __invoke(CreateEntityRequest $request): int
+    public function __invoke(AccountingEntity $entity, User $user): void
     {
-        $user = $this->currentUser->getCurrentLoggedInUser();
-
-        $entity = new AccountingEntity($request);
-        $this->entityManager->persist($entity);
-
-        $entityUser = new EntityUser($user, $entity, true);
+        $entityUser = new EntityUser($user, $entity, false);
         $this->entityManager->persist($entityUser);
 
         $user->getEntityUsers()->add($entityUser);
         $entity->getEntityUsers()->add($entityUser);
 
         $this->entityManager->flush();
-
-        return $entity->getId();
     }
 }

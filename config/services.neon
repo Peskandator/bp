@@ -13,8 +13,13 @@ services:
     - App\Utils\SrcDir(dir: '%srcDir%')
 
     - App\Majetek\ORM\AccountingEntityRepository
+    - App\Majetek\ORM\EntityUserRepository
+
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction
+    - App\Majetek\Action\AddEntityUserAction
+    - App\Majetek\Action\DeleteEntityUserAction
+    - App\Majetek\Action\AppointEntityAdminAction
 
 
 includes:

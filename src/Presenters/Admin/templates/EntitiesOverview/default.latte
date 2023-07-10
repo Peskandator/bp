@@ -8,19 +8,27 @@
 
     <div class="row mt-4">
         {foreach $entities as $entity}
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-sm-6">
                 <div class="card entity-card {if $entity->getId() === $currentEntityId}card-active{/if}">
                     <div class="card-body">
                         <h4 class="card-title">{$entity->getName()}</h4>
                         <p class="card-text">{$entity->getAddress()}</p>
 
                         {if $entity->getId() !== $currentEntityId}
-                            <a n:href=":Admin:EntitiesOverview:default, currentEntityId: $entity->getId()" class="btn btn-primary">Vstup</a>
+                            <a n:href=":Admin:EntitiesOverview:default, currentEntityId: $entity->getId()" class="btn btn-primary ml-2">Vstup</a>
                         {/if}
 
                         {if $entity->getId() === $currentEntityId}
-                            <a n:href=":Admin:EntitiesOverview:edit, entityId: $entity->getId()" class="btn btn-info justify-content-center ml-2">Upravit</a>
-                            <a n:href=":Admin:EntitiesOverview:edit, entityId: $entity->getId()" class="btn btn-secondary float-end ml-2">Správa uživatelů</a>
+                            {if $signedUser->isEntityAdmin($entity)}
+                                <a n:href=":Admin:EntitiesOverview:edit, entityId: $entity->getId()" class="btn btn-info justify-content-center ml-2">Upravit</a>
+                            {/if}
+                            <a n:href=":Admin:EntitiesOverview:manageUsers, entityId: $entity->getId()" class="btn btn-secondary float-end mr-2">
+                                {if $signedUser->isEntityAdmin($entity)}
+                                    Správa uživatelů
+                                {else}
+                                    Uživatelé
+                                {/if}
+                            </a>
                         {/if}
                     </div>
                 </div>

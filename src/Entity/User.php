@@ -141,4 +141,38 @@ class User
     {
         return $this->entityUsers;
     }
+
+    public function isEntityAdmin(AccountingEntity $entity): bool
+    {
+        if ($this->getEntityUser($entity)) {
+            return $this->getEntityUser($entity)->isEntityAdmin();
+        }
+
+        return false;
+    }
+
+    public function getEntityUser(AccountingEntity $entity): ?EntityUser
+    {
+        $entityUsers = $this->getEntityUsers();
+        /**
+         * @var EntityUser $entityUser
+         */
+        foreach ($entityUsers as $entityUser) {
+            if ($entityUser->getEntity()->getId() === $entity->getId()) {
+                return $entityUser;
+            }
+        }
+
+        return null;
+    }
+
+    public function isEntityUser(AccountingEntity $entity): bool
+    {
+        $entityUser = $this->getEntityUser($entity);
+        if ($entityUser !== null) {
+            return true;
+        }
+
+        return false;
+    }
 }

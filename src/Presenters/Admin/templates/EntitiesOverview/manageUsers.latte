@@ -1,0 +1,136 @@
+{layout $adminlayoutPath}
+
+{block modals}
+    <div class="modal fade" id="deleteEntityUserModal" tabindex="-1" aria-labelledby="deleteEntityUserLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteEntityUserLabel">Odstranit přístup</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Opravdu chcete odebrat přístup uživateli <b class="js-entity-user-name"></b> k této účetní jednotce?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger" id="deleteEntityUserConfirm">Odstranit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="appointEntityAdminModal" tabindex="-1" aria-labelledby="appointEntityAdminLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="appointEntityAdminLabel">Jmenování nového správce</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Opravdu chcete uživatele <b class="js-entity-user-name"></b> jmenovat novým správcem této učetní jednotky?
+                    <b>Provedením této akce ztratí Váš účet status správce!!!</b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger" id="appointEntityAdminConfirm">Jmenovat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block content}
+    <h1>Správa uživatelů účetní jednotky <b>{$entity->getName()}</b></h1>
+
+    <form n:name="deleteEntityUserForm" class="delete-entity-user-form">
+        <div class="form-errors" n:ifcontent>
+            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+        </div>
+        <input n:name="entity_user_id" class="entity-user-id">
+    </form>
+
+    <form n:name="appointEntityAdminForm" class="appoint-entity-admin-form">
+        <div class="form-errors" n:ifcontent>
+            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+        </div>
+        <input n:name="entity_user_id" class="entity-user-id">
+    </form>
+
+
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Uživatelé s přístupem</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive px-3">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Jméno</th>
+                                    <th>E-mail</th>
+                                    {if $isEntityAdmin}
+                                        <th>Akce</th>
+                                    {/if}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {foreach $entityUsers as $entityUser}
+                                    {var $renderedUser = $entityUser->getUser()}
+                                    <tr>
+                                        <td>{$renderedUser->getFullName()}</td>
+                                        <td>{$renderedUser->getEmail()}</td>
+                                        {if $isEntityAdmin}
+                                            <td>
+                                                {if $renderedUser->getId() !== $signedUser->getId()}
+                                                    <i class="fa-solid fa-trash text-danger icon modify-entity-user"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#deleteEntityUserModal"
+                                                       data-user-name="{$renderedUser->getFullName()}"
+                                                       data-entity-user-id="{$entityUser->getId()}"
+                                                    ></i>
+                                                    <i class="fa-solid fa-circle-up icon icon-left text-primary modify-entity-user"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#appointEntityAdminModal"
+                                                       data-user-name="{$renderedUser->getFullName()}"
+                                                       data-entity-user-id="{$entityUser->getId()}"
+                                                    ></i>
+                                                {/if}
+                                            </td>
+                                        {/if}
+                                    </tr>
+                                {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {if $isEntityAdmin}
+            <div class="col-md-6 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Přidat uživatele</h5>
+                    </div>
+
+                    <div class="card-body">
+                        {form addEntityUserForm}
+                            <div class="form-errors" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="addedUserEmail">E-mail</label>
+                                <input n:name="email" type="text" class="form-control" id="addedUserEmail">
+                                <small class="form-error" n:ifcontent>{inputError email}</small>
+                            </div>
+                            <input n:name="send" class="mt-4 btn rounded-3 btn-primary" type="submit">
+                        {/form}
+                    </div>
+                </div>
+            </div>
+        {/if}
+    </div>
+{/block}

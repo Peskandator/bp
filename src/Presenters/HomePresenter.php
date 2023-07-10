@@ -46,7 +46,7 @@ final class HomePresenter extends BasePresenter
     {
         $form = new Form;
         $form
-            ->addText('email', 'E-mailová adresa')
+            ->addEmail('email', 'E-mailová adresa')
             ->setRequired(true)
         ;
         $form

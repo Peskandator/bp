@@ -2,22 +2,22 @@
 
 namespace App\Majetek\ORM;
 
-use App\Entity\AccountingEntity;
+use App\Entity\EntityUser;
 use Doctrine\ORM\EntityManagerInterface;
 
-class AccountingEntityRepository
+class EntityUserRepository
 {
-    private AccountingEntity|\Doctrine\ORM\EntityRepository $repository;
+    private EntityUser|\Doctrine\ORM\EntityRepository $repository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
     ) {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(AccountingEntity::class);
+        $this->repository = $entityManager->getRepository(EntityUser::class);
     }
 
-    public function find($id): ?AccountingEntity
+    public function find($id): ?EntityUser
     {
         return $this->repository->find($id);
     }
@@ -26,4 +26,6 @@ class AccountingEntityRepository
     {
         return $this->repository->findAll();
     }
+
+
 }

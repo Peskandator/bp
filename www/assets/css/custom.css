@@ -29,16 +29,17 @@ main {
 
 .form-box {
     background-color: white;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 10px;
     box-shadow: 0 0.76875rem 2.4875rem rgba(52,58,64,0.3);
     margin-left: auto;
     margin-right: auto;
-    margin-top: 200px;
     width: 500px;
+    margin-top: 0;
 }
 
-.register-form-box {
-    margin-top: 0;
+.form-box .form-control {
+    border-width: 2px;
 }
 
 .form-error {
@@ -102,6 +103,24 @@ h1 {
     margin-bottom: 20px;
 }
 
-.ml-2 {
-    margin-left: 0.7rem;
+.card-header {
+    background-color: white !important;
+}
+
+.card-header h5 {
+    margin-bottom: 7px;
+    margin-top: 7px;
+}
+
+.card {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+.icon {
+    font-size: 21px;
+    cursor: pointer;
+}
+
+.icon-left {
+    margin-left: 5px;
 }
