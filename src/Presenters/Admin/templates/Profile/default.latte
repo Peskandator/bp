@@ -1,0 +1,45 @@
+{layout $adminlayoutPath}
+
+{block content}
+    <h1>Úprava profilu <b>{$signedUser->getFullName()}</b></h1>
+
+    {form editUserProfileForm}
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <div class="card">
+                    <div class="card-body mb-3">
+                        <div class="form-errors" n:ifcontent>
+                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newFirstName">Jméno</label>
+                            <input n:name="new_first_name" type="text" class="form-control" id="newFirstName">
+                            <small class="form-error" n:ifcontent>{inputError new_first_name}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newLastName">Příjmení</label>
+                            <input n:name="new_last_name" type="text" class="form-control" id="newLastName">
+                            <small class="form-error" n:ifcontent>{inputError new_last_name}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEmail">E-mailová adresa</label>
+                            <input n:name="new_email" type="email" class="form-control" id="newEmail">
+                            <small class="form-error" n:ifcontent>{inputError new_email}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Nové heslo</label>
+                            <input n:name="new_password" type="password" class="form-control" id="newPassword" autocomplete="new-password">
+                            <small class="form-error" n:ifcontent>{inputError new_password}</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPasswordAgain">Potrzení hesla</label>
+                            <input n:name="new_password_again" type="password" class="form-control" id="newPasswordAgain">
+                            <small class="form-error" n:ifcontent>{inputError new_password_again}</small>
+                        </div>
+                    </div>
+                </div>
+                <input n:name="send" class="mt-4 btn btn-lg rounded-3 btn-primary" type="submit">
+            </div>
+        </div>
+    {/form}
+{/block}

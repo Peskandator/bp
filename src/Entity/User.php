@@ -65,6 +65,17 @@ class User
         $this->entityUsers = new ArrayCollection();
     }
 
+    public function update(
+        string $email,
+        string $firstName,
+        string $lastName
+    ): void
+    {
+        $this->email = $email;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+    }
+
     public function authenticate(string $password, callable $verifyPassword): bool
     {
         return $verifyPassword($password, $this->password);

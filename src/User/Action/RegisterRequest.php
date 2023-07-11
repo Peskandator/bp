@@ -9,6 +9,7 @@ class RegisterRequest
         public string $surname,
         public string $email,
         public string $password,
+        public string $passwordAgain,
         public \DateTimeInterface $registrationDate
     ) {
     }

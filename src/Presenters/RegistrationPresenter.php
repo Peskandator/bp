@@ -7,6 +7,7 @@ namespace App\Presenters;
 use App\User\Action\RegisterAction;
 use App\User\Action\RegisterRequest;
 use App\User\Exception\EmailIsAlreadyUsedException;
+use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
 
@@ -55,13 +56,15 @@ final class RegistrationPresenter extends BasePresenter
                 $values->surname,
                 $values->email,
                 $values->password,
+                '',
                 new \DateTimeImmutable(),
             );
 
             try {
                 $this->registerAction->__invoke($request);
             } catch (EmailIsAlreadyUsedException $e) {
-                $form->getComponent('email')->addError('Účet se zadaným jménem byl již vytvořen');
+                $form->getComponent('email')->addError('Účet se zadanou e-mailovou adresou již existuje');
+                $this->flashMessage('Účet se zadanou e-mailovou adresou již existuje', FlashMessageType::ERROR);
                 return;
             }
             $this->flashMessage('Byl jste úspěšně registrován.');

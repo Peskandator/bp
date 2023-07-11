@@ -114,6 +114,6 @@ class AccountingEntity
         $zipCode = $this->getZipCode();
         $street = $this->getStreet();
 
-        return $street . ', ' . $city . ' ' . $zipCode . ' ' . $country;
+        return $street . ', ' . $city . ' ' . $zipCode . ', ' . $country;
     }
 }

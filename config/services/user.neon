@@ -1,5 +1,6 @@
 services:
     - App\User\Action\RegisterAction
+    - App\User\Action\EditProfileAction
     - App\User\ORM\UserRepository
     - App\User\Authenticator
     - App\Utils\CurrentUser
