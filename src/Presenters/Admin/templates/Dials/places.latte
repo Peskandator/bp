@@ -1,0 +1,80 @@
+{layout $adminlayoutPath}
+
+{block content}
+    <h1>Číselník míst</h1>
+
+    <div class="row">
+        <div class="col-md-10 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Místa</h5>
+                </div>
+                <div class="card-header">
+                    <div class="table-responsive px-3">
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                            <tr>
+                                <th>Název</th>
+                                <th>Středisko</th>
+                                <th>Kód</th>
+                                <th>Akce</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {foreach $places as $place}
+                                    <tr>
+                                        <td>{$place->getName()}</td>
+                                        <td>{$place->getLocation()->getName()}</td>
+                                        <td>{$place->getCode()}</td>
+                                        <td>{$place->getCode()}</td>
+                                    </tr>
+                                {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <h6 class="mt-1 mb-3">Přidat místo</h6>
+                    {form addPlaceForm}
+                        <div class="form-errors" n:ifcontent>
+                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                        </div>
+                        <div class="row mb-4 px-2">
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="placeName">Název</label>
+                                    <input n:name="name" type="text" class="form-control" id="placeName">
+                                    <small class="form-error" n:ifcontent>{inputError name}</small>
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="locationSelect">Název</label>
+                                    <select n:name="location" id="locationSelect" class="form-select">
+                                        <option selected>Vyberte středisko</option>
+                                        {foreach $locations as $location}
+                                            <option value="{$location->getId()}">{$location->getName()}, Kód: {$location->getCode()}</option>
+                                        {/foreach}
+                                    </select>
+{*                                    {control location}*}
+                                    <small class="form-error" n:ifcontent>{inputError location}</small>
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label for="placeCode">Kód</label>
+                                    <input n:name="code" type="number" class="form-control" id="placeCode">
+                                    <small class="form-error" n:ifcontent>{inputError code}</small>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
+                    {/form}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

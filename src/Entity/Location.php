@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="place")
+ * @ORM\Table(name="location")
  */
-class Place
+class Location
 {
     /**
      * @ORM\Id()
@@ -25,22 +26,25 @@ class Place
      */
     private int $code;
     /**
-     * @ORM\ManyToOne(targetEntity="Location")
-     * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="locations")
+     * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
      */
-    private Location $location;
+    private AccountingEntity $entity;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Place", mappedBy="location")
+     */
+    private Collection $places;
 
 
     public function __construct(
+        AccountingEntity $entity,
         string $name,
-        int $code,
-        Location $location
+        int $code
     ){
+        $this->entity = $entity;
         $this->name = $name;
         $this->code = $code;
-        $this->location = $location;
     }
-
 
     public function getId(): int
     {
@@ -54,11 +58,16 @@ class Place
 
     public function getCode(): int
     {
-        return $this->id;
+        return $this->code;
     }
 
-    public function getLocation(): Location
+    public function getEntity(): AccountingEntity
     {
-        return $this->location;
+        return $this->entity;
+    }
+
+    public function getPlaces(): Collection
+    {
+        return $this->places;
     }
 }

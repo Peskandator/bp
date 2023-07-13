@@ -11,7 +11,7 @@
                         <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
                             Majetek
                         </button>
-                        <div class="collapse show" id="home-collapse">
+                        <div class="collapse {*show*}" id="home-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Overview</a></li>
                                 <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
@@ -38,10 +38,9 @@
                         </button>
                         <div class="collapse" id="orders-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                <li><a n:href=":Admin:Dashboard:default, currentEntityId: 2" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
-                                <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Střediska</a></li>
-                                <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Místa</a></li>
-                                <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Způsoby pořízení</a></li>
+                                <li><a n:href=":Admin:Dials:locations" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Střediska</a></li>
+                                <li><a n:href=":Admin:Dials:places" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Místa</a></li>
+                                <li><a n:href=":Admin:Dials:acquisitions" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Způsoby pořízení</a></li>
                             </ul>
                         </div>
                     </li>

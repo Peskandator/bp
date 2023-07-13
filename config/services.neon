@@ -14,12 +14,16 @@ services:
 
     - App\Majetek\ORM\AccountingEntityRepository
     - App\Majetek\ORM\EntityUserRepository
+    - App\Majetek\ORM\LocationRepository
 
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction
     - App\Majetek\Action\AddEntityUserAction
     - App\Majetek\Action\DeleteEntityUserAction
     - App\Majetek\Action\AppointEntityAdminAction
+    - App\Majetek\Action\AddLocationAction
+    - App\Majetek\Action\AddAcquisitionAction
+    - App\Majetek\Action\AddPlaceAction
 
 
 includes:

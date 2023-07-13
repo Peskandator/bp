@@ -47,6 +47,14 @@ class AccountingEntity
      * @ORM\Column(name="company_id", type="string", nullable=true)
      */
     private ?string $companyId;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Location", mappedBy="entity")
+     */
+    private Collection $locations;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Acquisition", mappedBy="entity")
+     */
+    private Collection $acquisitions;
 
 
     public function __construct(
@@ -115,5 +123,37 @@ class AccountingEntity
         $street = $this->getStreet();
 
         return $street . ', ' . $city . ' ' . $zipCode . ', ' . $country;
+    }
+
+    public function getLocations(): Collection
+    {
+        return $this->locations;
+    }
+
+    public function getAcquisitions(): Collection
+    {
+        return $this->acquisitions;
+    }
+
+    public function getPlaces(): array
+    {
+        $places = [];
+
+        $locations = $this->getLocations();
+
+        /**
+         * @var Location $location
+         */
+        foreach ($locations as $location) {
+            $locationPlaces = $location->getPlaces();
+            /**
+             * @var Place $locationPlace
+             */
+            foreach ($locationPlaces as $locationPlace) {
+                $places[] = $locationPlace;
+            }
+        }
+
+        return $places;
     }
 }

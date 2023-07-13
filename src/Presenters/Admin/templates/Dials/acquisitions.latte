@@ -1,0 +1,62 @@
+{layout $adminlayoutPath}
+
+{block content}
+    <h1>Číselník způsobů pořízení</h1>
+
+    <div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Způsoby pořízení</h5>
+            </div>
+            <div class="card-header">
+                <div class="table-responsive px-3">
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th>Způsob pořízení</th>
+                            <th>Kód</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach $acquisitions as $acquisition}
+                            <tr>
+                                <td>{$acquisition->getName()}</td>
+                                <td>{$acquisition->getCode()}</td>
+                            </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-header">
+                <h6 class="mt-1 mb-3">Přidat způsob pořízení</h6>
+                {form addAcquisitionForm}
+                    <div class="form-errors" n:ifcontent>
+                        <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                    </div>
+                    <div class="row mb-4 px-2">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="acquisitionName">Název</label>
+                                <input n:name="name" type="text" class="form-control" id="acquisitionName">
+                                <small class="form-error" n:ifcontent>{inputError name}</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="acquisitionCode">Kód</label>
+                                <input n:name="code" type="number" class="form-control" id="acquisitionCode">
+                                <small class="form-error" n:ifcontent>{inputError code}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
+                {/form}
+            </div>
+        </div>
+    </div>
+
+
+
+{/block}

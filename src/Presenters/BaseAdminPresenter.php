@@ -2,6 +2,7 @@
 
 namespace App\Presenters;
 
+use App\Entity\AccountingEntity;
 use App\Entity\User;
 use App\Majetek\ORM\AccountingEntityRepository;
 use App\Utils\CurrentUser;
@@ -15,6 +16,7 @@ abstract class BaseAdminPresenter extends Presenter
     public int $currentEntityId;
     private CurrentUser $currentUser;
     private AccountingEntityRepository $entityRepository;
+    public AccountingEntity $currentEntity;
 
 
     public function injectBaseDeps(
@@ -56,6 +58,8 @@ abstract class BaseAdminPresenter extends Presenter
             if (!$currentUser->isEntityUser($currentEntity)) {
                 $this->addNoPermissionError(true);
             }
+
+            $this->currentEntity = $currentEntity;
         }
     }
 

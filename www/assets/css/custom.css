@@ -124,3 +124,7 @@ h1 {
 .icon-left {
     margin-left: 5px;
 }
+
+h6 {
+    font-size: 18px !important;
+}

@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="acquisition")
+ * @ORM\Table(name="place")
  */
-class Acquisition
+class Place
 {
     /**
      * @ORM\Id()
@@ -23,29 +23,42 @@ class Acquisition
     /**
      * @ORM\Column(name="code", type="integer", unique=true)
      */
-    private ?int $code;
+    private int $code;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Location", inversedBy="places")
+     * @ORM\JoinColumn(name="location_id", referencedColumnName="id", nullable=false)
+     */
+    private Location $location;
 
 
     public function __construct(
+        Location $location,
         string $name,
-        int $code,
+        int $code
     ){
+        $this->location = $location;
         $this->name = $name;
         $this->code = $code;
     }
+
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getCode(): ?int
+    public function getCode(): int
     {
-        return $this->code;
+        return $this->id;
+    }
+
+    public function getLocation(): Location
+    {
+        return $this->location;
     }
 }
