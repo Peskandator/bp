@@ -11,10 +11,12 @@ services:
 
     - App\Router\RouterFactory::createRouter
     - App\Utils\SrcDir(dir: '%srcDir%')
+    - App\Utils\AcquisitionsProvider
 
     - App\Majetek\ORM\AccountingEntityRepository
     - App\Majetek\ORM\EntityUserRepository
     - App\Majetek\ORM\LocationRepository
+    - App\Majetek\ORM\AcquisitionRepository
 
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction

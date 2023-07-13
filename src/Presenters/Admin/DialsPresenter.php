@@ -9,6 +9,7 @@ use App\Majetek\Action\AddAcquisitionAction;
 use App\Majetek\Action\AddLocationAction;
 use App\Majetek\Action\AddPlaceAction;
 use App\Presenters\BaseAdminPresenter;
+use App\Utils\AcquisitionsProvider;
 use App\Utils\FlashMessageType;
 use Doctrine\Common\Collections\Collection;
 use Nette\Application\UI\Form;
@@ -27,17 +28,20 @@ final class DialsPresenter extends BaseAdminPresenter
     private AddLocationAction $addLocationAction;
     private AddAcquisitionAction $addAcquisitionAction;
     private AddPlaceAction $addPlaceAction;
+    private AcquisitionsProvider $acquisitionsProvider;
 
     public function __construct(
         AddLocationAction $addLocationAction,
         AddAcquisitionAction $addAcquisitionAction,
-        AddPlaceAction $addPlaceAction
+        AddPlaceAction $addPlaceAction,
+        AcquisitionsProvider $acquisitionsProvider
     )
     {
         parent::__construct();
         $this->addLocationAction = $addLocationAction;
         $this->addAcquisitionAction = $addAcquisitionAction;
         $this->addPlaceAction = $addPlaceAction;
+        $this->acquisitionsProvider = $acquisitionsProvider;
     }
 
     public function actionLocations(): void
@@ -53,7 +57,7 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionAcquisitions(): void
     {
-        $this->template->acquisitions = $this->currentEntity->getAcquisitions();
+        $this->template->acquisitions = $this->acquisitionsProvider->provideAcquisitions($this->currentEntity);
     }
 
     protected function createComponentAddLocationForm(): Form

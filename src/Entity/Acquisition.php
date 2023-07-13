@@ -21,14 +21,18 @@ class Acquisition
      */
     private ?string $name;
     /**
-     * @ORM\Column(name="code", type="integer", unique=true)
+     * @ORM\Column(name="code", type="integer", nullable=true)
      */
     private ?int $code;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="locations")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=true)
      */
-    private AccountingEntity $entity;
+    private ?AccountingEntity $entity;
+    /**
+     * @ORM\Column(name="is_default", type="boolean")
+     */
+    private bool $isDefault;
 
 
     public function __construct(
@@ -39,6 +43,7 @@ class Acquisition
         $this->entity = $entity;
         $this->name = $name;
         $this->code = $code;
+        $this->isDefault = false;
     }
 
     public function getId(): int
@@ -56,8 +61,13 @@ class Acquisition
         return $this->code;
     }
 
-    public function getEntity(): AccountingEntity
+    public function getEntity(): ?AccountingEntity
     {
         return $this->entity;
+    }
+
+    public function isDefault(): bool
+    {
+        return $this->isDefault;
     }
 }
