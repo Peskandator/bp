@@ -156,4 +156,14 @@ class AccountingEntity
 
         return $places;
     }
+
+    public function isEntityUser(User $user): bool
+    {
+        $entityUser = $user->getEntityUser($this);
+        if ($entityUser !== null) {
+            return true;
+        }
+
+        return false;
+    }
 }

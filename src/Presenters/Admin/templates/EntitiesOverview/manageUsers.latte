@@ -23,12 +23,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="appointEntityAdminLabel">Jmenování nového správce</h1>
+                    <h1 class="modal-title fs-5" id="appointEntityAdminLabel">Jmenování nového administrátora</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Opravdu chcete uživatele <b class="js-entity-user-name"></b> jmenovat novým správcem této učetní jednotky?
-                    <b>Provedením této akce ztratí Váš účet status správce!!!</b>
+                    Opravdu chcete uživatele <b class="js-entity-user-name"></b> jmenovat novým administrátorem této učetní jednotky?
+                    <b>Provedením této akce ztratí Váš účet status administrátora!!!</b>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
@@ -69,6 +69,7 @@
                                 <tr>
                                     <th>Jméno</th>
                                     <th>E-mail</th>
+                                    <th>Role</th>
                                     {if $isEntityAdmin}
                                         <th>Akce</th>
                                     {/if}
@@ -80,16 +81,25 @@
                                     <tr>
                                         <td>{$renderedUser->getFullName()}</td>
                                         <td>{$renderedUser->getEmail()}</td>
+                                        <td>
+                                            {if $entityUser->isEntityAdmin()}
+                                                Administrátor
+                                            {else}
+                                                Člen
+                                            {/if}
+                                        </td>
                                         {if $isEntityAdmin}
                                             <td>
                                                 {if $renderedUser->getId() !== $signedUser->getId()}
                                                     <i class="fa-solid fa-trash text-danger icon modify-entity-user"
+                                                       title="Odstranit přístup"
                                                        data-bs-toggle="modal"
                                                        data-bs-target="#deleteEntityUserModal"
                                                        data-user-name="{$renderedUser->getFullName()}"
                                                        data-entity-user-id="{$entityUser->getId()}"
                                                     ></i>
                                                     <i class="fa-solid fa-circle-up icon icon-left text-primary modify-entity-user"
+                                                       title="Jmenovat nového administrátora"
                                                        data-bs-toggle="modal"
                                                        data-bs-target="#appointEntityAdminModal"
                                                        data-user-name="{$renderedUser->getFullName()}"

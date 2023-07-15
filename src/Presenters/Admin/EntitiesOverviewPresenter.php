@@ -314,8 +314,8 @@ final class EntitiesOverviewPresenter extends BaseAdminPresenter
             }
 
             if ($entityUser->getUser()->getId() === $this->getCurrentUser()->getId()) {
-                $form->addError('Uživatele nelze jmenovat správcem.');
-                $this->flashMessage('Uživatele nelze jmenovat správcem.', FlashMessageType::ERROR);
+                $form->addError('Uživatele nelze jmenovat administrátorem.');
+                $this->flashMessage('Uživatele nelze jmenovat administrátorem.', FlashMessageType::ERROR);
             }
         };
 

@@ -46,6 +46,12 @@ class Acquisition
         $this->isDefault = false;
     }
 
+    public function update(string $name, int $code): void
+    {
+        $this->name = $name;
+        $this->code = $code;
+    }
+
     public function getId(): int
     {
         return $this->id;

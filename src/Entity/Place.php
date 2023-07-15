@@ -21,7 +21,7 @@ class Place
      */
     private ?string $name;
     /**
-     * @ORM\Column(name="code", type="integer", unique=true)
+     * @ORM\Column(name="code", type="integer")
      */
     private int $code;
     /**
@@ -41,6 +41,12 @@ class Place
         $this->code = $code;
     }
 
+    public function update(string $name, int $code, Location $location): void
+    {
+        $this->name = $name;
+        $this->code = $code;
+        $this->location = $location;
+    }
 
     public function getId(): int
     {
@@ -54,7 +60,7 @@ class Place
 
     public function getCode(): int
     {
-        return $this->id;
+        return $this->code;
     }
 
     public function getLocation(): Location

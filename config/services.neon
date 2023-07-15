@@ -12,11 +12,14 @@ services:
     - App\Router\RouterFactory::createRouter
     - App\Utils\SrcDir(dir: '%srcDir%')
     - App\Utils\AcquisitionsProvider
+    - App\Utils\DialsCodeValidator
 
     - App\Majetek\ORM\AccountingEntityRepository
     - App\Majetek\ORM\EntityUserRepository
     - App\Majetek\ORM\LocationRepository
     - App\Majetek\ORM\AcquisitionRepository
+    - App\Majetek\ORM\PlaceRepository
+
 
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction
@@ -26,6 +29,9 @@ services:
     - App\Majetek\Action\AddLocationAction
     - App\Majetek\Action\AddAcquisitionAction
     - App\Majetek\Action\AddPlaceAction
+    - App\Majetek\Action\EditAcquisitionAction
+    - App\Majetek\Action\EditLocationAction
+    - App\Majetek\Action\EditPlaceAction
 
 
 includes:

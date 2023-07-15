@@ -7,26 +7,58 @@
         <div class="col-md-10 col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Místa</h5>
+                    <h5>Seznam míst</h5>
                 </div>
                 <div class="card-header">
                     <div class="table-responsive px-3">
+                        <form n:name="editPlaceForm" class="edit-place-form">
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <div class="d-none">
+                                <input n:name="id" class="form-place-id">
+                                <input n:name="name" class="form-place-name">
+                                <input n:name="code" class="form-place-code">
+                                <input n:name="location" class="form-place-location">
+                            </div>
+                        </form>
                         <table class="table table-bordered mt-3">
                             <thead>
                             <tr>
-                                <th>Název</th>
+                                <th>Název místa</th>
                                 <th>Středisko</th>
-                                <th>Kód</th>
+                                <th>Kód místa</th>
                                 <th>Akce</th>
                             </tr>
                             </thead>
                             <tbody>
                                 {foreach $places as $place}
+                                    {var $currentLocation = $place->getLocation()}
+                                    {var $placeId = strval($place->getId())}
                                     <tr>
-                                        <td>{$place->getName()}</td>
-                                        <td>{$place->getLocation()->getName()}</td>
-                                        <td>{$place->getCode()}</td>
-                                        <td>{$place->getCode()}</td>
+                                        <td>
+                                            <span class="place-name-text-{$placeId}">{$place->getName()}</span>
+                                            <input type="text" class="place-name-{$placeId}" style="display: none" value="{$place->getName()}">
+                                        </td>
+                                        <td>
+                                            <span class="place-location-text-{$placeId}">{$place->getLocation()->getName()}</span>
+                                            <select class="{*form-select *}place-location-{$placeId}" style="display: none">
+                                                <option value="{$currentLocation->getId()}">{$currentLocation->getName()}, Kód: {$currentLocation->getCode()}</option>
+                                                {foreach $locations as $location}
+                                                    {if $currentLocation->getId() !== $location->getId()}
+                                                        <option value="{$location->getId()}">{$location->getName()}, Kód: {$location->getCode()}</option>
+                                                    {/if}
+                                                {/foreach}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <span class="place-code-text-{$placeId}">{$place->getCode()}</span>
+                                            <input type="number" class="place-code-{$placeId}" style="display: none" value="{$place->getCode()}" min="7" max="999">
+                                        </td>
+                                        <td>
+                                            <button class="edit-place-button btn-primary btn btn-sm" style="display: none" data-place-id="{$place->getId()}">OK</button>
+                                            <i class="fas fa-pencil-alt edit-place-icon text-primary icon" title="Upravit" data-place-id="{$place->getId()}"></i>
+                                        </td>
                                     </tr>
                                 {/foreach}
                             </tbody>
@@ -42,7 +74,7 @@
                         <div class="row mb-4 px-2">
                             <div class="col-5">
                                 <div class="form-group">
-                                    <label for="placeName">Název</label>
+                                    <label for="placeName">Název místa</label>
                                     <input n:name="name" type="text" class="form-control" id="placeName">
                                     <small class="form-error" n:ifcontent>{inputError name}</small>
                                 </div>
@@ -50,22 +82,21 @@
 
                             <div class="col-5">
                                 <div class="form-group">
-                                    <label for="locationSelect">Název</label>
+                                    <label for="locationSelect">Středisko</label>
                                     <select n:name="location" id="locationSelect" class="form-select">
                                         <option selected>Vyberte středisko</option>
                                         {foreach $locations as $location}
                                             <option value="{$location->getId()}">{$location->getName()}, Kód: {$location->getCode()}</option>
                                         {/foreach}
                                     </select>
-{*                                    {control location}*}
                                     <small class="form-error" n:ifcontent>{inputError location}</small>
                                 </div>
                             </div>
 
                             <div class="col-2">
                                 <div class="form-group">
-                                    <label for="placeCode">Kód</label>
-                                    <input n:name="code" type="number" class="form-control" id="placeCode">
+                                    <label for="placeCode">Kód místa</label>
+                                    <input n:name="code" type="number" class="form-control" id="placeCode" min="1" max="999">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
                                 </div>
                             </div>

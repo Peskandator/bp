@@ -22,7 +22,7 @@ class Location
      */
     private ?string $name;
     /**
-     * @ORM\Column(name="code", type="integer", unique=true)
+     * @ORM\Column(name="code", type="integer")
      */
     private int $code;
     /**
@@ -42,6 +42,12 @@ class Location
         int $code
     ){
         $this->entity = $entity;
+        $this->name = $name;
+        $this->code = $code;
+    }
+
+    public function update(string $name, int $code): void
+    {
         $this->name = $name;
         $this->code = $code;
     }

@@ -4,59 +4,98 @@
     <h1>Číselník způsobů pořízení</h1>
 
     <div class="row">
-    <div class="col-md-6 col-sm-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Způsoby pořízení</h5>
-            </div>
-            <div class="card-header">
-                <div class="table-responsive px-3">
-                    <table class="table table-bordered mt-3">
-                        <thead>
-                        <tr>
-                            <th>Způsob pořízení</th>
-                            <th>Kód</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {foreach $acquisitions as $acquisition}
-                            <tr>
-                                <td>{$acquisition->getName()}</td>
-                                <td>{$acquisition->getCode()}</td>
-                            </tr>
-                        {/foreach}
-                        </tbody>
-                    </table>
+        <div class="col-md-8 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Seznam způsobů pořízení</h5>
                 </div>
-            </div>
-            <div class="card-header">
-                <h6 class="mt-1 mb-3">Přidat způsob pořízení</h6>
-                {form addAcquisitionForm}
-                    <div class="form-errors" n:ifcontent>
-                        <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                <div class="card-header">
+                    <div class="table-responsive px-3">
+                        <form n:name="editAcquisitionForm" class="edit-acquisition-form">
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <div class="d-none">
+                                <input n:name="id" class="form-acquisition-id">
+                                <input n:name="name" class="form-acquisition-name">
+                                <input n:name="code" class="form-acquisition-code">
+                            </div>
+                        </form>
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                            <tr>
+                                <th>Text</th>
+                                <th>Kód</th>
+                                <th>Akce</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {foreach $acquisitions as $acquisition}
+                                    {var $acquisitionId = strval($acquisition->getId())}
+                                    <tr>
+                                        <td>
+                                            <span class="acquisition-name-text-{$acquisitionId}">{$acquisition->getName()}</span>
+                                            {if !$acquisition->isDefault()}
+                                                <div class="form-group">
+                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control" style="display: none" value="{$acquisition->getName()}">
+                                                </div>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            <span class="acquisition-code-text-{$acquisitionId}">{$acquisition->getCode()}</span>
+                                            {if !$acquisition->isDefault()}
+                                                <div class="form-group">
+                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
+                                                </div>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {if !$acquisition->isDefault()}
+                                                <button class="edit-acquisition-button btn-primary btn btn-sm" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
+                                                <i class="fas fa-pencil-alt edit-acquisition-icon text-primary icon" title="Upravit" data-acquisition-id="{$acquisition->getId()}"></i>
+                                            {else}
+                                                {* TODO: DODĚLAT HOVNO*}
+                                                {* TODO: všude form-control*}
+                                                {* TODO: oddělata, aby bylo jen jedno *}
+                                                {* TODO: dodělat - řazení podle kódu *}
+
+                                                <i class="fas fa-solid fa-pencil-slash icon"></i>
+                                                <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
+                                            {/if}
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="row mb-4 px-2">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="acquisitionName">Název</label>
-                                <input n:name="name" type="text" class="form-control" id="acquisitionName">
-                                <small class="form-error" n:ifcontent>{inputError name}</small>
+                </div>
+                <div class="card-header">
+                    <h6 class="mt-1 mb-3">Přidat způsob pořízení</h6>
+                    {form addAcquisitionForm}
+                        <div class="form-errors" n:ifcontent>
+                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                        </div>
+                        <div class="row mb-4 px-2">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="acquisitionName">Text</label>
+                                    <input n:name="name" type="text" class="form-control" id="acquisitionName">
+                                    <small class="form-error" n:ifcontent>{inputError name}</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="acquisitionCode">Kód</label>
+                                    <input n:name="code" type="number" class="form-control" id="acquisitionCode" min="7" max="999">
+                                    <small class="form-error" n:ifcontent>{inputError code}</small>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="acquisitionCode">Kód</label>
-                                <input n:name="code" type="number" class="form-control" id="acquisitionCode">
-                                <small class="form-error" n:ifcontent>{inputError code}</small>
-                            </div>
-                        </div>
-                    </div>
-                    <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
-                {/form}
+                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
+                    {/form}
+                </div>
             </div>
         </div>
     </div>
-
-
 
 {/block}
