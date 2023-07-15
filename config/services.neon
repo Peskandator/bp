@@ -32,6 +32,9 @@ services:
     - App\Majetek\Action\EditAcquisitionAction
     - App\Majetek\Action\EditLocationAction
     - App\Majetek\Action\EditPlaceAction
+    - App\Majetek\Action\DeleteAcquisitionAction
+    - App\Majetek\Action\DeleteLocationAction
+    - App\Majetek\Action\DeletePlaceAction
 
 
 includes:

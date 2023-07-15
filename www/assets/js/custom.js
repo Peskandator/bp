@@ -7,11 +7,13 @@ $(document).ready(function(){
     $(`.edit-acquisition-icon`).click(function () {
         let acquisitionId = $(this).attr('data-acquisition-id');
 
-        $(`.acquisition-name-` + acquisitionId).toggle();
-        $(`.acquisition-code-` + acquisitionId).toggle();
+        $(`.js-edit-text`).show();
+        $(`.js-edit-input`).hide();
+        $(`.acquisition-name-` + acquisitionId).show();
+        $(`.acquisition-code-` + acquisitionId).show();
+        $(`.acquisition-name-text-` + acquisitionId).hide();
+        $(`.acquisition-code-text-` + acquisitionId).hide();
 
-        $(`.acquisition-name-text-` + acquisitionId).toggle();
-        $(`.acquisition-code-text-` + acquisitionId).toggle();
         $(this).toggle();
         $(this).siblings(".edit-acquisition-button").toggle();
     });
@@ -31,11 +33,12 @@ $(document).ready(function(){
     $(`.edit-location-icon`).click(function () {
         let locationId = $(this).attr('data-location-id');
 
-        $(`.location-name-` + locationId).toggle();
-        $(`.location-code-` + locationId).toggle();
-
-        $(`.location-name-text-` + locationId).toggle();
-        $(`.location-code-text-` + locationId).toggle();
+        $(`.js-edit-text`).show();
+        $(`.js-edit-input`).hide();
+        $(`.location-name-` + locationId).show();
+        $(`.location-code-` + locationId).show();
+        $(`.location-name-text-` + locationId).hide();
+        $(`.location-code-text-` + locationId).hide();
         $(this).toggle();
         $(this).siblings(".edit-location-button").toggle();
     });
@@ -55,13 +58,14 @@ $(document).ready(function(){
     $(`.edit-place-icon`).click(function () {
         let placeId = $(this).attr('data-place-id');
 
-        $(`.place-name-` + placeId).toggle();
-        $(`.place-code-` + placeId).toggle();
-        $(`.place-location-` + placeId).toggle();
-
-        $(`.place-name-text-` + placeId).toggle();
-        $(`.place-code-text-` + placeId).toggle();
-        $(`.place-location-text-` + placeId).toggle();
+        $(`.js-edit-text`).show();
+        $(`.js-edit-input`).hide();
+        $(`.place-name-` + placeId).show();
+        $(`.place-code-` + placeId).show();
+        $(`.place-location-` + placeId).show();
+        $(`.place-name-text-` + placeId).hide();
+        $(`.place-code-text-` + placeId).hide();
+        $(`.place-location-text-` + placeId).hide();
         $(this).toggle();
         $(this).siblings(".edit-place-button").toggle();
     });

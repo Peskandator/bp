@@ -1,5 +1,25 @@
 {layout $adminlayoutPath}
 
+{block modals}
+    <div class="modal fade" id="deleteAcquisitionModal" tabindex="-1" aria-labelledby="deleteAcquisitionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteAcquisitionLabel">Smazat způsob pořízení</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Chcete opravdu odstranit způsob pořízení <b class="js-acquisition-name"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger" id="deleteAcquisitionConfirm">Odstranit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
 {block content}
     <h1>Číselník způsobů pořízení</h1>
 
@@ -21,6 +41,12 @@
                                 <input n:name="code" class="form-acquisition-code">
                             </div>
                         </form>
+                        <form n:name="deleteAcquisitionForm" class="delete-acquisition-form">
+                            <div class="form-errors" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <input n:name="id" class="acquisition-id">
+                        </form>
                         <table class="table table-bordered mt-3">
                             <thead>
                             <tr>
@@ -34,31 +60,34 @@
                                     {var $acquisitionId = strval($acquisition->getId())}
                                     <tr>
                                         <td>
-                                            <span class="acquisition-name-text-{$acquisitionId}">{$acquisition->getName()}</span>
+                                            <span class="acquisition-name-text-{$acquisitionId} js-edit-text">{$acquisition->getName()}</span>
                                             {if !$acquisition->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control" style="display: none" value="{$acquisition->getName()}">
+                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control js-edit-input" style="display: none" value="{$acquisition->getName()}">
                                                 </div>
                                             {/if}
                                         </td>
                                         <td>
-                                            <span class="acquisition-code-text-{$acquisitionId}">{$acquisition->getCode()}</span>
+                                            <span class="acquisition-code-text-{$acquisitionId} js-edit-text">{$acquisition->getCode()}</span>
                                             {if !$acquisition->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
+                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control js-edit-input" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
                                                 </div>
                                             {/if}
                                         </td>
                                         <td>
                                             {if !$acquisition->isDefault()}
-                                                <button class="edit-acquisition-button btn-primary btn btn-sm" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
-                                                <i class="fas fa-pencil-alt edit-acquisition-icon text-primary icon" title="Upravit" data-acquisition-id="{$acquisition->getId()}"></i>
+                                                <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
+                                                <i class="fas fa-pencil-alt edit-acquisition-icon text-primary icon js-edit-text" title="Upravit" data-acquisition-id="{$acquisition->getId()}"></i>
+                                                <i class="fa-solid fa-trash text-danger icon delete-acquisition js-edit-text icon-left"
+                                                   title="Odstranit"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deleteAcquisitionModal"
+                                                   data-acquisition-name="{$acquisition->getName()}"
+                                                   data-acquisition-id="{$acquisition->getId()}"
+                                                ></i>
                                             {else}
                                                 {* TODO: DODĚLAT HOVNO*}
-                                                {* TODO: všude form-control*}
-                                                {* TODO: oddělata, aby bylo jen jedno *}
-                                                {* TODO: dodělat - řazení podle kódu *}
-
                                                 <i class="fas fa-solid fa-pencil-slash icon"></i>
                                                 <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
                                             {/if}

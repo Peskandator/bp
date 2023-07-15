@@ -18,10 +18,13 @@ class EditPlaceAction
 
     public function __invoke(Place $place, string $name, int $code, Location $location): void
     {
+        $placeLocation = $place->getLocation();
+        if ($placeLocation->getId() !== $location->getId()) {
+            $placeLocation->getPlaces()->removeElement($place);
+            $location->getPlaces()->add($place);
+        }
+
         $place->update($name, $code, $location);
-
-        // TODO: remove place from location ???
-
         $this->entityManager->flush();
     }
 }
