@@ -17,41 +17,37 @@ class DepreciationGroup
      */
     private int $id;
     /**
-     * @ORM\Column(name="name", type="string", nullable=true)
+     * @ORM\Column(name="group_number", type="integer")
      */
-    private ?string $name;
+    private int $group;
     /**
-     * @ORM\Column(name="code", type="integer")
-     */
-    private int $code;
-    /**
-     * @ORM\Column(name="method", type="integer", nullable=false)
+     * @ORM\Column(name="depreciation_method", type="integer")
      */
     private int $method;
     /**
-     * @ORM\Column(name="years", type="integer")
+     * @ORM\Column(name="years_to_depreciate", type="integer", nullable=true)
      */
-    private int $years;
+    private ?int $years;
     /**
-     * @ORM\Column(name="months", type="integer")
+     * @ORM\Column(name="months_to_depreciate", type="integer", nullable=true)
      */
-    private int $months;
+    private ?int $months;
     /**
-     * @ORM\Column(name="coefficient", type="integer")
+     * @ORM\Column(name="is_coefficient", type="boolean")
      */
-    private int $coefficient;
+    private bool $isCoefficient;
     /**
-     * @ORM\Column(name="rate_first_year", type="integer")
+     * @ORM\Column(name="rate_first_year", type="float")
      */
-    private int $rateFirstYear;
+    private float $rateFirstYear;
     /**
-     * @ORM\Column(name="rate", type="integer")
+     * @ORM\Column(name="rate", type="float")
      */
-    private int $rate;
+    private float $rate;
     /**
-     * @ORM\Column(name="rate_increased_price", type="integer")
+     * @ORM\Column(name="rate_increased_price", type="float")
      */
-    private int $rateIncreasedPrice;
+    private float $rateIncreasedPrice;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="depreciationGroups")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
@@ -61,23 +57,21 @@ class DepreciationGroup
 
     public function __construct(
         AccountingEntity $entity,
-        int $code,
-        string $name,
         int $method,
-        int $years,
-        int $months,
-        int $coefficient,
-        int $rateFirstYear,
-        int $rate,
-        int $rateIncreasedPrice,
+        int $group,
+        ?int $years,
+        ?int $months,
+        bool $isCoefficient,
+        float $rateFirstYear,
+        float $rate,
+        float $rateIncreasedPrice,
     ){
         $this->entity = $entity;
-        $this->code = $code;
-        $this->name = $name;
+        $this->group = $group;
         $this->method = $method;
         $this->years = $years;
         $this->months = $months;
-        $this->coefficient = $coefficient;
+        $this->isCoefficient = $isCoefficient;
         $this->rateFirstYear = $rateFirstYear;
         $this->rate = $rate;
         $this->rateIncreasedPrice = $rateIncreasedPrice;
@@ -93,14 +87,9 @@ class DepreciationGroup
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getGroup(): int
     {
-        return $this->name;
-    }
-
-    public function getCode(): int
-    {
-        return $this->code;
+        return $this->group;
     }
 
     public function getMethod(): int
@@ -108,19 +97,19 @@ class DepreciationGroup
         return $this->method;
     }
 
-    public function getYears(): int
+    public function getYears(): ?int
     {
         return $this->years;
     }
 
-    public function getMonths(): int
+    public function getMonths(): ?int
     {
         return $this->months;
     }
 
-    public function getCoefficient(): int
+    public function isCoefficient(): bool
     {
-        return $this->coefficient;
+        return $this->isCoefficient;
     }
 
     public function getRateFirstYear(): int

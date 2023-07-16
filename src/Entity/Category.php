@@ -25,17 +25,17 @@ class Category
      */
     private int $code;
     /**
-     * @ORM\Column(name="account_asset", type="integer", nullable=true)
+     * @ORM\Column(name="account_asset", type="string", nullable=true)
      */
-    private ?int $accountAsset;
+    private ?string $accountAsset;
     /**
-     * @ORM\Column(name="account_depreciation", type="integer", nullable=true)
+     * @ORM\Column(name="account_depreciation", type="string", nullable=true)
      */
-    private ?int $accountDepreciation;
+    private ?string $accountDepreciation;
     /**
-     * @ORM\Column(name="account_repairs", type="integer", nullable=true)
+     * @ORM\Column(name="account_repairs", type="string", nullable=true)
      */
-    private ?int $accountRepairs;
+    private ?string $accountRepairs;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="categories")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
@@ -50,17 +50,17 @@ class Category
 
     public function __construct(
         AccountingEntity $entity,
-        ?DepreciationGroup $depreciationGroup,
-        ?string $name,
         int $code,
-        ?int $accountAsset,
-        ?int $accountDepreciation,
-        ?int $accountRepairs
+        ?string $name,
+        ?DepreciationGroup $depreciationGroup,
+        ?string $accountAsset,
+        ?string $accountDepreciation,
+        ?string $accountRepairs
     ){
         $this->entity = $entity;
-        $this->depreciationGroup = $depreciationGroup;
-        $this->name = $name;
         $this->code = $code;
+        $this->name = $name;
+        $this->depreciationGroup = $depreciationGroup;
         $this->accountAsset = $accountAsset;
         $this->accountDepreciation = $accountDepreciation;
         $this->accountRepairs = $accountRepairs;
@@ -86,17 +86,17 @@ class Category
         return $this->code;
     }
 
-    public function getAccountAsset(): ?int
+    public function getAccountAsset(): ?string
     {
         return $this->accountAsset;
     }
 
-    public function getAccountDepreciation(): ?int
+    public function getAccountDepreciation(): ?string
     {
         return $this->accountDepreciation;
     }
 
-    public function getAccountRepairs(): ?int
+    public function getAccountRepairs(): ?string
     {
         return $this->accountRepairs;
     }

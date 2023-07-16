@@ -93,6 +93,21 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->template->acquisitions = $this->sortByCode($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
     }
 
+    public function actionAssetTypes(): void
+    {
+        $this->template->assetTypes = $this->currentEntity->getAssetTypes();
+    }
+
+    public function actionCategories(): void
+    {
+        $this->template->categories = $this->currentEntity->getCategories();
+    }
+
+    public function actionDepreciationGroups(): void
+    {
+        $this->template->groups = $this->currentEntity->getDepreciationGroups();
+    }
+
     protected function createComponentAddLocationForm(): Form
     {
         $form = new Form;
