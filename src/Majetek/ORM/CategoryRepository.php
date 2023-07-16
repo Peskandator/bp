@@ -2,27 +2,23 @@
 
 namespace App\Majetek\ORM;
 
-use App\Entity\Place;
+use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PlaceRepository
+class CategoryRepository
 {
-    private Place|\Doctrine\ORM\EntityRepository $repository;
+    private Category|\Doctrine\ORM\EntityRepository $repository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
     ) {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Place::class);
+        $this->repository = $entityManager->getRepository(Category::class);
     }
 
-    public function find(?int $id): ?Place
+    public function find($id): ?Category
     {
-        if (!$id) {
-            return null;
-        }
-
         return $this->repository->find($id);
     }
 
@@ -30,6 +26,4 @@ class PlaceRepository
     {
         return $this->repository->findAll();
     }
-
-
 }

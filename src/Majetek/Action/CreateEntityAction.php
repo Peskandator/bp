@@ -8,6 +8,7 @@ use App\Entity\Category;
 use App\Entity\DepreciationGroup;
 use App\Entity\EntityUser;
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Requests\CreateEntityRequest;
 use App\Utils\CurrentUser;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -72,12 +73,12 @@ class CreateEntityAction
         $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::EXTRAORDINARY, 1, null, 12, false,100, 0, 0));
         $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::EXTRAORDINARY, 2, null, 24, false,1, 0, 0));
 
-        $this->entityManager->persist(new Category($entity, 1, '', $depreciationGroup1, '021000', '551000', '081000'));
-        $this->entityManager->persist(new Category($entity, 2, '', $depreciationGroup2, '022000', '551000', '082000'));
-        $this->entityManager->persist(new Category($entity, 3, '', $depreciationGroup3, '022000', '551000', '082000'));
-        $this->entityManager->persist(new Category($entity, 4, '', null, '031000', null, null));
-        $this->entityManager->persist(new Category($entity, 5, '', $depreciationGroup5, '021000', '551000', '082000'));
-        $this->entityManager->persist(new Category($entity, 6, '', null, '501300', null, null));
-        $this->entityManager->persist(new Category($entity, 7, '', null, '501300', null, null));
+        $this->entityManager->persist(new Category($entity, 1, 'Budovy, stavby', $depreciationGroup1, '021000', '551000', '081000'));
+        $this->entityManager->persist(new Category($entity, 2, 'Dopravní prostř.', $depreciationGroup2, '022000', '551000', '082000'));
+        $this->entityManager->persist(new Category($entity, 3, 'Stroje, nástroje', $depreciationGroup3, '022000', '551000', '082000'));
+        $this->entityManager->persist(new Category($entity, 4, 'Pozemky', null, '031000', null, null));
+        $this->entityManager->persist(new Category($entity, 5, 'TZ na pron. majetku', $depreciationGroup5, '021000', '551000', '082000'));
+        $this->entityManager->persist(new Category($entity, 6, 'Leasing', null, '501300', null, null));
+        $this->entityManager->persist(new Category($entity, 7, 'Drobný HM', null, '501300', null, null));
     }
 }

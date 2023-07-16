@@ -2,22 +2,22 @@
 
 namespace App\Majetek\ORM;
 
-use App\Entity\Place;
+use App\Entity\DepreciationGroup;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PlaceRepository
+class DepreciationGroupRepository
 {
-    private Place|\Doctrine\ORM\EntityRepository $repository;
+    private DepreciationGroup|\Doctrine\ORM\EntityRepository $repository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
     ) {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Place::class);
+        $this->repository = $entityManager->getRepository(DepreciationGroup::class);
     }
 
-    public function find(?int $id): ?Place
+    public function find(?int $id): ?DepreciationGroup
     {
         if (!$id) {
             return null;
@@ -30,6 +30,4 @@ class PlaceRepository
     {
         return $this->repository->findAll();
     }
-
-
 }

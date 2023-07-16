@@ -6,6 +6,8 @@ namespace App\Utils;
 
 use App\Entity\AccountingEntity;
 use App\Entity\Acquisition;
+use App\Entity\Category;
+use App\Entity\DepreciationGroup;
 use App\Entity\Location;
 use App\Entity\Place;
 
@@ -92,6 +94,55 @@ class DialsCodeValidator
         foreach ($places as $place) {
             if ($code === $place->getCode()) {
                 return 'Zadaný kód je již obsazen';
+            }
+        }
+
+        return '';
+    }
+
+    public function isCategoryValid(AccountingEntity $entity, int $code, ?int $currentCode = null): string
+    {
+        if ($code === $currentCode) {
+            return '';
+        }
+
+        if (!$this->validateCode($code)) {
+            return 'Kód musí být v rozmezí 1-999';
+        }
+
+        $categories = $entity->getCategories();
+        /**
+         * @var Category $category
+         */
+        foreach ($categories as $category) {
+            if ($code === $category->getCode()) {
+                return 'Zadaný kód je již obsazen';
+            }
+        }
+
+        return '';
+    }
+
+    public function isDeprecationGroupValid(AccountingEntity $entity, int $groupNumber, int $method, ?int $currentGroupNumber = null, ?int $currentMethod = null): string
+    {
+        if ($groupNumber === $currentGroupNumber && $method === $currentMethod) {
+            return '';
+        }
+
+        if ($groupNumber < 1) {
+            return 'Číslo odpisové skupiny musí být větší než 0';
+        }
+        if ($groupNumber > 7) {
+            return 'Číslo odpisové skupiny nemůže být větší než 7';
+        }
+
+        $groups = $entity->getDepreciationGroups();
+        /**
+         * @var DepreciationGroup $group
+         */
+        foreach ($groups as $group) {
+            if ($groupNumber === $group->getGroup() && $method === $group->getMethod()) {
+                return 'Odpisová skupina již existuje';
             }
         }
 

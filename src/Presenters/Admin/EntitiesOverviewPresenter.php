@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Majetek\Action\AddEntityUserAction;
 use App\Majetek\Action\AppointEntityAdminAction;
 use App\Majetek\Action\CreateEntityAction;
-use App\Majetek\Action\CreateEntityRequest;
+use App\Majetek\Requests\CreateEntityRequest;
 use App\Majetek\Action\DeleteEntityUserAction;
 use App\Majetek\Action\EditEntityAction;
 use App\Majetek\ORM\AccountingEntityRepository;

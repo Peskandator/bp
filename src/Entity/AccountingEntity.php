@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Majetek\Action\CreateEntityRequest;
+use App\Majetek\Requests\CreateEntityRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

@@ -83,5 +83,14 @@ $(document).ready(function(){
         $(`.form-place-location`).val(selectedLocation);
         $(`.edit-place-form`).submit();
     });
+
+
+
+
+
+
+
+
+
 });
 

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 
+use App\Entity\DepreciationGroup;
 use App\Entity\Location;
 use App\Majetek\Action\AddAcquisitionAction;
+use App\Majetek\Action\AddCategoryAction;
 use App\Majetek\Action\AddLocationAction;
 use App\Majetek\Action\AddPlaceAction;
 use App\Majetek\Action\DeleteAcquisitionAction;
@@ -15,8 +17,11 @@ use App\Majetek\Action\EditAcquisitionAction;
 use App\Majetek\Action\EditLocationAction;
 use App\Majetek\Action\EditPlaceAction;
 use App\Majetek\ORM\AcquisitionRepository;
+use App\Majetek\ORM\CategoryRepository;
+use App\Majetek\ORM\DepreciationGroupRepository;
 use App\Majetek\ORM\LocationRepository;
 use App\Majetek\ORM\PlaceRepository;
+use App\Majetek\Requests\CreateCategoryRequest;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
 use App\Utils\DialsCodeValidator;
@@ -40,6 +45,9 @@ final class DialsPresenter extends BaseAdminPresenter
     private DeletePlaceAction $deletePlaceAction;
     private DeleteAcquisitionAction $deleteAcquisitionAction;
     private DeleteLocationAction $deleteLocationAction;
+    private AddCategoryAction $addCategoryAction;
+    private CategoryRepository $categoryRepository;
+    private DepreciationGroupRepository $depreciationGroupRepository;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -55,7 +63,10 @@ final class DialsPresenter extends BaseAdminPresenter
         EditPlaceAction $editPlaceAction,
         DeletePlaceAction $deletePlaceAction,
         DeleteAcquisitionAction $deleteAcquisitionAction,
-        DeleteLocationAction $deleteLocationAction
+        DeleteLocationAction $deleteLocationAction,
+        AddCategoryAction $addCategoryAction,
+        CategoryRepository $categoryRepository,
+        DepreciationGroupRepository $depreciationGroupRepository
     )
     {
         parent::__construct();
@@ -73,6 +84,9 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->deletePlaceAction = $deletePlaceAction;
         $this->deleteAcquisitionAction = $deleteAcquisitionAction;
         $this->deleteLocationAction = $deleteLocationAction;
+        $this->addCategoryAction = $addCategoryAction;
+        $this->categoryRepository = $categoryRepository;
+        $this->depreciationGroupRepository = $depreciationGroupRepository;
     }
 
     public function actionLocations(): void
@@ -95,17 +109,19 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionAssetTypes(): void
     {
-        $this->template->assetTypes = $this->currentEntity->getAssetTypes();
+        $this->template->assetTypes = $this->sortByCode($this->currentEntity->getAssetTypes()->toArray());
     }
 
     public function actionCategories(): void
     {
-        $this->template->categories = $this->currentEntity->getCategories();
+        $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
+        $this->template->categories = $this->sortByCode($this->currentEntity->getCategories()->toArray());
+
     }
 
     public function actionDepreciationGroups(): void
     {
-        $this->template->groups = $this->currentEntity->getDepreciationGroups();
+        $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
     }
 
     protected function createComponentAddLocationForm(): Form
@@ -521,5 +537,105 @@ final class DialsPresenter extends BaseAdminPresenter
         });
 
         return $records;
+    }
+
+    protected function sortGroupsByMethodAndNumber(array $groups): array
+    {
+        usort($groups, function ($first, $second) {
+            if ($first->getMethod() > $second->getMethod()) {
+                return 1;
+            }
+            if ($first->getMethod() > $second->getMethod()) {
+                return -1;
+            };
+            if ($first->getGroup() > $second->getGroup()) {
+                return 1;
+            }
+            if ($first->getGroup() > $second->getGroup()) {
+                return -1;
+            };
+            return 0;
+        });
+
+        return $groups;
+    }
+
+    protected function createComponentAddCategoryForm(): Form
+    {
+        $form = new Form;
+        $form
+            ->addInteger('code', 'Kód')
+            ->setRequired(true)
+        ;
+        $form
+            ->addText('name', 'Název')
+            ->setRequired(true)
+        ;
+        $groups = $this->currentEntity->getDepreciationGroups()->toArray();
+        $groupIds = $this->getDepreciationGroupsForSelect($groups);
+        $form
+            ->addSelect('group', 'Odpisová skupina', $groupIds)
+            ->setRequired(true)
+        ;
+        $form
+            ->addText('account_asset', 'Název')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+
+        ;
+        $form
+            ->addText('account_depreciation', 'Název')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+        ;
+        $form
+            ->addText('account_repairs', 'Název')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+        ;
+        $form->addSubmit('send', 'Přidat');
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $group = $this->depreciationGroupRepository->find($values->group);
+            if (!$group) {
+                $form->addError('Zadaná odpisová skupina neexistuje');
+                $this->flashMessage('Zadaná odpisová skupina neexistuje',FlashMessageType::ERROR);
+                return;
+            }
+
+            $validationMsg = $this->dialsCodeValidator->isCategoryValid($this->currentEntity, $values->code);
+            if ($validationMsg !== '') {
+                $form->addError($validationMsg);
+                $this->flashMessage($validationMsg,FlashMessageType::ERROR);
+                return;
+            }
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $group = $this->depreciationGroupRepository->find($values->group);
+            $request = new CreateCategoryRequest(
+                $values->code,
+                $values->name,
+                $group,
+                $values->account_asset,
+                $values->account_depreciation,
+                $values->account_repairs
+            );
+            $this->addCategoryAction->__invoke($this->currentEntity, $request);
+            $this->flashMessage('Kategorie byla přidána.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+    protected function getDepreciationGroupsForSelect(array $groups): array
+    {
+        $groupIds = [];
+        /**
+         * @var DepreciationGroup $group
+         */
+        foreach ($groups as $group) {
+            $groupIds[] = $group->getId();
+        }
+
+        return $groupIds;
     }
 }

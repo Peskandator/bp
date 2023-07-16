@@ -17,8 +17,12 @@ class LocationRepository
         $this->repository = $entityManager->getRepository(Location::class);
     }
 
-    public function find($id): ?Location
+    public function find(?int $id): ?Location
     {
+        if (!$id) {
+            return null;
+        }
+
         return $this->repository->find($id);
     }
 

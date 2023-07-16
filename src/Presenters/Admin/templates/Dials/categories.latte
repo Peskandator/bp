@@ -1,0 +1,194 @@
+{layout $adminlayoutPath}
+
+{block modals}
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteCategoryLabel">Smazat kategorii</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Chcete opravdu odstranit kategorii <b class="js-category-name"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger" id="deleteCategoryConfirm">Odstranit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block content}
+    <h1>Číselník kategorií</h1>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Seznam kategorií</h5>
+                </div>
+                <div class="card-header">
+                    <div class="table-responsive px-3">
+{*                        <form n:name="editCategoryForm" class="edit-category-form">*}
+{*                            <div class="form-errors d-block" n:ifcontent>*}
+{*                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
+{*                            </div>*}
+{*                            <div class="d-none">*}
+{*                                <input n:name="id" class="form-category-id">*}
+{*                                <input n:name="name" class="form-category-name">*}
+{*                                <input n:name="code" class="form-category-code">*}
+{*                            </div>*}
+{*                        </form>*}
+{*                        <form n:name="deleteCategoryForm" class="delete-category-form">*}
+{*                            <div class="form-errors" n:ifcontent>*}
+{*                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
+{*                            </div>*}
+{*                            <input n:name="id" class="category-id">*}
+{*                        </form>*}
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Kód kategorie</th>
+                                    <th>Název</th>
+                                    <th>Odpis. sk.</th>
+                                    <th>Účet IM</th>
+                                    <th>Účet odpis</th>
+                                    <th>Účet oprávky</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {foreach $categories as $category}
+                                    {var $categoryId = strval($category->getId())}
+                                    {var $currentGroup = $category->getDepreciationGroup()}
+                                    <tr>
+                                        <td>
+                                            <span class="category-code-text-{$categoryId} js-edit-text">{$category->getCode()}</span>
+                                            <div class="form-group">
+                                                <input type="number" class="category-code-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getCode()}" min="1" max="999">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="category-name-text-{$categoryId} js-edit-text">{$category->getName()}</span>
+                                            <div class="form-group">
+                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getName()}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {if $currentGroup}
+                                                <span class="category-group-text-{$categoryId} js-edit-text">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</span>
+                                            {/if}
+                                            <div class="form-group">
+                                                <select class="category-group-{$categoryId} form-select js-edit-input" style="display: none">
+                                                    {if $currentGroup}
+                                                        <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</option>
+                                                    {/if}
+                                                    {foreach $groups as $group}
+                                                        {if $currentGroup !== null && $currentGroup->getId() !== $group->getId()}
+                                                            <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()}</option>
+                                                        {/if}
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="category-acc-asset-text-{$categoryId} js-edit-text">{$category->getAccountAsset()}</span>
+                                            <div class="form-group">
+                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getAccountAsset()}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="category-acc-depreciation-text-{$categoryId} js-edit-text">{$category->getAccountDepreciation()}</span>
+                                            <div class="form-group">
+                                                <input type="text" class="category-acc-depreciation-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getAccountDepreciation()}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="category-acc-repairs-text-{$categoryId} js-edit-text">{$category->getAccountRepairs()}</span>
+                                            <div class="form-group">
+                                                <input type="text" class="category-acc-repairs-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getAccountRepairs()}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
+                                            <i class="fas fa-pencil-alt edit-category-icon text-primary icon js-edit-text" title="Upravit" data-category-id="{$category->getId()}"></i>
+                                            <i class="fa-solid fa-trash text-danger icon delete-category js-edit-text icon-left"
+                                               title="Odstranit"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#deleteCategoryModal"
+                                               data-category-name="{$category->getName()}"
+                                               data-category-id="{$category->getId()}"
+                                            ></i>
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-header">
+                    <h6 class="mt-1 mb-3">Přidat kategorii</h6>
+                    {form addCategoryForm}
+                        <div class="form-errors" n:ifcontent>
+                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                        </div>
+                        <div class="row px-2">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="categoryCode">Kód kategorie</label>
+                                    <input n:name="code" type="number" class="form-control" id="categoryCode" min="1" max="999">
+                                    <small class="form-error" n:ifcontent>{inputError code}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="categoryName">Název</label>
+                                    <input n:name="name" type="text" class="form-control" id="categoryName">
+                                    <small class="form-error" n:ifcontent>{inputError name}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="categoryGroup">Odpisová skupina</label>
+                                    <select name="group" class="form-select">
+                                        <option>Vyberte odpisovou skupinu</option>
+                                        {foreach $groups as $group}
+                                            <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()}</option>
+                                        {/foreach}
+                                    </select>
+                                    <small class="form-error" n:ifcontent>{inputError group}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4 px-2">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="categoryAccAsset">Účet IM</label>
+                                    <input n:name="account_asset" type="text" class="form-control" id="categoryAccAsset">
+                                    <small class="form-error" n:ifcontent>{inputError account_asset}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="categoryAccDepreciation">Účet odpis</label>
+                                    <input n:name="account_depreciation" type="text" class="form-control" id="categoryAccDepreciation">
+                                    <small class="form-error" n:ifcontent>{inputError account_depreciation}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="categoryAccRepairs">Účet oprávky</label>
+                                    <input n:name="account_repairs" type="text" class="form-control" id="categoryAccRepairs">
+                                    <small class="form-error" n:ifcontent>{inputError account_repairs}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
+                    {/form}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

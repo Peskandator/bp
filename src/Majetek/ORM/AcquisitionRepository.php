@@ -17,8 +17,12 @@ class AcquisitionRepository
         $this->repository = $entityManager->getRepository(Acquisition::class);
     }
 
-    public function find($id): ?Acquisition
+    public function find(?int $id): ?Acquisition
     {
+        if (!$id) {
+            return null;
+        }
+
         return $this->repository->find($id);
     }
 

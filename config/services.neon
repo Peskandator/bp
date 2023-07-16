@@ -19,7 +19,8 @@ services:
     - App\Majetek\ORM\LocationRepository
     - App\Majetek\ORM\AcquisitionRepository
     - App\Majetek\ORM\PlaceRepository
-
+    - App\Majetek\ORM\CategoryRepository
+    - App\Majetek\ORM\DepreciationGroupRepository
 
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction
@@ -35,6 +36,8 @@ services:
     - App\Majetek\Action\DeleteAcquisitionAction
     - App\Majetek\Action\DeleteLocationAction
     - App\Majetek\Action\DeletePlaceAction
+
+    - App\Majetek\Action\AddCategoryAction
 
 
 includes:

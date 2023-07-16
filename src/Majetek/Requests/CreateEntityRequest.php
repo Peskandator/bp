@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Majetek\Action;
+namespace App\Majetek\Requests;
 
 class CreateEntityRequest
 {

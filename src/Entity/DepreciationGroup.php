@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Majetek\Enums\DepreciationMethod;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -95,6 +96,12 @@ class DepreciationGroup
     public function getMethod(): int
     {
         return $this->method;
+    }
+
+    public function getMethodText(): string
+    {
+        $methodTexts = DepreciationMethod::NAMES;
+        return $methodTexts[$this->getMethod()];
     }
 
     public function getYears(): ?int
