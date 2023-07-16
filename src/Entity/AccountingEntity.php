@@ -55,7 +55,18 @@ class AccountingEntity
      * @ORM\OneToMany(targetEntity="App\Entity\Acquisition", mappedBy="entity")
      */
     private Collection $acquisitions;
-
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\DepreciationGroup", mappedBy="entity")
+     */
+    private Collection $depreciationGroups;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Category", mappedBy="entity")
+     */
+    private Collection $categories;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AssetType", mappedBy="entity")
+     */
+    private Collection $assetTypes;
 
     public function __construct(
         CreateEntityRequest $request,
@@ -63,6 +74,9 @@ class AccountingEntity
 
         $this->update($request);
         $this->entityUsers = new ArrayCollection();
+        $this->locations = new ArrayCollection();
+        $this->acquisitions = new ArrayCollection();
+        $this->assetTypes = new ArrayCollection();
     }
 
     public function update(CreateEntityRequest $request)
@@ -133,6 +147,21 @@ class AccountingEntity
     public function getAcquisitions(): Collection
     {
         return $this->acquisitions;
+    }
+
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function getDepreciationGroups(): Collection
+    {
+        return $this->depreciationGroups;
+    }
+
+    public function getAssetTypes(): Collection
+    {
+        return $this->assetTypes;
     }
 
     public function getPlaces(): array
