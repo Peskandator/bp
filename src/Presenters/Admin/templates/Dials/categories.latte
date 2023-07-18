@@ -128,14 +128,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-header">
+                <div class="card-header js-category-form-card">
                     <h6 class="mt-1 mb-3">Přidat kategorii</h6>
                     {form addCategoryForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
                         </div>
                         <div class="row px-2">
-                            <div class="col-4">
+                            <div class="col-2">
                                 <div class="form-group">
                                     <label for="categoryCode">Kód kategorie</label>
                                     <input n:name="code" type="number" class="form-control" id="categoryCode" min="1" max="999">
@@ -149,13 +149,22 @@
                                     <small class="form-error" n:ifcontent>{inputError name}</small>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2">
+                                <div class="form-check" style="margin-top: 41px">
+                                    <input n:name="is_depreciable" class="form-check-input js-depreciable-checkbox" type="checkbox" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Odpisovat
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-4 js-depreciable-true">
                                 <div class="form-group">
                                     <label for="categoryGroup">Odpisová skupina</label>
                                     <select name="group" class="form-select">
-                                        <option>Vyberte odpisovou skupinu</option>
+                                        <option value="0">Vyberte odpisovou skupinu</option>
                                         {foreach $groups as $group}
-                                            <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()}</option>
+                                            <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()} ({$group->getYears()|yearsText:$group->getMonths()})</option>
                                         {/foreach}
                                     </select>
                                     <small class="form-error" n:ifcontent>{inputError group}</small>
@@ -170,14 +179,14 @@
                                     <small class="form-error" n:ifcontent>{inputError account_asset}</small>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-4 js-depreciable-true">
                                 <div class="form-group">
                                     <label for="categoryAccDepreciation">Účet odpis</label>
                                     <input n:name="account_depreciation" type="text" class="form-control" id="categoryAccDepreciation">
                                     <small class="form-error" n:ifcontent>{inputError account_depreciation}</small>
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-4 js-depreciable-true">
                                 <div class="form-group">
                                     <label for="categoryAccRepairs">Účet oprávky</label>
                                     <input n:name="account_repairs" type="text" class="form-control" id="categoryAccRepairs">

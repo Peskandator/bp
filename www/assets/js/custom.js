@@ -85,12 +85,20 @@ $(document).ready(function(){
     });
 
 
+    $(`.js-depreciable-checkbox`).each(function () {
+        checkCheckbox($(this));
+        $(this).change(function () {
+            checkCheckbox($(this));
+        });
+    });
 
-
-
-
-
-
-
+    function checkCheckbox(checkBox) {
+        const selectorPrefix = '.js-category-form-card';
+        if (checkBox.prop("checked") === true) {
+            $(selectorPrefix).find('.js-depreciable-true').show();
+        } else {
+            $(selectorPrefix).find('.js-depreciable-true').hide();
+        }
+    }
 });
 

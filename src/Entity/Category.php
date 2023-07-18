@@ -37,6 +37,10 @@ class Category
      */
     private ?string $accountRepairs;
     /**
+     * @ORM\Column(name="is_depreciable", type="boolean")
+     */
+    private bool $isDepreciable;
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="categories")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
      */
@@ -55,7 +59,8 @@ class Category
         ?DepreciationGroup $depreciationGroup,
         ?string $accountAsset,
         ?string $accountDepreciation,
-        ?string $accountRepairs
+        ?string $accountRepairs,
+        bool $isDepreciable
     ){
         $this->entity = $entity;
         $this->code = $code;
@@ -64,6 +69,7 @@ class Category
         $this->accountAsset = $accountAsset;
         $this->accountDepreciation = $accountDepreciation;
         $this->accountRepairs = $accountRepairs;
+        $this->isDepreciable = $isDepreciable;
     }
 
     public function getEntity(): AccountingEntity
@@ -104,5 +110,10 @@ class Category
     public function getDepreciationGroup(): ?DepreciationGroup
     {
         return $this->depreciationGroup;
+    }
+
+    public function isDepreciable(): bool
+    {
+        return $this->isDepreciable;
     }
 }

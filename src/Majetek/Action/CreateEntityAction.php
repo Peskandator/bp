@@ -64,21 +64,21 @@ class CreateEntityAction
         $this->entityManager->persist($depreciationGroup5);
 
         $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::UNIFORM, 6, 50, null, false,1.02, 2.02, 2));
-        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 50, null, true,3, 4, 3));
-        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 50, null, true,5, 6, 5));
-        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 50, null, true,10, 11, 10));
-        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 50, null, true,20, 21, 20));
-        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 50, null, true,30, 31, 30));
-        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 50, null, true,50, 51, 50));
+        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 1, 3, null, true,3, 4, 3));
+        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 2, 5, null, true,5, 6, 5));
+        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 3, 10, null, true,10, 11, 10));
+        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 4, 20, null, true,20, 21, 20));
+        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 5, 30, null, true,30, 31, 30));
+        $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::ACCELERATED, 6, 50, null, true,50, 51, 50));
         $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::EXTRAORDINARY, 1, null, 12, false,100, 0, 0));
         $this->entityManager->persist(new DepreciationGroup($entity, DepreciationMethod::EXTRAORDINARY, 2, null, 24, false,1, 0, 0));
 
-        $this->entityManager->persist(new Category($entity, 1, 'Budovy, stavby', $depreciationGroup1, '021000', '551000', '081000'));
-        $this->entityManager->persist(new Category($entity, 2, 'Dopravní prostř.', $depreciationGroup2, '022000', '551000', '082000'));
-        $this->entityManager->persist(new Category($entity, 3, 'Stroje, nástroje', $depreciationGroup3, '022000', '551000', '082000'));
-        $this->entityManager->persist(new Category($entity, 4, 'Pozemky', null, '031000', null, null));
-        $this->entityManager->persist(new Category($entity, 5, 'TZ na pron. majetku', $depreciationGroup5, '021000', '551000', '082000'));
-        $this->entityManager->persist(new Category($entity, 6, 'Leasing', null, '501300', null, null));
-        $this->entityManager->persist(new Category($entity, 7, 'Drobný HM', null, '501300', null, null));
+        $this->entityManager->persist(new Category($entity, 1, 'Budovy, stavby', $depreciationGroup1, '021000', '551000', '081000', true));
+        $this->entityManager->persist(new Category($entity, 2, 'Dopravní prostř.', $depreciationGroup2, '022000', '551000', '082000', true));
+        $this->entityManager->persist(new Category($entity, 3, 'Stroje, nástroje', $depreciationGroup3, '022000', '551000', '082000', true));
+        $this->entityManager->persist(new Category($entity, 4, 'Pozemky', null, '031000', null, null, false));
+        $this->entityManager->persist(new Category($entity, 5, 'TZ na pron. majetku', $depreciationGroup5, '021000', '551000', '082000', true));
+        $this->entityManager->persist(new Category($entity, 6, 'Leasing', null, '501300', null, null, false));
+        $this->entityManager->persist(new Category($entity, 7, 'Drobný HM', null, '501300', null, null, false));
     }
 }

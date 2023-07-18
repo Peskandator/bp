@@ -28,7 +28,8 @@ class AddCategoryAction
             $request->depreciationGroup,
             $request->accountAsset,
             $request->accountDepreciation,
-            $request->accountRepairs
+            $request->accountRepairs,
+            $request->isDepreciable
         );
 
         $this->entityManager->persist($category);

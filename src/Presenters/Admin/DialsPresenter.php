@@ -571,33 +571,46 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addText('name', 'Název')
             ->setRequired(true)
         ;
+        $isDepreciableCheckbox = $form
+            ->addCheckbox('is_depreciable', '')
+        ;
+
         $groups = $this->currentEntity->getDepreciationGroups()->toArray();
         $groupIds = $this->getDepreciationGroupsForSelect($groups);
+        $groupIds[] = 0;
         $form
             ->addSelect('group', 'Odpisová skupina', $groupIds)
-            ->setRequired(true)
         ;
         $form
             ->addText('account_asset', 'Název')
             ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
-
         ;
         $form
             ->addText('account_depreciation', 'Název')
             ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+            ->addConditionOn($isDepreciableCheckbox, $form::EQUAL, true)
+            ->setRequired(true);
         ;
         $form
             ->addText('account_repairs', 'Název')
             ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+            ->addConditionOn($isDepreciableCheckbox, $form::EQUAL, true)
+            ->setRequired(true);
         ;
         $form->addSubmit('send', 'Přidat');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $group = $this->depreciationGroupRepository->find($values->group);
-            if (!$group) {
-                $form->addError('Zadaná odpisová skupina neexistuje');
-                $this->flashMessage('Zadaná odpisová skupina neexistuje',FlashMessageType::ERROR);
-                return;
+            if ($values->is_depreciable === true) {
+                if ($values->group === 0) {
+                    $form['group']->addError('Vyberte prosím odpisovou skupinu');
+                    return;
+                }
+                $group = $this->depreciationGroupRepository->find($values->group);
+                if (!$group) {
+                    $form['group']->addError('Zadaná odpisová skupina neexistuje');
+                    $this->flashMessage('Zadaná odpisová skupina neexistuje',FlashMessageType::ERROR);
+                    return;
+                }
             }
 
             $validationMsg = $this->dialsCodeValidator->isCategoryValid($this->currentEntity, $values->code);
@@ -609,16 +622,31 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $group = $this->depreciationGroupRepository->find($values->group);
-            $request = new CreateCategoryRequest(
-                $values->code,
-                $values->name,
-                $group,
-                $values->account_asset,
-                $values->account_depreciation,
-                $values->account_repairs
-            );
-            $this->addCategoryAction->__invoke($this->currentEntity, $request);
+            if ($values->is_depreciable === true) {
+                $group = $this->depreciationGroupRepository->find($values->group);
+                $request = new CreateCategoryRequest(
+                    $values->code,
+                    $values->name,
+                    $group,
+                    $values->account_asset,
+                    $values->account_depreciation,
+                    $values->account_repairs,
+                    $values->is_depreciable
+                );
+                $this->addCategoryAction->__invoke($this->currentEntity, $request);
+            } else {
+                $request = new CreateCategoryRequest(
+                    $values->code,
+                    $values->name,
+                    null,
+                    $values->account_asset,
+                    null,
+                    null,
+                    $values->is_depreciable
+                );
+                $this->addCategoryAction->__invoke($this->currentEntity, $request);
+            }
+
             $this->flashMessage('Kategorie byla přidána.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };

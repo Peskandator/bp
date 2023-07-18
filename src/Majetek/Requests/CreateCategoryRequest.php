@@ -12,7 +12,8 @@ class CreateCategoryRequest
         public ?DepreciationGroup $depreciationGroup,
         public ?string $accountAsset,
         public ?string $accountDepreciation,
-        public ?string $accountRepairs
+        public ?string $accountRepairs,
+        public bool $isDepreciable
     ) {
     }
 }
