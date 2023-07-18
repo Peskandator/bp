@@ -21,6 +21,7 @@ services:
     - App\Majetek\ORM\PlaceRepository
     - App\Majetek\ORM\CategoryRepository
     - App\Majetek\ORM\DepreciationGroupRepository
+    - App\Majetek\ORM\AssetTypeRepository
 
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction
@@ -40,7 +41,7 @@ services:
     - App\Majetek\Action\AddCategoryAction
     - App\Majetek\Action\DeleteCategoryAction
     - App\Majetek\Action\DeleteDepreciationGroupAction
-
+    - App\Majetek\Action\EditAssetTypeAction
 
 
 includes:

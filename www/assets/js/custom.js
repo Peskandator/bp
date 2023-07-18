@@ -4,20 +4,6 @@ $(document).ready(function(){
         $(".flash-message-alert").alert('close');
     }
 
-    $(`.edit-acquisition-icon`).click(function () {
-        let acquisitionId = $(this).attr('data-acquisition-id');
-
-        $(`.js-edit-text`).show();
-        $(`.js-edit-input`).hide();
-        $(`.acquisition-name-` + acquisitionId).show();
-        $(`.acquisition-code-` + acquisitionId).show();
-        $(`.acquisition-name-text-` + acquisitionId).hide();
-        $(`.acquisition-code-text-` + acquisitionId).hide();
-
-        $(this).toggle();
-        $(this).siblings(".edit-acquisition-button").toggle();
-    });
-
     $(`.edit-acquisition-button`).click(function (event) {
         event.preventDefault();
         let acquisitionId = $(this).attr('data-acquisition-id');
@@ -30,19 +16,6 @@ $(document).ready(function(){
         $(`.edit-acquisition-form`).submit();
     });
 
-    $(`.edit-location-icon`).click(function () {
-        let locationId = $(this).attr('data-location-id');
-
-        $(`.js-edit-text`).show();
-        $(`.js-edit-input`).hide();
-        $(`.location-name-` + locationId).show();
-        $(`.location-code-` + locationId).show();
-        $(`.location-name-text-` + locationId).hide();
-        $(`.location-code-text-` + locationId).hide();
-        $(this).toggle();
-        $(this).siblings(".edit-location-button").toggle();
-    });
-
     $(`.edit-location-button`).click(function (event) {
         event.preventDefault();
         let locationId = $(this).attr('data-location-id');
@@ -53,21 +26,6 @@ $(document).ready(function(){
         $(`.form-location-name`).val(selectedName);
         $(`.form-location-code`).val(selectedCode);
         $(`.edit-location-form`).submit();
-    });
-
-    $(`.edit-place-icon`).click(function () {
-        let placeId = $(this).attr('data-place-id');
-
-        $(`.js-edit-text`).show();
-        $(`.js-edit-input`).hide();
-        $(`.place-name-` + placeId).show();
-        $(`.place-code-` + placeId).show();
-        $(`.place-location-` + placeId).show();
-        $(`.place-name-text-` + placeId).hide();
-        $(`.place-code-text-` + placeId).hide();
-        $(`.place-location-text-` + placeId).hide();
-        $(this).toggle();
-        $(this).siblings(".edit-place-button").toggle();
     });
 
     $(`.edit-place-button`).click(function (event) {
@@ -100,5 +58,27 @@ $(document).ready(function(){
             $(selectorPrefix).find('.js-depreciable-true').hide();
         }
     }
+
+    $(`.js-edit-start`).click(function () {
+        let recordId = $(this).attr('data-record-id');
+        $(`.js-edit-text`).show();
+        $(`.js-edit-input`).hide();
+        $(`.js-input-` + recordId).show();
+        $(`.js-text-` + recordId).hide();
+        $(this).toggle();
+        $(this).siblings(".js-edit-input").toggle();
+    });
+
+    $(`.edit-assettype-button`).click(function (event) {
+        event.preventDefault();
+        let id = $(this).attr('data-assettype-id');
+        let selectedSeries = $(`.assettype-series-` + id).val();
+        let selectedStep = $(`.assettype-step-` + id).val();
+
+        $(`.form-assettype-id`).val(id);
+        $(`.form-assettype-series`).val(selectedSeries);
+        $(`.form-assettype-step`).val(selectedStep);
+        $(`.edit-assettype-form`).submit();
+    });
 });
 

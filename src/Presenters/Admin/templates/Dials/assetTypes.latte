@@ -30,57 +30,52 @@
                     <h5>Seznam středisek</h5>
                 </div>
                 <div class="card-header">
-                    <div class="table-responsive px-3">
-                        <form n:name="editLocationForm" class="edit-location-form">
+                    <div class="table-responsive px-3 py-3">
+                        <form n:name="editAssetTypeForm" class="edit-assettype-form">
                             <div class="form-errors d-block" n:ifcontent>
                                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                             </div>
                             <div class="d-none">
-                                <input n:name="id" class="form-location-id">
-                                <input n:name="name" class="form-location-name">
-                                <input n:name="code" class="form-location-code">
+                                <input n:name="id" class="form-assettype-id">
+                                <input n:name="series" class="form-assettype-series">
+                                <input n:name="step" class="form-assettype-step">
                             </div>
-                        </form>
-                        <form n:name="deleteLocationForm" class="delete-location-form">
-                            <div class="form-errors" n:ifcontent>
-                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
-                            </div>
-                            <input n:name="id" class="location-id">
                         </form>
                         <table class="table table-bordered mt-3">
                             <thead>
                                 <tr>
-                                    <th>Název</th>
-                                    <th>Číslo střediska</th>
+                                    <th>Druh</th>
+                                    <th>Text</th>
+                                    <th>Číselná řada</th>
+                                    <th>Krok</th>
                                     <th>Akce</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {foreach $locations as $location}
-                                    {var $locationId = strval($location->getId())}
+                                {foreach $assetTypes as $type}
+                                    {var $typeId = strval($type->getId())}
                                     <tr>
                                         <td>
-                                            <span class="location-name-text-{$locationId} js-edit-text">{$location->getName()}</span>
+                                            {$type->getCode()}
+                                        </td>
+                                        <td>
+                                            {$type->getName()}
+                                        </td>
+                                        <td>
+                                            <span class="assettype-series-text-{$typeId} js-edit-text js-text-{$typeId}">{$type->getSeries()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="location-name-{$locationId} form-control js-edit-input" style="display: none" value="{$location->getName()}">
+                                                <input type="number" class="assettype-series-{$typeId} form-control js-edit-input js-input-{$typeId}" style="display: none" value="{$type->getSeries()}">
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="location-code-text-{$locationId} js-edit-text">{$location->getCode()}</span>
+                                            <span class="assettype-step-text-{$typeId} js-edit-text js-text-{$typeId}">{$type->getStep()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="location-code-{$locationId} form-control js-edit-input" style="display: none" value="{$location->getCode()}" min="7" max="999">
+                                                <input type="number" class="assettype-step-{$typeId} form-control js-edit-input js-input-{$typeId}" style="display: none" value="{$type->getStep()}">
                                             </div>
                                         </td>
                                         <td>
-                                            <button class="edit-location-button btn-primary btn btn-sm js-edit-input" style="display: none" data-location-id="{$location->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt edit-location-icon text-primary icon js-edit-text" title="Upravit" data-location-id="{$location->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon delete-location js-edit-text icon-left"
-                                               title="Odstranit"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#deleteLocationModal"
-                                               data-location-name="{$location->getName()}"
-                                               data-location-id="{$location->getId()}"
-                                            ></i>
+                                            <button class="btn-primary btn btn-sm js-edit-input edit-assettype-button" style="display: none" data-assettype-id="{$type->getId()}">OK</button>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$type->getId()}"></i>
                                         </td>
                                     </tr>
                                 {/foreach}
@@ -88,31 +83,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-header">
-                    <h6 class="mt-1 mb-3">Přidat středisko</h6>
-                    {form addLocationForm}
-                        <div class="form-errors" n:ifcontent>
-                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
-                        </div>
-                        <div class="row mb-4 px-2">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="locationName">Název</label>
-                                    <input n:name="name" type="text" class="form-control" id="locationName">
-                                    <small class="form-error" n:ifcontent>{inputError name}</small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="locationCode">Číslo střediska</label>
-                                    <input n:name="code" type="number" class="form-control" id="locationCode" min="1" max="999">
-                                    <small class="form-error" n:ifcontent>{inputError code}</small>
-                                </div>
-                            </div>
-                        </div>
-                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
-                    {/form}
-                </div>
+
             </div>
         </div>
     </div>

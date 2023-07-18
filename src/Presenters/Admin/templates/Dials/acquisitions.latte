@@ -60,25 +60,25 @@
                                     {var $acquisitionId = strval($acquisition->getId())}
                                     <tr>
                                         <td>
-                                            <span class="acquisition-name-text-{$acquisitionId} js-edit-text">{$acquisition->getName()}</span>
+                                            <span class="acquisition-name-text-{$acquisitionId} js-edit-text js-text-{$acquisitionId}">{$acquisition->getName()}</span>
                                             {if !$acquisition->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control js-edit-input" style="display: none" value="{$acquisition->getName()}">
+                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getName()}">
                                                 </div>
                                             {/if}
                                         </td>
                                         <td>
-                                            <span class="acquisition-code-text-{$acquisitionId} js-edit-text">{$acquisition->getCode()}</span>
+                                            <span class="acquisition-code-text-{$acquisitionId} js-edit-text js-text-{$acquisitionId}">{$acquisition->getCode()}</span>
                                             {if !$acquisition->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control js-edit-input" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
+                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
                                                 </div>
                                             {/if}
                                         </td>
                                         <td>
                                             {if !$acquisition->isDefault()}
                                                 <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
-                                                <i class="fas fa-pencil-alt edit-acquisition-icon text-primary icon js-edit-text" title="Upravit" data-acquisition-id="{$acquisition->getId()}"></i>
+                                                <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$acquisition->getId()}"></i>
                                                 <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left"
                                                    title="Odstranit"
                                                    data-bs-toggle="modal"

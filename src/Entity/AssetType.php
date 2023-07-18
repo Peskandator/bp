@@ -52,6 +52,12 @@ class AssetType
         $this->step = $step;
     }
 
+    public function update(int $series, int $step): void
+    {
+        $this->series = $series;
+        $this->step = $step;
+    }
+
     public function getEntity(): AccountingEntity
     {
         return $this->entity;

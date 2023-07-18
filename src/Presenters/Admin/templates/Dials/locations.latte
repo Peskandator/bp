@@ -60,20 +60,20 @@
                                     {var $locationId = strval($location->getId())}
                                     <tr>
                                         <td>
-                                            <span class="location-name-text-{$locationId} js-edit-text">{$location->getName()}</span>
+                                            <span class="location-name-text-{$locationId} js-edit-text js-text-{$locationId}">{$location->getName()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="location-name-{$locationId} form-control js-edit-input" style="display: none" value="{$location->getName()}">
+                                                <input type="text" class="location-name-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getName()}">
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="location-code-text-{$locationId} js-edit-text">{$location->getCode()}</span>
+                                            <span class="location-code-text-{$locationId} js-edit-text js-text-{$locationId}">{$location->getCode()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="location-code-{$locationId} form-control js-edit-input" style="display: none" value="{$location->getCode()}" min="7" max="999">
+                                                <input type="number" class="location-code-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getCode()}" min="7" max="999">
                                             </div>
                                         </td>
                                         <td>
                                             <button class="edit-location-button btn-primary btn btn-sm js-edit-input" style="display: none" data-location-id="{$location->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt edit-location-icon text-primary icon js-edit-text" title="Upravit" data-location-id="{$location->getId()}"></i>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$location->getId()}"></i>
                                             <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left"
                                                title="Odstranit"
                                                data-bs-toggle="modal"

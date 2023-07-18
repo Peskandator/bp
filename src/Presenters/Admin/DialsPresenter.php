@@ -16,9 +16,11 @@ use App\Majetek\Action\DeleteDepreciationGroupAction;
 use App\Majetek\Action\DeleteLocationAction;
 use App\Majetek\Action\DeletePlaceAction;
 use App\Majetek\Action\EditAcquisitionAction;
+use App\Majetek\Action\EditAssetTypeAction;
 use App\Majetek\Action\EditLocationAction;
 use App\Majetek\Action\EditPlaceAction;
 use App\Majetek\ORM\AcquisitionRepository;
+use App\Majetek\ORM\AssetTypeRepository;
 use App\Majetek\ORM\CategoryRepository;
 use App\Majetek\ORM\DepreciationGroupRepository;
 use App\Majetek\ORM\LocationRepository;
@@ -52,6 +54,8 @@ final class DialsPresenter extends BaseAdminPresenter
     private DepreciationGroupRepository $depreciationGroupRepository;
     private DeleteCategoryAction $deleteCategoryAction;
     private DeleteDepreciationGroupAction $deleteDepreciationGroupAction;
+    private AssetTypeRepository $assetTypeRepository;
+    private EditAssetTypeAction $editAssetTypeAction;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -72,7 +76,9 @@ final class DialsPresenter extends BaseAdminPresenter
         CategoryRepository $categoryRepository,
         DepreciationGroupRepository $depreciationGroupRepository,
         DeleteCategoryAction $deleteCategoryAction,
-        DeleteDepreciationGroupAction $deleteDepreciationGroupAction
+        DeleteDepreciationGroupAction $deleteDepreciationGroupAction,
+        AssetTypeRepository $assetTypeRepository,
+        EditAssetTypeAction $editAssetTypeAction
     )
     {
         parent::__construct();
@@ -95,6 +101,8 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->depreciationGroupRepository = $depreciationGroupRepository;
         $this->deleteCategoryAction = $deleteCategoryAction;
         $this->deleteDepreciationGroupAction = $deleteDepreciationGroupAction;
+        $this->assetTypeRepository = $assetTypeRepository;
+        $this->editAssetTypeAction = $editAssetTypeAction;
     }
 
     public function actionLocations(): void
@@ -355,13 +363,13 @@ final class DialsPresenter extends BaseAdminPresenter
             ->setRequired(true)
         ;
         $form
-            ->addHidden('location')
+            ->addInteger('location')
             ->setRequired(true)
         ;
         $form->addSubmit('send',);
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $location = $this->locationRepository->find($values->location);
+            $location = $this->locationRepository->find((int)$values->location);
             if (!$location) {
                 $form->addError('Vybrané středisko nebylo nalezeno.');
                 $this->flashMessage('Vybrané středisko nebylo nalezeno.', FlashMessageType::ERROR);
@@ -392,7 +400,7 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $location = $this->locationRepository->find($values->location);
+            $location = $this->locationRepository->find((int)$values->location);
             $place = $this->placeRepository->find((int)$values->id);
             $this->editPlaceAction->__invoke($place, $values->name, $values->code, $location);
             $this->flashMessage('Místo bylo upraveno.', FlashMessageType::SUCCESS);
@@ -581,6 +589,7 @@ final class DialsPresenter extends BaseAdminPresenter
         ;
         $isDepreciableCheckbox = $form
             ->addCheckbox('is_depreciable', '')
+            ->setDefaultValue(true)
         ;
 
         $groups = $this->currentEntity->getDepreciationGroups()->toArray();
@@ -693,6 +702,50 @@ final class DialsPresenter extends BaseAdminPresenter
             $category = $this->categoryRepository->find((int)$values->id);
             $this->deleteCategoryAction->__invoke($category);
             $this->flashMessage('Kategorie byla smazána.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+    protected function createComponentEditAssetTypeForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addInteger('id')
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('series', 'Číselná řada')
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('step', 'Krok')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send', 'Uložit');
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $assetType = $this->assetTypeRepository->find($values->id);
+            if (!$assetType) {
+                $form->addError('Druh majetku nebyl nalezen.');
+                $this->flashMessage('Způsob pořízení nebyl nalezen.', FlashMessageType::ERROR);
+                return;
+            }
+            $entity = $assetType->getEntity();
+
+            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
+                $form->addError('K této akci nemáte oprávnění.');
+                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+                return;
+            }
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $assetType = $this->assetTypeRepository->find($values->id);
+            $this->editAssetTypeAction->__invoke($assetType, $values->series, $values->step);
+            $this->flashMessage('Způsob pořízení byl upraven.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 

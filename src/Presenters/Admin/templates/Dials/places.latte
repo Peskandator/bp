@@ -63,15 +63,15 @@
                                     {var $placeId = strval($place->getId())}
                                     <tr>
                                         <td>
-                                            <span class="place-name-text-{$placeId}  js-edit-text">{$place->getName()}</span>
+                                            <span class="place-name-text-{$placeId} js-edit-text js-text-{$placeId}">{$place->getName()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="place-name-{$placeId} form-control js-edit-input" style="display: none" value="{$place->getName()}">
+                                                <input type="text" class="place-name-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getName()}">
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="place-location-text-{$placeId} js-edit-text">{$place->getLocation()->getName()}</span>
+                                            <span class="place-location-text-{$placeId} js-edit-text js-text-{$placeId}">{$place->getLocation()->getName()}</span>
                                             <div class="form-group">
-                                                <select class="place-location-{$placeId} form-select js-edit-input" style="display: none">
+                                                <select class="place-location-{$placeId} form-select js-edit-input js-input-{$placeId}" style="display: none">
                                                     <option value="{$currentLocation->getId()}">{$currentLocation->getCode()} - {$currentLocation->getName()}</option>
                                                     {foreach $locations as $location}
                                                         {if $currentLocation->getId() !== $location->getId()}
@@ -82,14 +82,14 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="place-code-text-{$placeId} js-edit-text">{$place->getCode()}</span>
+                                            <span class="place-code-text-{$placeId} js-edit-text js-text-{$placeId}">{$place->getCode()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="place-code-{$placeId} form-control js-edit-input" style="display: none" value="{$place->getCode()}" min="7" max="999">
+                                                <input type="number" class="place-code-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getCode()}" min="7" max="999">
                                             </div>
                                         </td>
                                         <td>
                                             <button class="edit-place-button btn-primary btn btn-sm js-edit-input" style="display: none" data-place-id="{$place->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt edit-place-icon text-primary icon js-edit-text" title="Upravit" data-place-id="{$place->getId()}"></i>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$place->getId()}"></i>
                                             <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left"
                                                title="Odstranit"
                                                data-bs-toggle="modal"
