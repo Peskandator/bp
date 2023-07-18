@@ -11,6 +11,8 @@ use App\Majetek\Action\AddCategoryAction;
 use App\Majetek\Action\AddLocationAction;
 use App\Majetek\Action\AddPlaceAction;
 use App\Majetek\Action\DeleteAcquisitionAction;
+use App\Majetek\Action\DeleteCategoryAction;
+use App\Majetek\Action\DeleteDepreciationGroupAction;
 use App\Majetek\Action\DeleteLocationAction;
 use App\Majetek\Action\DeletePlaceAction;
 use App\Majetek\Action\EditAcquisitionAction;
@@ -48,6 +50,8 @@ final class DialsPresenter extends BaseAdminPresenter
     private AddCategoryAction $addCategoryAction;
     private CategoryRepository $categoryRepository;
     private DepreciationGroupRepository $depreciationGroupRepository;
+    private DeleteCategoryAction $deleteCategoryAction;
+    private DeleteDepreciationGroupAction $deleteDepreciationGroupAction;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -66,7 +70,9 @@ final class DialsPresenter extends BaseAdminPresenter
         DeleteLocationAction $deleteLocationAction,
         AddCategoryAction $addCategoryAction,
         CategoryRepository $categoryRepository,
-        DepreciationGroupRepository $depreciationGroupRepository
+        DepreciationGroupRepository $depreciationGroupRepository,
+        DeleteCategoryAction $deleteCategoryAction,
+        DeleteDepreciationGroupAction $deleteDepreciationGroupAction
     )
     {
         parent::__construct();
@@ -87,6 +93,8 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->addCategoryAction = $addCategoryAction;
         $this->categoryRepository = $categoryRepository;
         $this->depreciationGroupRepository = $depreciationGroupRepository;
+        $this->deleteCategoryAction = $deleteCategoryAction;
+        $this->deleteDepreciationGroupAction = $deleteDepreciationGroupAction;
     }
 
     public function actionLocations(): void
@@ -245,7 +253,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send',);
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $acquisition = $this->acquisitionRepository->find($values->id);
+            $acquisition = $this->acquisitionRepository->find((int)$values->id);
 
             if (!$acquisition) {
                 $form->addError('Způsob pořízení nebyl nalezen.');
@@ -269,7 +277,7 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $acquisition = $this->acquisitionRepository->find($values->id);
+            $acquisition = $this->acquisitionRepository->find((int)$values->id);
             $this->editAcquisitionAction->__invoke($acquisition, $values->name, $values->code);
             $this->flashMessage('Způsob pořízení byl upraven.', FlashMessageType::SUCCESS);
             $this->redirect('this');
@@ -297,7 +305,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send',);
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $location = $this->locationRepository->find($values->id);
+            $location = $this->locationRepository->find((int)$values->id);
 
             if (!$location) {
                 $form->addError('Středisko nebylo nalezeno.');
@@ -321,7 +329,7 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $location = $this->locationRepository->find($values->id);
+            $location = $this->locationRepository->find((int)$values->id);
             $this->editLocationAction->__invoke($location, $values->name, $values->code);
             $this->flashMessage('Středisko bylo upraveno.', FlashMessageType::SUCCESS);
             $this->redirect('this');
@@ -361,7 +369,7 @@ final class DialsPresenter extends BaseAdminPresenter
             }
             $locationEntity = $location->getEntity();
 
-            $place = $this->placeRepository->find($values->id);
+            $place = $this->placeRepository->find((int)$values->id);
             if (!$place) {
                 $form->addError('Místo nebylo nalezeno.');
                 $this->flashMessage('Místo nebylo nalezeno.', FlashMessageType::ERROR);
@@ -385,7 +393,7 @@ final class DialsPresenter extends BaseAdminPresenter
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             $location = $this->locationRepository->find($values->location);
-            $place = $this->placeRepository->find($values->id);
+            $place = $this->placeRepository->find((int)$values->id);
             $this->editPlaceAction->__invoke($place, $values->name, $values->code, $location);
             $this->flashMessage('Místo bylo upraveno.', FlashMessageType::SUCCESS);
             $this->redirect('this');
@@ -405,7 +413,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send',);
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $acquisition = $this->acquisitionRepository->find($values->id);
+            $acquisition = $this->acquisitionRepository->find((int)$values->id);
 
             if (!$acquisition) {
                 $form->addError('Způsob pořízení nebyl nalezen.');
@@ -422,7 +430,7 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $acquisition = $this->acquisitionRepository->find($values->id);
+            $acquisition = $this->acquisitionRepository->find((int)$values->id);
             $this->deleteAcquisitionAction->__invoke($acquisition);
             $this->flashMessage('Způsob pořízení byl smazán.', FlashMessageType::SUCCESS);
             $this->redirect('this');
@@ -442,7 +450,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send',);
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $location = $this->locationRepository->find($values->id);
+            $location = $this->locationRepository->find((int)$values->id);
 
             if (!$location) {
                 $form->addError('Středisko nebylo nalezeno.');
@@ -466,7 +474,7 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $location = $this->locationRepository->find($values->id);
+            $location = $this->locationRepository->find((int)$values->id);
             $this->deleteLocationAction->__invoke($location);
             $this->flashMessage('Středisko bylo smazáno.', FlashMessageType::SUCCESS);
             $this->redirect('this');
@@ -486,7 +494,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send',);
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $place = $this->placeRepository->find($values->id);
+            $place = $this->placeRepository->find((int)$values->id);
             if (!$place) {
                 $form->addError('Místo nebylo nalezeno.');
                 $this->flashMessage('Místo nebylo nalezeno.', FlashMessageType::ERROR);
@@ -502,7 +510,7 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $place = $this->placeRepository->find($values->id);
+            $place = $this->placeRepository->find((int)$values->id);
             $this->deletePlaceAction->__invoke($place);
             $this->flashMessage('Místo bylo smazáno.', FlashMessageType::SUCCESS);
             $this->redirect('this');
@@ -648,6 +656,43 @@ final class DialsPresenter extends BaseAdminPresenter
             }
 
             $this->flashMessage('Kategorie byla přidána.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+    protected function createComponentDeleteCategoryForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addHidden('id')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send',);
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $category = $this->categoryRepository->find((int)$values->id);
+
+            if (!$category) {
+                $form->addError('Kategorie nebyla nalezena.');
+                $this->flashMessage('Kategorie nebyla nalezena.', FlashMessageType::ERROR);
+                return;
+            }
+            $entity = $category->getEntity();
+
+            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
+                $form->addError('K této akci nemáte oprávnění.');
+                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+                return;
+            }
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $category = $this->categoryRepository->find((int)$values->id);
+            $this->deleteCategoryAction->__invoke($category);
+            $this->flashMessage('Kategorie byla smazána.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 

@@ -38,6 +38,9 @@ services:
     - App\Majetek\Action\DeletePlaceAction
 
     - App\Majetek\Action\AddCategoryAction
+    - App\Majetek\Action\DeleteCategoryAction
+    - App\Majetek\Action\DeleteDepreciationGroupAction
+
 
 
 includes:

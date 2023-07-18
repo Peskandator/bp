@@ -9,11 +9,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Chcete opravdu odstranit způsob pořízení <b class="js-acquisition-name"></b>?
+                    Chcete opravdu odstranit způsob pořízení <b class="js-modal-record-name"></b>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
-                    <button type="button" class="btn btn-danger" id="deleteAcquisitionConfirm">Odstranit</button>
+                    <button type="button" class="btn btn-danger js-modal-delete-confirm">Odstranit</button>
                 </div>
             </div>
         </div>
@@ -41,11 +41,11 @@
                                 <input n:name="code" class="form-acquisition-code">
                             </div>
                         </form>
-                        <form n:name="deleteAcquisitionForm" class="delete-acquisition-form">
+                        <form n:name="deleteAcquisitionForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>
                                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                             </div>
-                            <input n:name="id" class="acquisition-id">
+                            <input n:name="id" class="js-delete-record-id">
                         </form>
                         <table class="table table-bordered mt-3">
                             <thead>
@@ -79,12 +79,12 @@
                                             {if !$acquisition->isDefault()}
                                                 <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
                                                 <i class="fas fa-pencil-alt edit-acquisition-icon text-primary icon js-edit-text" title="Upravit" data-acquisition-id="{$acquisition->getId()}"></i>
-                                                <i class="fa-solid fa-trash text-danger icon delete-acquisition js-edit-text icon-left"
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left"
                                                    title="Odstranit"
                                                    data-bs-toggle="modal"
                                                    data-bs-target="#deleteAcquisitionModal"
-                                                   data-acquisition-name="{$acquisition->getName()}"
-                                                   data-acquisition-id="{$acquisition->getId()}"
+                                                   data-record-name="{$acquisition->getName()}"
+                                                   data-record-id={$acquisition->getId()}
                                                 ></i>
                                             {else}
                                                 {* TODO: DODĚLAT HOVNO*}

@@ -9,11 +9,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Chcete opravdu odstranit kategorii <b class="js-category-name"></b>?
+                    Chcete opravdu odstranit kategorii <b class="js-modal-record-name"></b>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
-                    <button type="button" class="btn btn-danger" id="deleteCategoryConfirm">Odstranit</button>
+                    <button type="button" class="btn btn-danger js-modal-delete-confirm">Odstranit</button>
                 </div>
             </div>
         </div>
@@ -41,12 +41,12 @@
 {*                                <input n:name="code" class="form-category-code">*}
 {*                            </div>*}
 {*                        </form>*}
-{*                        <form n:name="deleteCategoryForm" class="delete-category-form">*}
-{*                            <div class="form-errors" n:ifcontent>*}
-{*                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
-{*                            </div>*}
-{*                            <input n:name="id" class="category-id">*}
-{*                        </form>*}
+                        <form n:name="deleteCategoryForm" class="js-delete-form">
+                            <div class="form-errors" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <input n:name="id" class="js-delete-record-id">
+                        </form>
                         <table class="table table-bordered mt-3">
                             <thead>
                                 <tr>
@@ -114,12 +114,12 @@
                                         <td>
                                             <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
                                             <i class="fas fa-pencil-alt edit-category-icon text-primary icon js-edit-text" title="Upravit" data-category-id="{$category->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon delete-category js-edit-text icon-left"
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left"
                                                title="Odstranit"
                                                data-bs-toggle="modal"
                                                data-bs-target="#deleteCategoryModal"
-                                               data-category-name="{$category->getName()}"
-                                               data-category-id="{$category->getId()}"
+                                               data-record-name="{$category->getName()}"
+                                               data-record-id={$category->getId()}
                                             ></i>
                                         </td>
                                     </tr>

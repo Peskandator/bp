@@ -9,11 +9,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Chcete opravdu odstranit středisko <b class="js-location-name"></b>?
+                    Chcete opravdu odstranit středisko <b class="js-modal-record-name"></b>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
-                    <button type="button" class="btn btn-danger" id="deleteLocationConfirm">Odstranit</button>
+                    <button type="button" class="btn btn-danger js-modal-delete-confirm">Odstranit</button>
                 </div>
             </div>
         </div>
@@ -41,11 +41,11 @@
                                 <input n:name="code" class="form-location-code">
                             </div>
                         </form>
-                        <form n:name="deleteLocationForm" class="delete-location-form">
+                        <form n:name="deleteLocationForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>
                                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                             </div>
-                            <input n:name="id" class="location-id">
+                            <input n:name="id" class="js-delete-record-id">
                         </form>
                         <table class="table table-bordered mt-3">
                             <thead>
@@ -74,12 +74,12 @@
                                         <td>
                                             <button class="edit-location-button btn-primary btn btn-sm js-edit-input" style="display: none" data-location-id="{$location->getId()}">OK</button>
                                             <i class="fas fa-pencil-alt edit-location-icon text-primary icon js-edit-text" title="Upravit" data-location-id="{$location->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon delete-location js-edit-text icon-left"
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left"
                                                title="Odstranit"
                                                data-bs-toggle="modal"
                                                data-bs-target="#deleteLocationModal"
-                                               data-location-name="{$location->getName()}"
-                                               data-location-id="{$location->getId()}"
+                                               data-record-name="{$location->getName()}"
+                                               data-record-id={$location->getId()}
                                             ></i>
                                         </td>
                                     </tr>
