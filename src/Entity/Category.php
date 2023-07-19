@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Majetek\Requests\CreateCategoryRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -70,6 +71,18 @@ class Category
         $this->accountDepreciation = $accountDepreciation;
         $this->accountRepairs = $accountRepairs;
         $this->isDepreciable = $isDepreciable;
+    }
+
+
+    public function update(CreateCategoryRequest $request): void
+    {
+        $this->code = $request->code;
+        $this->name = $request->name;
+        $this->depreciationGroup = $request->depreciationGroup;
+        $this->accountAsset = $request->accountAsset;
+        $this->accountDepreciation = $request->accountDepreciation;
+        $this->accountRepairs = $request->accountRepairs;
+        $this->isDepreciable = $request->isDepreciable;
     }
 
     public function getEntity(): AccountingEntity

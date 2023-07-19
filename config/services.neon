@@ -43,6 +43,8 @@ services:
     - App\Majetek\Action\DeleteDepreciationGroupAction
     - App\Majetek\Action\EditAssetTypeAction
     - App\Majetek\Action\AddDepreciationGroupAction
+    - App\Majetek\Action\EditDepreciationGroupAction
+    - App\Majetek\Action\EditCategoryAction
 
 
 includes:

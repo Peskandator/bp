@@ -42,6 +42,33 @@ $(document).ready(function(){
         $(`.edit-place-form`).submit();
     });
 
+    $(`.edit-group-button`).click(function (event) {
+        event.preventDefault();
+        let groupId = $(this).attr('data-group-id');
+        let method = $(`.group-method-` + groupId).find(":selected").val();
+        let number = $(`.group-number-` + groupId).val();
+        let years = $(`.group-years-` + groupId).val();
+        let months = $(`.group-months-` + groupId).val();
+        let coeff = $(`.group-coeff-` + groupId).find(":selected").val();
+        let first = $(`.group-first-` + groupId).val();
+        let rate = $(`.group-rate-` + groupId).val();
+        let increased = $(`.group-increased-` + groupId).val();
+
+
+
+        $(`.form-group-id`).val(groupId);
+        $(`.form-group-method`).val(method);
+        $(`.form-group-number`).val(number);
+        $(`.form-group-years`).val(years);
+        $(`.form-group-months`).val(months);
+        $(`.form-group-coeff`).val(coeff);
+        $(`.form-group-first`).val(first);
+        $(`.form-group-rate`).val(rate);
+        $(`.form-group-increased`).val(increased);
+        $(`.edit-group-form`).submit();
+    });
+
+
 
     $(`.js-depreciable-checkbox`).each(function () {
         checkCheckbox($(this));

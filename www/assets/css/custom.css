@@ -128,6 +128,10 @@ h1 {
     margin-left: 5px;
 }
 
+.icon-left.align-self-center {
+    margin-left: 10px;
+}
+
 h6 {
     font-size: 18px !important;
 }

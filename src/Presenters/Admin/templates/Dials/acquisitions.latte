@@ -75,11 +75,11 @@
                                                 </div>
                                             {/if}
                                         </td>
-                                        <td>
+                                        <td class="d-flex">
                                             {if !$acquisition->isDefault()}
                                                 <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
                                                 <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$acquisition->getId()}"></i>
-                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left"
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
                                                    title="Odstranit"
                                                    data-bs-toggle="modal"
                                                    data-bs-target="#deleteAcquisitionModal"

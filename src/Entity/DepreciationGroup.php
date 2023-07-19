@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Requests\CreateDepreciationGroupRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -76,6 +77,19 @@ class DepreciationGroup
         $this->rateFirstYear = $rateFirstYear;
         $this->rate = $rate;
         $this->rateIncreasedPrice = $rateIncreasedPrice;
+    }
+
+
+    public function update(CreateDepreciationGroupRequest $request): void
+    {
+        $this->group = $request->group;
+        $this->method = $request->method;
+        $this->years = $request->years;
+        $this->months = $request->months;
+        $this->isCoefficient = $request->isCoefficient;
+        $this->rateFirstYear = $request->rateFirstYear;
+        $this->rate = $request->rate;
+        $this->rateIncreasedPrice = $request->rateIncreasedPrice;
     }
 
     public function getEntity(): AccountingEntity

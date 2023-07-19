@@ -18,6 +18,8 @@ use App\Majetek\Action\DeleteLocationAction;
 use App\Majetek\Action\DeletePlaceAction;
 use App\Majetek\Action\EditAcquisitionAction;
 use App\Majetek\Action\EditAssetTypeAction;
+use App\Majetek\Action\EditCategoryAction;
+use App\Majetek\Action\EditDepreciationGroupAction;
 use App\Majetek\Action\EditLocationAction;
 use App\Majetek\Action\EditPlaceAction;
 use App\Majetek\Enums\DepreciationMethod;
@@ -61,6 +63,8 @@ final class DialsPresenter extends BaseAdminPresenter
     private AssetTypeRepository $assetTypeRepository;
     private EditAssetTypeAction $editAssetTypeAction;
     private AddDepreciationGroupAction $addDepreciationGroupAction;
+    private EditDepreciationGroupAction $editDepreciationGroupAction;
+    private EditCategoryAction $editCategoryAction;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -84,7 +88,9 @@ final class DialsPresenter extends BaseAdminPresenter
         DeleteDepreciationGroupAction $deleteDepreciationGroupAction,
         AssetTypeRepository $assetTypeRepository,
         EditAssetTypeAction $editAssetTypeAction,
-        AddDepreciationGroupAction $addDepreciationGroupAction
+        AddDepreciationGroupAction $addDepreciationGroupAction,
+        EditDepreciationGroupAction $editDepreciationGroupAction,
+        EditCategoryAction $editCategoryAction
     )
     {
         parent::__construct();
@@ -110,6 +116,8 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->assetTypeRepository = $assetTypeRepository;
         $this->editAssetTypeAction = $editAssetTypeAction;
         $this->addDepreciationGroupAction = $addDepreciationGroupAction;
+        $this->editDepreciationGroupAction = $editDepreciationGroupAction;
+        $this->editCategoryAction = $editCategoryAction;
     }
 
     public function actionLocations(): void
@@ -863,5 +871,131 @@ final class DialsPresenter extends BaseAdminPresenter
     protected function getCoeffPercentageForSelect(): array
     {
         return [0 => 'P', 1 => 'K'];
+    }
+
+    protected function createComponentDeleteDepreciationGroupForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addHidden('id')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send',);
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $group = $this->depreciationGroupRepository->find((int)$values->id);
+
+            if (!$group) {
+                $form->addError('Odpisová skupina nebyla nalezena.');
+                $this->flashMessage('Odpisová skupina nebyla nalezena.', FlashMessageType::ERROR);
+                return;
+            }
+            $entity = $group->getEntity();
+
+            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
+                $form->addError('K této akci nemáte oprávnění.');
+                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+                return;
+            }
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $group = $this->depreciationGroupRepository->find((int)$values->id);
+            $this->deleteDepreciationGroupAction->__invoke($group);
+            $this->flashMessage('Odpisová skupina byla smazána.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+    protected function createComponentEditDepreciationGroupForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addInteger('id', 'id')
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('method', 'Odpisová skupina')
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('group_number', 'Odpis. skupina')
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('years', 'Počet let')
+        ;
+        $form
+            ->addInteger('months', 'Počet roků')
+        ;
+        $form
+            ->addInteger('is_coefficient', 'Koef./Procento')
+            ->setRequired(true)
+        ;
+        $form
+            ->addText('rate_first_year', 'Sazba 1. rok')
+            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->setRequired(true)
+        ;
+
+        $form
+            ->addText('rate', 'Sazba další roky')
+            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->setRequired(true)
+        ;
+        $form
+            ->addText('rate_increased_price', 'Sazba zvýš. VC')
+            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send', 'Přidat');
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            bdump($values);
+            $group = $this->depreciationGroupRepository->find((int)$values->id);
+            if (!$group) {
+                $form->addError('Středisko nebylo nalezeno.');
+                $this->flashMessage('Středisko nebylo nalezeno.', FlashMessageType::ERROR);
+                return;
+            }
+
+            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method);
+            if ($validationMsg !== '') {
+                $form->addError($validationMsg);
+                $this->flashMessage($validationMsg,FlashMessageType::ERROR);
+                return;
+            }
+
+            if ($values->years === null && $values->months === null) {
+                $form->addError('Musí být zadán buď počet let nebo měsíců');
+                $form->addError('Musí být zadán buď počet let nebo měsíců');
+                $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
+            }
+            bdump($form->getErrors());
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $group = $this->depreciationGroupRepository->find((int)$values->id);
+            $isCoefficient = $values->is_coefficient === 1;
+            $request = new CreateDepreciationGroupRequest(
+                $values->method,
+                $values->group_number,
+                $values->years,
+                $values->months,
+                $isCoefficient,
+                $values->rate_first_year,
+                $values->rate,
+                $values->rate_increased_price,
+            );
+            $this->editDepreciationGroupAction->__invoke($group, $request);
+            $this->flashMessage('Odpisová skupina byla upravena.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
     }
 }

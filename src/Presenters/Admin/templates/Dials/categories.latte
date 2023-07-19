@@ -65,23 +65,23 @@
                                     {var $currentGroup = $category->getDepreciationGroup()}
                                     <tr>
                                         <td>
-                                            <span class="category-code-text-{$categoryId} js-edit-text">{$category->getCode()}</span>
+                                            <span class="category-code-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getCode()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="category-code-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getCode()}" min="1" max="999">
+                                                <input type="number" class="category-code-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getCode()}" min="1" max="999">
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="category-name-text-{$categoryId} js-edit-text">{$category->getName()}</span>
+                                            <span class="category-name-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getName()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getName()}">
+                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getName()}">
                                             </div>
                                         </td>
                                         <td>
                                             {if $currentGroup}
-                                                <span class="category-group-text-{$categoryId} js-edit-text">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</span>
+                                                <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</span>
                                             {/if}
                                             <div class="form-group">
-                                                <select class="category-group-{$categoryId} form-select js-edit-input" style="display: none">
+                                                <select class="category-group-{$categoryId} form-select js-edit-input js-input-{$categoryId}" style="display: none">
                                                     {if $currentGroup}
                                                         <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</option>
                                                     {/if}
@@ -94,27 +94,27 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="category-acc-asset-text-{$categoryId} js-edit-text">{$category->getAccountAsset()}</span>
+                                            <span class="category-acc-asset-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getAccountAsset()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getAccountAsset()}">
+                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountAsset()}">
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="category-acc-depreciation-text-{$categoryId} js-edit-text">{$category->getAccountDepreciation()}</span>
+                                            <span class="category-acc-depreciation-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getAccountDepreciation()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="category-acc-depreciation-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getAccountDepreciation()}">
+                                                <input type="text" class="category-acc-depreciation-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountDepreciation()}">
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="category-acc-repairs-text-{$categoryId} js-edit-text">{$category->getAccountRepairs()}</span>
+                                            <span class="category-acc-repairs-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getAccountRepairs()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="category-acc-repairs-{$categoryId} form-control js-edit-input" style="display: none" value="{$category->getAccountRepairs()}">
+                                                <input type="text" class="category-acc-repairs-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountRepairs()}">
                                             </div>
                                         </td>
-                                        <td>
+                                        <td class="d-flex">
                                             <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
                                             <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-category-id="{$category->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left"
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
                                                title="Odstranit"
                                                data-bs-toggle="modal"
                                                data-bs-target="#deleteCategoryModal"
