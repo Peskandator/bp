@@ -1,0 +1,230 @@
+{layout $adminlayoutPath}
+
+{block modals}
+    <div class="modal fade" id="deleteDepreciationGroupModal" tabindex="-1" aria-labelledby="deleteDepreciationGroupLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteDepreciationGroupLabel">Smazat kategorii</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Chcete opravdu odstranit kategorii <b class="js-modal-record-name"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger js-modal-delete-confirm">Odstranit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block content}
+    <h1>Číselník odpisových skupin</h1>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Seznam odpisových skupin</h5>
+                </div>
+                <div class="card-header">
+                    <div class="table-responsive px-3">
+                        {*                        <form n:name="editDepreciationGroupForm" class="edit-group-form">*}
+                        {*                            <div class="form-errors d-block" n:ifcontent>*}
+                        {*                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
+                        {*                            </div>*}
+                        {*                            <div class="d-none">*}
+                        {*                                <input n:name="id" class="form-group-id">*}
+                        {*                                <input n:name="name" class="form-group-name">*}
+                        {*                                <input n:name="code" class="form-group-code">*}
+                        {*                            </div>*}
+                        {*                        </form>*}
+{*                        <form n:name="deleteDepreciationGroupForm" class="js-delete-form">*}
+{*                            <div class="form-errors" n:ifcontent>*}
+{*                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
+{*                            </div>*}
+{*                            <input n:name="id" class="js-delete-record-id">*}
+{*                        </form>*}
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                            <tr>
+                                <th>Způsob odpisu</th>
+                                <th>Odpis. skupina</th>
+                                <th>Počet let</th>
+                                <th>Počet měsíců</th>
+                                <th>Koef./procento</th>
+                                <th>Sazba 1. rok</th>
+                                <th>Sazba další roky</th>
+                                <th>Sazba zvýšená VC</th>
+                                <th>Akce</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $groups as $group}
+                                {var $groupId = strval($group->getId())}
+                                {var $currentGroupNumber = $group->getGroup()}
+                                {var $isCoefficient = $group->isCoefficient()}
+                                <tr>
+                                    <td>
+                                        <span class="group-method-text-{$groupId} js-edit-text">{$group->getMethodText()}</span>
+                                        <div class="form-group">
+                                            <select class="group-method-{$groupId} form-select js-edit-input" style="display: none">
+                                                <option value="{$group->getMethod()}">{$group->getMethodText()}</option>
+                                                {foreach $methods as $method}
+                                                    {if $method !== $group->getMethod()}
+                                                        <option value="{$method}">{$methodNames[$method]}</option>
+                                                    {/if}
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-group-text-{$groupId} js-edit-text">{$group->getGroup()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="group-group-{$groupId} form-control js-edit-input" style="display: none" value="{$group->getGroup()}" min="1" max="7">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-years-text-{$groupId} js-edit-text">{$group->getYears()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="group-years-{$groupId} form-control js-edit-input" style="display: none" value="{$group->getYears()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-months-text-{$groupId} js-edit-text">{$group->getMonths()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="group-months-{$groupId} form-control js-edit-input" style="display: none" value="{$group->getMonths()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-coeff-text-{$groupId} js-edit-text">{if $isCoefficient}K{else}P{/if}</span>
+                                        <div class="form-group">
+                                            <select class="group-coeff-{$groupId} form-select js-edit-input" style="display: none">
+                                                {if $isCoefficient}
+                                                    <option value="1">K</option>
+                                                    <option value="0">P</option>
+                                                {else}
+                                                    <option value="0">P</option>
+                                                    <option value="1">K</option>
+                                                {/if}
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-first-text-{$groupId} js-edit-text">{$group->getRateFirstYear()}</span>
+                                        <div class="form-group">
+                                            <input type="number" step="0.01" class="group-first-{$groupId} form-control js-edit-input" style="display: none" value="{$group->getRateFirstYear()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-rate-text-{$groupId} js-edit-text">{$group->getRate()}</span>
+                                        <div class="form-group">
+                                            <input type="number" step="0.01" class="group-rate-{$groupId} form-control js-edit-input" style="display: none" value="{$group->getRate()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-increased-text-{$groupId} js-edit-text">{$group->getRate()}</span>
+                                        <div class="form-group">
+                                            <input type="number" step="0.01" class="group-increased-{$groupId} form-control js-edit-input" style="display: none" value="{$group->getRateIncreasedPrice()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="edit-group-button btn-primary btn btn-sm js-edit-input" style="display: none" data-group-id="{$group->getId()}">OK</button>
+                                        <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$group->getId()}"></i>
+                                        <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left"
+                                           title="Odstranit"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#deleteDepreciationGroupModal"
+                                           data-record-name="{$group->getGroup()} - {$group->getMethodText()}"
+                                           data-record-id={$group->getId()}
+                                        ></i>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-header js-group-form-card">
+                    <h6 class="mt-1 mb-3">Přidat odpisovou skupinu</h6>
+                    {form addDepreciationGroupForm}
+                        <div class="form-errors" n:ifcontent>
+                            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+                        </div>
+                        <div class="row px-2">
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupMethod">Způsob odpisu</label>
+                                    <select name="method" class="form-select" id="groupMethod">
+                                        <option value="-1">Vyberte ...</option>
+                                        {foreach $methods as $method}
+                                            <option value="{$method}">{$methodNames[$method]}</option>
+                                        {/foreach}
+                                    </select>
+                                    <small class="form-error" n:ifcontent>{inputError method}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupNumber">Odpisová skupina</label>
+                                    <input n:name="group_number" type="number" step="1" class="form-control" id="groupNumber">
+                                    <small class="form-error" n:ifcontent>{inputError group_number}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupYears">Počet let</label>
+                                    <input n:name="years" type="number" step="1" class="form-control" id="groupYears" min="1" max="100">
+                                    <small class="form-error" n:ifcontent>{inputError years}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupMonths">Počet měsíců</label>
+                                    <input n:name="months" type="number" class="form-control" id="groupMonths" min="1" max="1000">
+                                    <small class="form-error" n:ifcontent>{inputError months}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4 px-2">
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupCoeff">Koeficient/procento</label>
+                                    <select name="is_coefficient" class="form-select" id="groupCoeff">
+                                        <option value="0">Procento</option>
+                                        <option value="1">Koeficient</option>
+                                    </select>
+                                    <small class="form-error" n:ifcontent>{inputError is_coefficient}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupFirstRate">Sazba 1. rok</label>
+                                    <input n:name="rate_first_year" type="number" class="form-control" id="groupFirstRate" min="1" max="100">
+                                    <small class="form-error" n:ifcontent>{inputError rate_first_year}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupRate">Sazba další roky</label>
+                                    <input n:name="rate" type="number" class="form-control" id="groupRate" min="1" max="100">
+                                    <small class="form-error" n:ifcontent>{inputError rate}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="groupRateIncreased">Sazba zvýš. VC</label>
+                                    <input n:name="rate_increased_price" type="number" class="form-control" id="groupRateIncreased" min="1" max="100">
+                                    <small class="form-error" n:ifcontent>{inputError rate_increased_price}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
+                    {/form}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

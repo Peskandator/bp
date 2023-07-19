@@ -119,17 +119,17 @@ class DepreciationGroup
         return $this->isCoefficient;
     }
 
-    public function getRateFirstYear(): int
+    public function getRateFirstYear(): float
     {
         return $this->rateFirstYear;
     }
 
-    public function getRate(): int
+    public function getRate(): float
     {
         return $this->rate;
     }
 
-    public function getRateIncreasedPrice(): int
+    public function getRateIncreasedPrice(): float
     {
         return $this->rateIncreasedPrice;
     }

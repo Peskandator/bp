@@ -113,7 +113,7 @@
                                         </td>
                                         <td>
                                             <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt edit-category-icon text-primary icon js-edit-text" title="Upravit" data-category-id="{$category->getId()}"></i>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-category-id="{$category->getId()}"></i>
                                             <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left"
                                                title="Odstranit"
                                                data-bs-toggle="modal"
@@ -161,7 +161,7 @@
                             <div class="col-4 js-depreciable-true">
                                 <div class="form-group">
                                     <label for="categoryGroup">Odpisová skupina</label>
-                                    <select name="group" class="form-select">
+                                    <select name="group" class="form-select" id="categoryGroup">
                                         <option value="0">Vyberte odpisovou skupinu</option>
                                         {foreach $groups as $group}
                                             <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()} ({$group->getYears()|yearsText:$group->getMonths()})</option>
