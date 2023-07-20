@@ -9,13 +9,11 @@ final class DepreciationMethod
     public const UNIFORM = 1;
     public const ACCELERATED = 2;
     public const EXTRAORDINARY= 3;
-    public const NOT_DEPRECIATING  = 4;
     public const NAMES =
         [
             1 => 'Rovnoměrné',
             2 => 'Zrychlené',
-            3 => 'Mimořádné',
-            4 => 'Neodpisovat',
+            3 => 'Mimořádné'
         ]
     ;
 
@@ -25,7 +23,6 @@ final class DepreciationMethod
             self::UNIFORM,
             self::ACCELERATED,
             self::EXTRAORDINARY,
-            self::NOT_DEPRECIATING,
         ];
     }
 

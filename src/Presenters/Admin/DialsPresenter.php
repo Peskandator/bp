@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 
+use App\Entity\AccountingEntity;
 use App\Entity\DepreciationGroup;
 use App\Entity\Location;
 use App\Majetek\Action\AddAcquisitionAction;
@@ -36,7 +37,6 @@ use App\Utils\AcquisitionsProvider;
 use App\Utils\DialsCodeValidator;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
-use Nette\Forms\Form as FormAlias;
 
 
 final class DialsPresenter extends BaseAdminPresenter
@@ -154,7 +154,7 @@ final class DialsPresenter extends BaseAdminPresenter
     {
         $cpSelect = $this->getCoeffPercentageForSelect();
         $methodNames = DepreciationMethod::getNames();
-        $methodIds = [1,2,3,4];
+        $methodIds = [1,2,3];
 
         $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
         $this->template->cpSelect = $cpSelect;
@@ -291,12 +291,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $acquisition->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
 
             $validationMsg = $this->dialsCodeValidator->isAcquisitionValid($entity, $values->code, $acquisition->getCode());
             if ($validationMsg !== '') {
@@ -343,12 +338,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $location->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
 
             $validationMsg = $this->dialsCodeValidator->isLocationValid($entity, $values->code, $location->getCode());
             if ($validationMsg !== '') {
@@ -451,12 +441,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $acquisition->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -488,12 +473,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $location->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
 
             $places = $location->getPlaces();
             if ($places->count() !== 0) {
@@ -531,12 +511,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $place->getLocation()->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -713,12 +688,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $category->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -757,12 +727,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $assetType->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -793,45 +758,62 @@ final class DialsPresenter extends BaseAdminPresenter
         $form = new Form;
 
         $methodNames = DepreciationMethod::getNames();
+        $methodNames[0] = 'Vyberte ...';
         $form
-            ->addSelect('method', 'Odpisová skupina', $methodNames)
+            ->addSelect('method', 'Způsob odpis', $methodNames)
             ->setRequired(true)
         ;
         $form
             ->addInteger('group_number', 'Odpis. skupina')
+            ->addRule($form::MIN, 'Číslo odpisové skupiny musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Číslo odpisové skupiny může být nejvýše 6', 6)
             ->setRequired(true)
         ;
         $form
             ->addInteger('years', 'Počet let')
+            ->addRule($form::MIN, 'Počet let musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Počet let může být nejvýše 100', 100)
         ;
         $form
             ->addInteger('months', 'Počet roků')
+            ->addRule($form::MIN, 'Počet měsíců musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Počet měsíců může být nejvýše 1000', 1000)
         ;
         $cpSelect = $this->getCoeffPercentageForSelect();
         $form
             ->addSelect('is_coefficient', 'Koef./Procento', $cpSelect)
             ->setRequired(true)
         ;
-
         $form
             ->addText('rate_first_year', 'Sazba 1. rok')
-            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
+            ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
             ->setRequired(true)
         ;
-
         $form
             ->addText('rate', 'Sazba další roky')
-            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
+            ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
             ->setRequired(true)
         ;
         $form
             ->addText('rate_increased_price', 'Sazba zvýš. VC')
-            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
+            ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
             ->setRequired(true)
         ;
         $form->addSubmit('send', 'Přidat');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
+            if ($values->method === 0) {
+                $form['method']->addError('Vyberte prosím způsob odpisu');
+                $this->flashMessage('Vyberte prosím způsob odpisu',FlashMessageType::ERROR);
+                return;
+            }
+
             $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method);
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
@@ -844,7 +826,6 @@ final class DialsPresenter extends BaseAdminPresenter
                 $form->getComponent('months')->addError('Musí být zadán buď počet let nebo měsíců');
                 $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
             }
-
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -892,12 +873,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
             $entity = $group->getEntity();
-
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -919,18 +895,26 @@ final class DialsPresenter extends BaseAdminPresenter
             ->setRequired(true)
         ;
         $form
-            ->addInteger('method', 'Odpisová skupina')
+            ->addInteger('method', 'Způsob odpisu')
+            ->addRule($form::MIN, 'Vyberte prosím platný způsob odpisu', 1)
+            ->addRule($form::MAX, 'Vyberte prosím platný způsob odpisu', 3)
             ->setRequired(true)
         ;
         $form
             ->addInteger('group_number', 'Odpis. skupina')
+            ->addRule($form::MIN, 'Číslo odpisové skupiny musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Číslo odpisové skupiny může být nejvýše 6', 6)
             ->setRequired(true)
         ;
         $form
             ->addInteger('years', 'Počet let')
+            ->addRule($form::MIN, 'Počet let musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Počet let může být nejvýše 100', 100)
         ;
         $form
-            ->addInteger('months', 'Počet roků')
+            ->addInteger('months', 'Počet měsíců')
+            ->addRule($form::MIN, 'Počet měsíců musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Počet měsíců může být nejvýše 999', 999)
         ;
         $form
             ->addInteger('is_coefficient', 'Koef./Procento')
@@ -938,18 +922,24 @@ final class DialsPresenter extends BaseAdminPresenter
         ;
         $form
             ->addText('rate_first_year', 'Sazba 1. rok')
-            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
+            ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
             ->setRequired(true)
         ;
 
         $form
             ->addText('rate', 'Sazba další roky')
-            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
+            ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
             ->setRequired(true)
         ;
         $form
             ->addText('rate_increased_price', 'Sazba zvýš. VC')
-            ->addRule(FormAlias::FLOAT, 'Zadejte číslo')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
+            ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
             ->setRequired(true)
         ;
         $form->addSubmit('send', 'Přidat');
@@ -963,11 +953,7 @@ final class DialsPresenter extends BaseAdminPresenter
             }
 
             $entity = $group->getEntity();
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
-            }
+            $form = $this->checkAccessToElementsEntity($form, $entity);
 
             $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method, $group->getGroup(), $group->getMethod());
             if ($validationMsg !== '') {
@@ -1053,10 +1039,15 @@ final class DialsPresenter extends BaseAdminPresenter
             }
 
             $entity = $category->getEntity();
-            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
-                $form->addError('K této akci nemáte oprávnění.');
-                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-                return;
+            $form = $this->checkAccessToElementsEntity($form, $entity);
+
+            if ($values->is_depreciable === true) {
+                $group = $this->depreciationGroupRepository->find((int)$values->group);
+                if (!$group || $group->getEntity()->getId() !== $this->currentEntityId) {
+                    $form->addError('Odpisová skupina nebyla nalezena.');
+                    $this->flashMessage('Odpisová skupina nebyla nalezena.', FlashMessageType::ERROR);
+                    return;
+                }
             }
 
             $validationMsg = $this->dialsCodeValidator->isCategoryValid($this->currentEntity, $values->code, $category->getCode());
@@ -1097,6 +1088,16 @@ final class DialsPresenter extends BaseAdminPresenter
             $this->flashMessage('Kategorie byla upravena.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
+
+        return $form;
+    }
+
+    protected function checkAccessToElementsEntity(Form $form, ?AccountingEntity $entity): Form
+    {
+        if (!$entity || $entity->getId() !== $this->currentEntityId) {
+            $form->addError('K této akci nemáte oprávnění.');
+            $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+        }
 
         return $form;
     }
