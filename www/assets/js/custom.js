@@ -54,8 +54,6 @@ $(document).ready(function(){
         let rate = $(`.group-rate-` + groupId).val();
         let increased = $(`.group-increased-` + groupId).val();
 
-
-
         $(`.form-group-id`).val(groupId);
         $(`.form-group-method`).val(method);
         $(`.form-group-number`).val(number);
@@ -68,7 +66,29 @@ $(document).ready(function(){
         $(`.edit-group-form`).submit();
     });
 
+    $(`.edit-category-button`).click(function (event) {
+        event.preventDefault();
+        let categoryId = $(this).attr('data-category-id');
+        let code = $(`.category-code-` + categoryId).val();
+        let categoryName = $(`.category-name-` + categoryId).val();
+        let group = $(`.category-group-` + categoryId).find(":selected").val();
+        let accAsset = $(`.category-acc-asset-` + categoryId).val();
+        let accDepreciation = $(`.category-acc-depreciation-` + categoryId).val();
+        let accRepairs = $(`.category-acc-repairs-` + categoryId).val();
 
+        let isDepreciable = $(`.category-depreciable-` + categoryId)[0].checked;
+        $(`.form-category-id`).val(categoryId);
+        $(`.form-category-code`).val(code);
+        $(`.form-category-name`).val(categoryName);
+        $(`.form-category-group`).val(group);
+        $(`.form-category-acc-asset`).val(accAsset);
+        $(`.form-category-acc-depreciation`).val(accDepreciation);
+        $(`.form-category-acc-repairs`).val(accRepairs);
+        if (isDepreciable === true) {
+            $(`.form-category-depreciable`).prop("checked", true)
+        }
+        $(`.edit-category-form`).submit();
+    });
 
     $(`.js-depreciable-checkbox`).each(function () {
         checkCheckbox($(this));

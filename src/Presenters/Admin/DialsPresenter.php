@@ -955,15 +955,21 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send', 'Přidat');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            bdump($values);
             $group = $this->depreciationGroupRepository->find((int)$values->id);
             if (!$group) {
-                $form->addError('Středisko nebylo nalezeno.');
-                $this->flashMessage('Středisko nebylo nalezeno.', FlashMessageType::ERROR);
+                $form->addError('Odpisová skupina nebyla nalezena.');
+                $this->flashMessage('Odpisová skupina nebyla nalezena.', FlashMessageType::ERROR);
                 return;
             }
 
-            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method);
+            $entity = $group->getEntity();
+            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
+                $form->addError('K této akci nemáte oprávnění.');
+                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+                return;
+            }
+
+            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method, $group->getGroup(), $group->getMethod());
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
@@ -975,7 +981,6 @@ final class DialsPresenter extends BaseAdminPresenter
                 $form->addError('Musí být zadán buď počet let nebo měsíců');
                 $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
             }
-            bdump($form->getErrors());
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -993,6 +998,103 @@ final class DialsPresenter extends BaseAdminPresenter
             );
             $this->editDepreciationGroupAction->__invoke($group, $request);
             $this->flashMessage('Odpisová skupina byla upravena.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
+    protected function createComponentEditCategoryForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addInteger('id', 'id')
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('code', 'Kód')
+            ->setRequired(true)
+        ;
+        $form
+            ->addText('name', 'Název')
+            ->setRequired(true)
+        ;
+        $isDepreciableCheckbox = $form
+            ->addCheckbox('is_depreciable', '')
+        ;
+        $form
+            ->addInteger('group', 'Odpisová skupina')
+        ;
+        $form
+            ->addText('account_asset', 'Název')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+        ;
+        $form
+            ->addText('account_depreciation', 'Název')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+            ->addConditionOn($isDepreciableCheckbox, $form::EQUAL, true)
+            ->setRequired(true);
+        ;
+        $form
+            ->addText('account_repairs', 'Název')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+            ->addConditionOn($isDepreciableCheckbox, $form::EQUAL, true)
+            ->setRequired(true);
+        ;
+        $form->addSubmit('send', 'Přidat');
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $category = $this->categoryRepository->find((int)$values->id);
+            if (!$category) {
+                $form->addError('Kategorie nebyla nalezena.');
+                $this->flashMessage('Kategorie nebyla nalezena.', FlashMessageType::ERROR);
+                return;
+            }
+
+            $entity = $category->getEntity();
+            if (!$entity || !$entity->isEntityUser($this->getCurrentUser())) {
+                $form->addError('K této akci nemáte oprávnění.');
+                $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+                return;
+            }
+
+            $validationMsg = $this->dialsCodeValidator->isCategoryValid($this->currentEntity, $values->code, $category->getCode());
+            if ($validationMsg !== '') {
+                $form->addError($validationMsg);
+                $this->flashMessage($validationMsg,FlashMessageType::ERROR);
+                return;
+            }
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $category = $this->categoryRepository->find((int)$values->id);
+
+            if ($values->is_depreciable === true) {
+                $group = $this->depreciationGroupRepository->find($values->group);
+                $request = new CreateCategoryRequest(
+                    $values->code,
+                    $values->name,
+                    $group,
+                    $values->account_asset,
+                    $values->account_depreciation,
+                    $values->account_repairs,
+                    $values->is_depreciable
+                );
+                $this->editCategoryAction->__invoke($category, $request);
+            } else {
+                $request = new CreateCategoryRequest(
+                    $values->code,
+                    $values->name,
+                    null,
+                    $values->account_asset,
+                    null,
+                    null,
+                    $values->is_depreciable
+                );
+                $this->editCategoryAction->__invoke($category, $request);
+            }
+            $this->flashMessage('Kategorie byla upravena.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 

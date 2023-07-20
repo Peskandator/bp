@@ -31,16 +31,23 @@
                 </div>
                 <div class="card-header">
                     <div class="table-responsive px-3">
-{*                        <form n:name="editCategoryForm" class="edit-category-form">*}
-{*                            <div class="form-errors d-block" n:ifcontent>*}
-{*                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
-{*                            </div>*}
-{*                            <div class="d-none">*}
-{*                                <input n:name="id" class="form-category-id">*}
-{*                                <input n:name="name" class="form-category-name">*}
-{*                                <input n:name="code" class="form-category-code">*}
-{*                            </div>*}
-{*                        </form>*}
+                        <form n:name="editCategoryForm" class="edit-category-form">
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form->getErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <div class="d-none">
+                                <input n:name="id" class="form-category-id">
+                                <input n:name="code" class="form-category-code">
+                                <input n:name="name" class="form-category-name">
+                                <input n:name="group" class="form-category-group">
+                                <input n:name="account_asset" class="form-category-acc-asset">
+                                <input n:name="account_depreciation" class="form-category-acc-depreciation">
+                                <input n:name="account_repairs" class="form-category-acc-repairs">
+                                <input n:name="is_depreciable" type="checkbox" class="form-category-depreciable">
+
+{*                                TODO: ERRORY k inputům*}
+                            </div>
+                        </form>
                         <form n:name="deleteCategoryForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>
                                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
@@ -52,6 +59,7 @@
                                 <tr>
                                     <th>Kód kategorie</th>
                                     <th>Název</th>
+                                    <th>Odpisovat</th>
                                     <th>Odpis. sk.</th>
                                     <th>Účet IM</th>
                                     <th>Účet odpis</th>
@@ -77,6 +85,12 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <span class="category-depreciable-text-{$categoryId} js-edit-text js-text-{$categoryId}">{if $category->isDepreciable()}Ano{else}Ne{/if}</span>
+                                            <div class="form-check">
+                                                <input style="display: none; margin-top: 10px" class="form-check-input js-edit-depreciable-checkbox category-depreciable-{$categoryId} js-edit-input js-input-{$categoryId}" type="checkbox" {if $category->isDepreciable()}checked=""{/if}>
+                                            </div>
+                                        </td>
+                                        <td>
                                             {if $currentGroup}
                                                 <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</span>
                                             {/if}
@@ -86,7 +100,7 @@
                                                         <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</option>
                                                     {/if}
                                                     {foreach $groups as $group}
-                                                        {if $currentGroup !== null && $currentGroup->getId() !== $group->getId()}
+                                                        {if ($currentGroup !== null && $currentGroup->getId())!== $group->getId() || $currentGroup === null}
                                                             <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()}</option>
                                                         {/if}
                                                     {/foreach}
@@ -96,7 +110,7 @@
                                         <td>
                                             <span class="category-acc-asset-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getAccountAsset()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="category-name-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountAsset()}">
+                                                <input type="text" class="category-acc-asset-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountAsset()}">
                                             </div>
                                         </td>
                                         <td>
@@ -113,7 +127,7 @@
                                         </td>
                                         <td class="d-flex">
                                             <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-category-id="{$category->getId()}"></i>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$category->getId()}"></i>
                                             <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
                                                title="Odstranit"
                                                data-bs-toggle="modal"

@@ -136,15 +136,15 @@ class DialsCodeValidator
             return 'Číslo odpisové skupiny nemůže být větší než 7';
         }
 
-//        $groups = $entity->getDepreciationGroups();
-//        /**
-//         * @var DepreciationGroup $group
-//         */
-//        foreach ($groups as $group) {
-//            if ($groupNumber === $group->getGroup() && $method === $group->getMethod()) {
-//                return 'Odpisová skupina již existuje';
-//            }
-//        }
+        $groups = $entity->getDepreciationGroups();
+        /**
+         * @var DepreciationGroup $group
+         */
+        foreach ($groups as $group) {
+            if ($groupNumber === $group->getGroup() && $method === $group->getMethod()) {
+                return 'Odpisová skupina již existuje';
+            }
+        }
 
         return '';
     }

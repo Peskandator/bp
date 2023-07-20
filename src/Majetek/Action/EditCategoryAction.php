@@ -18,12 +18,6 @@ class EditCategoryAction
 
     public function __invoke(Category $category, CreateCategoryRequest $request): void
     {
-//        $placeLocation = $place->getLocation();
-//        if ($placeLocation->getId() !== $location->getId()) {
-//            $placeLocation->getPlaces()->removeElement($place);
-//            $location->getPlaces()->add($place);
-//        }
-
         $category->update($request);
         $this->entityManager->flush();
     }
