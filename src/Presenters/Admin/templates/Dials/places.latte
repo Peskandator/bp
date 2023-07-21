@@ -41,6 +41,12 @@
                                 <input n:name="code" class="form-place-code">
                                 <input n:name="location" class="form-place-location">
                             </div>
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+                                <div n:foreach="$form['name']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Název místa -</b> {$error}</div>
+                                <div n:foreach="$form['location']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Středisko -</b> {$error}</div>
+                                <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Kód místa -</b> {$error}</div>
+                            </div>
                         </form>
                         <form n:name="deletePlaceForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>

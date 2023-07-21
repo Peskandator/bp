@@ -26,9 +26,9 @@ class DialsCodeValidator
         return true;
     }
 
-    public function isAcquisitionValid(AccountingEntity $entity, int $code, ?int $currentCode = null): string
+    public function isAcquisitionValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
     {
-        if ($code === $currentCode) {
+        if ($code === $currentCode || !$code) {
             return '';
         }
 
@@ -54,9 +54,9 @@ class DialsCodeValidator
         return '';
     }
 
-    public function isLocationValid(AccountingEntity $entity, int $code, ?int $currentCode = null): string
+    public function isLocationValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
     {
-        if ($code === $currentCode) {
+        if ($code === $currentCode || !$code) {
             return '';
         }
 
@@ -77,9 +77,9 @@ class DialsCodeValidator
         return '';
     }
 
-    public function isPlaceValid(AccountingEntity $entity, int $code, ?int $currentCode = null): string
+    public function isPlaceValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
     {
-        if ($code === $currentCode) {
+        if ($code === $currentCode || !$code) {
             return '';
         }
 
@@ -100,9 +100,9 @@ class DialsCodeValidator
         return '';
     }
 
-    public function isCategoryValid(AccountingEntity $entity, int $code, ?int $currentCode = null): string
+    public function isCategoryValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
     {
-        if ($code === $currentCode) {
+        if ($code === $currentCode || !$code) {
             return '';
         }
 
@@ -123,9 +123,9 @@ class DialsCodeValidator
         return '';
     }
 
-    public function isDeprecationGroupValid(AccountingEntity $entity, int $groupNumber, int $method, ?int $currentGroupNumber = null, ?int $currentMethod = null): string
+    public function isDeprecationGroupValid(AccountingEntity $entity, ?int $groupNumber, ?int $method, ?int $currentGroupNumber = null, ?int $currentMethod = null): string
     {
-        if ($groupNumber === $currentGroupNumber && $method === $currentMethod) {
+        if ($groupNumber === $currentGroupNumber && $method === $currentMethod  || !$groupNumber || !$method) {
             return '';
         }
 

@@ -40,6 +40,11 @@
                                 <input n:name="name" class="form-location-name">
                                 <input n:name="code" class="form-location-code">
                             </div>
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+                                <div n:foreach="$form['name']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Název -</b> {$error}</div>
+                                <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Číslo střediska -</b> {$error}</div>
+                            </div>
                         </form>
                         <form n:name="deleteLocationForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>
@@ -71,16 +76,18 @@
                                                 <input type="number" class="location-code-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getCode()}" min="7" max="999">
                                             </div>
                                         </td>
-                                        <td class="d-flex">
-                                            <button class="edit-location-button btn-primary btn btn-sm js-edit-input" style="display: none" data-location-id="{$location->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$location->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
-                                               title="Odstranit"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#deleteLocationModal"
-                                               data-record-name="{$location->getName()}"
-                                               data-record-id={$location->getId()}
-                                            ></i>
+                                        <td>
+                                            <div class="d-flex">
+                                                <button class="edit-location-button btn-primary btn btn-sm js-edit-input" style="display: none" data-location-id="{$location->getId()}">OK</button>
+                                                <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$location->getId()}"></i>
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
+                                                   title="Odstranit"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deleteLocationModal"
+                                                   data-record-name="{$location->getName()}"
+                                                   data-record-id={$location->getId()}
+                                                ></i>
+                                            </div>
                                         </td>
                                     </tr>
                                 {/foreach}

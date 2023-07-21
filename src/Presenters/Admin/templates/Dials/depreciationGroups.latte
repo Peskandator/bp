@@ -46,6 +46,17 @@
                                 <input n:name="rate" class="form-group-rate">
                                 <input n:name="rate_increased_price" class="form-group-increased">
                             </div>
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+                                <div n:foreach="$form['method']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Způsob odpisu -</b> {$error}</div>
+                                <div n:foreach="$form['group_number']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpis. skup. -</b> {$error}</div>
+                                <div n:foreach="$form['years']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Počet let -</b> {$error}</div>
+                                <div n:foreach="$form['months']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Počet měsíců -</b> {$error}</div>
+                                <div n:foreach="$form['is_coefficient']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Koef. / procento -</b> {$error}</div>
+                                <div n:foreach="$form['rate_first_year']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Sazba 1. rok -</b> {$error}</div>
+                                <div n:foreach="$form['rate']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Sazba další roky -</b> {$error}</div>
+                                <div n:foreach="$form['rate_increased_price']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Sazba zvýš. VC -</b> {$error}</div>
+                            </div>
                         </form>
                         <form n:name="deleteDepreciationGroupForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>
@@ -131,21 +142,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="group-increased-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getRate()|float}</span>
+                                        <span class="group-increased-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getRateIncreasedPrice()|float}</span>
                                         <div class="form-group">
                                             <input type="number" step="0.01" class="group-increased-{$groupId} form-control js-edit-input js-input-{$groupId}" style="display: none" value="{$group->getRateIncreasedPrice()}">
                                         </div>
                                     </td>
-                                    <td class="d-flex">
-                                        <button class="edit-group-button btn-primary btn btn-sm js-edit-input" style="display: none" data-group-id="{$group->getId()}">OK</button>
-                                        <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$group->getId()}"></i>
-                                        <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
-                                           title="Odstranit"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#deleteDepreciationGroupModal"
-                                           data-record-name="{$group->getGroup()} - {$group->getMethodText()}"
-                                           data-record-id={$group->getId()}
-                                        ></i>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="edit-group-button btn-primary btn btn-sm js-edit-input" style="display: none" data-group-id="{$group->getId()}">OK</button>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$group->getId()}"></i>
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
+                                               title="Odstranit"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#deleteDepreciationGroupModal"
+                                               data-record-name="{$group->getGroup()} - {$group->getMethodText()}"
+                                               data-record-id={$group->getId()}
+                                            ></i>
+                                        </div>
                                     </td>
                                 </tr>
                             {/foreach}

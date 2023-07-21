@@ -22,7 +22,6 @@
 
 {block content}
     <h1>Číselník způsobů pořízení</h1>
-
     <div class="row">
         <div class="col-lg-8 col-12">
             <div class="card">
@@ -39,6 +38,11 @@
                                 <input n:name="id" class="form-acquisition-id">
                                 <input n:name="name" class="form-acquisition-name">
                                 <input n:name="code" class="form-acquisition-code">
+                            </div>
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+                                <div n:foreach="$form['name']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Text -</b> {$error}</div>
+                                <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Kód -</b> {$error}</div>
                             </div>
                         </form>
                         <form n:name="deleteAcquisitionForm" class="js-delete-form">
@@ -75,22 +79,24 @@
                                                 </div>
                                             {/if}
                                         </td>
-                                        <td class="d-flex">
-                                            {if !$acquisition->isDefault()}
-                                                <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
-                                                <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$acquisition->getId()}"></i>
-                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
-                                                   title="Odstranit"
-                                                   data-bs-toggle="modal"
-                                                   data-bs-target="#deleteAcquisitionModal"
-                                                   data-record-name="{$acquisition->getName()}"
-                                                   data-record-id={$acquisition->getId()}
-                                                ></i>
-                                            {else}
-                                                {* TODO: DODĚLAT HOVNO*}
-                                                <i class="fas fa-solid fa-pencil-slash icon"></i>
-                                                <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
-                                            {/if}
+                                        <td>
+                                            <div class="d-flex">
+                                                {if !$acquisition->isDefault()}
+                                                    <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
+                                                    <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$acquisition->getId()}"></i>
+                                                    <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
+                                                       title="Odstranit"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#deleteAcquisitionModal"
+                                                       data-record-name="{$acquisition->getName()}"
+                                                       data-record-id={$acquisition->getId()}
+                                                    ></i>
+                                                {else}
+                                                    {* TODO: DODĚLAT HOVNO*}
+                                                    <i class="fas fa-solid fa-pencil-slash icon"></i>
+                                                    <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
+                                                {/if}
+                                            </div>
                                         </td>
                                     </tr>
                                 {/foreach}

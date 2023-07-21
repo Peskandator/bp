@@ -706,15 +706,17 @@ final class DialsPresenter extends BaseAdminPresenter
         $form = new Form;
 
         $form
-            ->addInteger('id')
+            ->addInteger('id', 'Identifikační číslo')
             ->setRequired(true)
         ;
         $form
             ->addInteger('series', 'Číselná řada')
+            ->addRule($form::MAX_LENGTH, 'Maximální délka číselné řady je 8 čísel')
             ->setRequired(true)
         ;
         $form
             ->addInteger('step', 'Krok')
+            ->addRule($form::MAX_LENGTH, 'Maximální délka číselné řady je 8 čísel')
             ->setRequired(true)
         ;
         $form->addSubmit('send', 'Uložit');
@@ -728,6 +730,11 @@ final class DialsPresenter extends BaseAdminPresenter
             }
             $entity = $assetType->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
+
+            if ($values->step * 10 > $values->series) {
+                $form->addError('Krok musí být alespoň 10x menší než číselná řada');
+                return;
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -825,6 +832,11 @@ final class DialsPresenter extends BaseAdminPresenter
                 $form->getComponent('years')->addError('Musí být zadán buď počet let nebo měsíců');
                 $form->getComponent('months')->addError('Musí být zadán buď počet let nebo měsíců');
                 $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
+            }
+
+            if ($values->years !== null && $values->months !== null) {
+                $form->addError('Může být vyplněno pouze jedno z polí "Počet let" a "Počet měsíců".');
+                $this->flashMessage('Může být vyplněno pouze jedno z polí "Počet let" a "Počet měsíců".',FlashMessageType::ERROR);
             }
         };
 
@@ -963,9 +975,14 @@ final class DialsPresenter extends BaseAdminPresenter
             }
 
             if ($values->years === null && $values->months === null) {
-                $form->addError('Musí být zadán buď počet let nebo měsíců');
-                $form->addError('Musí být zadán buď počet let nebo měsíců');
+                $form->getComponent('years')->addError('Musí být zadán buď počet let nebo měsíců');
+                $form->getComponent('months')->addError('Musí být zadán buď počet let nebo měsíců');
                 $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
+            }
+
+            if ($values->years !== null && $values->months !== null) {
+                $form->addError('Může být vyplněno pouze jedno z polí "Počet let" a "Počet měsíců".');
+                $this->flashMessage('Může být vyplněno pouze jedno z polí "Počet let" a "Počet měsíců".',FlashMessageType::ERROR);
             }
         };
 

@@ -106,6 +106,26 @@ $(document).ready(function(){
         }
     }
 
+    $(`.js-edit-depreciable-checkbox`).each(function () {
+        let categoryId = $(this).attr('data-category-id');
+
+        checkDepreciableCheckbox($(this), categoryId);
+        $(this).change(function () {
+            checkDepreciableCheckbox($(this), categoryId);
+        });
+    });
+
+    function checkDepreciableCheckbox(checkBox, categoryId) {
+        const selectorPrefix = '.js-edit-category-table';
+
+        if (checkBox.prop("checked") === true) {
+            $(selectorPrefix).find(`.js-edit-depreciable-true-` + categoryId).css("visibility","visible");
+
+        } else {
+            $(selectorPrefix).find(`.js-edit-depreciable-true-` + categoryId).css("visibility","hidden");
+        }
+    }
+
     $(`.js-edit-start`).click(function () {
         let recordId = $(this).attr('data-record-id');
         $(`.js-edit-text`).show();

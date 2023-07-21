@@ -24,6 +24,11 @@
                                 <input n:name="series" class="form-assettype-series">
                                 <input n:name="step" class="form-assettype-step">
                             </div>
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+                                <div n:foreach="$form['series']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Číselná řada -</b> {$error}</div>
+                                <div n:foreach="$form['step']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Krok -</b> {$error}</div>
+                            </div>
                         </form>
                         <table class="table table-bordered mt-3">
                             <thead>

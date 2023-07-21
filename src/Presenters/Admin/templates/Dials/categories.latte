@@ -33,7 +33,7 @@
                     <div class="table-responsive px-3">
                         <form n:name="editCategoryForm" class="edit-category-form">
                             <div class="form-errors d-block" n:ifcontent>
-                                <div n:foreach="$form->getErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                             </div>
                             <div class="d-none">
                                 <input n:name="id" class="form-category-id">
@@ -44,8 +44,16 @@
                                 <input n:name="account_depreciation" class="form-category-acc-depreciation">
                                 <input n:name="account_repairs" class="form-category-acc-repairs">
                                 <input n:name="is_depreciable" type="checkbox" class="form-category-depreciable">
-
-{*                                TODO: ERRORY k inputům*}
+                            </div>
+                            <div class="form-errors d-block" n:ifcontent>
+                                <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+                                <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Kód kategorie -</b> {$error}</div>
+                                <div n:foreach="$form['name']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Název -</b> {$error}</div>
+                                <div n:foreach="$form['is_depreciable']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpisovat -</b> {$error}</div>
+                                <div n:foreach="$form['group']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpis. sk. -</b> {$error}</div>
+                                <div n:foreach="$form['account_asset']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Účet IM -</b> {$error}</div>
+                                <div n:foreach="$form['account_depreciation']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Účet odpis -</b>{$error}</div>
+                                <div n:foreach="$form['account_repairs']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Účet oprávky -</b> {$error}</div>
                             </div>
                         </form>
                         <form n:name="deleteCategoryForm" class="js-delete-form">
@@ -67,7 +75,7 @@
                                     <th>Akce</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="js-edit-category-table">
                                 {foreach $categories as $category}
                                     {var $categoryId = strval($category->getId())}
                                     {var $currentGroup = $category->getDepreciationGroup()}
@@ -85,16 +93,24 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="category-depreciable-text-{$categoryId} js-edit-text js-text-{$categoryId}">{if $category->isDepreciable()}Ano{else}Ne{/if}</span>
+                                            <div class="form-check category-depreciable-text-{$categoryId} js-edit-text js-text-{$categoryId}">
+                                                <input class="form-check-input" type="checkbox" disabled {if $category->isDepreciable()}checked=""{/if} style="margin-top: 10px">
+                                            </div>
+
                                             <div class="form-check">
-                                                <input style="display: none; margin-top: 10px" class="form-check-input js-edit-depreciable-checkbox category-depreciable-{$categoryId} js-edit-input js-input-{$categoryId}" type="checkbox" {if $category->isDepreciable()}checked=""{/if}>
+                                                <input style="display: none; margin-top: 10px"
+                                                    class="form-check-input js-edit-depreciable-checkbox
+                                                    category-depreciable-{$categoryId} js-edit-input js-input-{$categoryId}"
+                                                    type="checkbox" {if $category->isDepreciable()}checked=""{/if}
+                                                    data-category-id="{$categoryId}"
+                                                >
                                             </div>
                                         </td>
                                         <td>
                                             {if $currentGroup}
                                                 <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</span>
                                             {/if}
-                                            <div class="form-group">
+                                            <div class="form-group js-edit-depreciable-true-{$categoryId}">
                                                 <select class="category-group-{$categoryId} form-select js-edit-input js-input-{$categoryId}" style="display: none">
                                                     {if $currentGroup}
                                                         <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</option>
@@ -115,26 +131,28 @@
                                         </td>
                                         <td>
                                             <span class="category-acc-depreciation-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getAccountDepreciation()}</span>
-                                            <div class="form-group">
+                                            <div class="form-group js-edit-depreciable-true-{$categoryId}">
                                                 <input type="text" class="category-acc-depreciation-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountDepreciation()}">
                                             </div>
                                         </td>
                                         <td>
                                             <span class="category-acc-repairs-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$category->getAccountRepairs()}</span>
-                                            <div class="form-group">
+                                            <div class="form-group js-edit-depreciable-true-{$categoryId}">
                                                 <input type="text" class="category-acc-repairs-{$categoryId} form-control js-edit-input js-input-{$categoryId}" style="display: none" value="{$category->getAccountRepairs()}">
                                             </div>
                                         </td>
-                                        <td class="d-flex">
-                                            <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
-                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$category->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
-                                               title="Odstranit"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#deleteCategoryModal"
-                                               data-record-name="{$category->getName()}"
-                                               data-record-id={$category->getId()}
-                                            ></i>
+                                        <td>
+                                            <div class="d-flex">
+                                                <button class="edit-category-button btn-primary btn btn-sm js-edit-input" style="display: none" data-category-id="{$category->getId()}">OK</button>
+                                                <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$category->getId()}"></i>
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
+                                                   title="Odstranit"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deleteCategoryModal"
+                                                   data-record-name="{$category->getName()}"
+                                                   data-record-id={$category->getId()}
+                                                ></i>
+                                            </div>
                                         </td>
                                     </tr>
                                 {/foreach}
