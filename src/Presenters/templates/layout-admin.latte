@@ -1,7 +1,7 @@
 {layout @layout.latte}
 {block body}
     <main class="d-flex flex-nowrap">
-        <div class="flex-shrink-0 p-3 sidebar" style="width: 280px;">
+{*        <div class="flex-shrink-0 p-3 sidebar" style="width: 280px;">
             {if isset($currentEntity) && $currentEntity !== null}
                 <a n:href=":Admin:Dashboard:default" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
                     <span class="fs-5 fw-semibold sidebar-title">{$currentEntity->getName()}</span>
@@ -11,7 +11,7 @@
                         <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
                             Majetek
                         </button>
-                        <div class="collapse {*show*}" id="home-collapse">
+                        <div class="collapse show" id="home-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Overview</a></li>
                                 <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
@@ -61,10 +61,12 @@
                 </li>
                 <li class="border-bottom my-3"></li>
             </ul>
+
             <div class="menu-signout">
                 <a n:href=":Home:signOut" class="link-dark d-inline-flex text-decoration-none rounded">Odhlásit se</a>
             </div>
-        </div>
+        </div>*}
+        {control adminMenu, $currentEntity}
 
         <div class="main-content">
             <div class="container-fluid">

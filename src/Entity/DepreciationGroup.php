@@ -23,6 +23,10 @@ class DepreciationGroup
      */
     private int $group;
     /**
+     * @ORM\Column(name="prefix", type="string")
+     */
+    private ?string $prefix;
+    /**
      * @ORM\Column(name="depreciation_method", type="integer")
      */
     private int $method;
@@ -61,6 +65,7 @@ class DepreciationGroup
         AccountingEntity $entity,
         int $method,
         int $group,
+//        ?string $prefix,
         ?int $years,
         ?int $months,
         bool $isCoefficient,
@@ -69,8 +74,9 @@ class DepreciationGroup
         float $rateIncreasedPrice,
     ){
         $this->entity = $entity;
-        $this->group = $group;
         $this->method = $method;
+        $this->group = $group;
+//        $this->prefix = $prefix;
         $this->years = $years;
         $this->months = $months;
         $this->isCoefficient = $isCoefficient;
@@ -110,6 +116,11 @@ class DepreciationGroup
     public function getMethod(): int
     {
         return $this->method;
+    }
+
+    public function getPrefix(): int
+    {
+        return $this->prefix;
     }
 
     public function getMethodText(): string

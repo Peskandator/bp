@@ -2,6 +2,8 @@
 
 namespace App\Presenters;
 
+use App\Components\AdminMenu\AdminMenu;
+use App\Components\AdminMenu\AdminMenuFactoryInterface;
 use App\Entity\AccountingEntity;
 use App\Entity\User;
 use App\Majetek\ORM\AccountingEntityRepository;
@@ -17,12 +19,20 @@ abstract class BaseAdminPresenter extends Presenter
     private CurrentUser $currentUser;
     private AccountingEntityRepository $entityRepository;
     public AccountingEntity $currentEntity;
+    private AdminMenuFactoryInterface $adminMenuFactory;
 
 
     public function injectBaseDeps(
         AccountingEntityRepository $entityRepository
     ) {
         $this->entityRepository = $entityRepository;
+    }
+
+    public function injectAdminMenuFactory(
+        AdminMenuFactoryInterface $adminMenuFactory,
+    )
+    {
+        $this->adminMenuFactory = $adminMenuFactory;
     }
 
     public function beforeRender()
@@ -40,6 +50,11 @@ abstract class BaseAdminPresenter extends Presenter
     )
     {
         $this->currentUser = $currentUser;
+    }
+
+    protected function createComponentAdminMenu(): AdminMenu
+    {
+        return $this->adminMenuFactory->create();
     }
 
     public function checkRequirements($element): void

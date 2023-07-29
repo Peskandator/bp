@@ -5,14 +5,13 @@ search:
 			- *Factory
 			- *Facade
 
-
 services:
     templateDecorator: App\Template\TemplateDecorator(debugMode: %debugMode%)
-
     - App\Router\RouterFactory::createRouter
     - App\Utils\SrcDir(dir: '%srcDir%')
     - App\Utils\AcquisitionsProvider
     - App\Utils\DialsCodeValidator
+    - App\Components\AdminMenu\AdminMenuFactoryInterface
 
     - App\Majetek\ORM\AccountingEntityRepository
     - App\Majetek\ORM\EntityUserRepository
