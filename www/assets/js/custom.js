@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    const flashTimeout = setTimeout(flashMessage, 4200);
+    setTimeout(flashMessage, 4200);
     function flashMessage() {
         $(".flash-message-alert").alert('close');
     }
@@ -47,6 +47,7 @@ $(document).ready(function(){
         let groupId = $(this).attr('data-group-id');
         let method = $(`.group-method-` + groupId).find(":selected").val();
         let number = $(`.group-number-` + groupId).val();
+        let prefix = $(`.group-prefix-` + groupId).val();
         let years = $(`.group-years-` + groupId).val();
         let months = $(`.group-months-` + groupId).val();
         let coeff = $(`.group-coeff-` + groupId).find(":selected").val();
@@ -57,6 +58,7 @@ $(document).ready(function(){
         $(`.form-group-id`).val(groupId);
         $(`.form-group-method`).val(method);
         $(`.form-group-number`).val(number);
+        $(`.form-group-prefix`).val(prefix);
         $(`.form-group-years`).val(years);
         $(`.form-group-months`).val(months);
         $(`.form-group-coeff`).val(coeff);

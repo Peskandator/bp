@@ -65,7 +65,7 @@ class DepreciationGroup
         AccountingEntity $entity,
         int $method,
         int $group,
-//        ?string $prefix,
+        ?string $prefix,
         ?int $years,
         ?int $months,
         bool $isCoefficient,
@@ -76,7 +76,7 @@ class DepreciationGroup
         $this->entity = $entity;
         $this->method = $method;
         $this->group = $group;
-//        $this->prefix = $prefix;
+        $this->setPrefix($prefix);
         $this->years = $years;
         $this->months = $months;
         $this->isCoefficient = $isCoefficient;
@@ -88,8 +88,9 @@ class DepreciationGroup
 
     public function update(CreateDepreciationGroupRequest $request): void
     {
-        $this->group = $request->group;
         $this->method = $request->method;
+        $this->group = $request->group;
+        $this->setPrefix($request->prefix);
         $this->years = $request->years;
         $this->months = $request->months;
         $this->isCoefficient = $request->isCoefficient;
@@ -118,9 +119,18 @@ class DepreciationGroup
         return $this->method;
     }
 
-    public function getPrefix(): int
+    public function getPrefix(): ?string
     {
         return $this->prefix;
+    }
+
+    public function setPrefix(?string $prefix): void
+    {
+        if (is_string($prefix)) {
+            $this->prefix = strtolower($prefix);
+            return;
+        }
+        $this->prefix = $prefix;
     }
 
     public function getMethodText(): string

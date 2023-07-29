@@ -26,6 +26,7 @@ class AddDepreciationGroupAction
             $entity,
             $request->method,
             $request->group,
+            $request->prefix,
             $request->years,
             $request->months,
             $request->isCoefficient,

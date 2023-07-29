@@ -677,7 +677,7 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addHidden('id')
             ->setRequired(true)
         ;
-        $form->addSubmit('send',);
+        $form->addSubmit('send');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
             $category = $this->categoryRepository->find((int)$values->id);
@@ -777,6 +777,10 @@ final class DialsPresenter extends BaseAdminPresenter
             ->setRequired(true)
         ;
         $form
+            ->addText('prefix')
+            ->addRule($form::PATTERN, 'Prefix může obsahovat jen 1 písmeno.', '[a-zA-Z]?')
+        ;
+        $form
             ->addInteger('years', 'Počet let')
             ->addRule($form::MIN, 'Počet let musí být nejméně 1', 1)
             ->addRule($form::MAX, 'Počet let může být nejvýše 100', 100)
@@ -821,7 +825,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
 
-            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method);
+            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method, $values->prefix);
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
@@ -846,6 +850,7 @@ final class DialsPresenter extends BaseAdminPresenter
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
+                $values->prefix,
                 $values->years,
                 $values->months,
                 $isCoefficient,
@@ -914,19 +919,23 @@ final class DialsPresenter extends BaseAdminPresenter
         ;
         $form
             ->addInteger('group_number', 'Odpis. skupina')
-            ->addRule($form::MIN, 'Číslo odpisové skupiny musí být nejméně 1', 1)
-            ->addRule($form::MAX, 'Číslo odpisové skupiny může být nejvýše 6', 6)
+            ->addRule($form::MIN, 'Musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Může být nejvýše 6', 6)
             ->setRequired(true)
         ;
         $form
+            ->addText('prefix')
+            ->addRule($form::PATTERN, 'Může obsahovat jen 1 písmeno.', '[a-zA-Z]?')
+        ;
+        $form
             ->addInteger('years', 'Počet let')
-            ->addRule($form::MIN, 'Počet let musí být nejméně 1', 1)
-            ->addRule($form::MAX, 'Počet let může být nejvýše 100', 100)
+            ->addRule($form::MIN, 'Musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Může být nejvýše 100', 100)
         ;
         $form
             ->addInteger('months', 'Počet měsíců')
-            ->addRule($form::MIN, 'Počet měsíců musí být nejméně 1', 1)
-            ->addRule($form::MAX, 'Počet měsíců může být nejvýše 999', 999)
+            ->addRule($form::MIN, 'Musí být nejméně 1', 1)
+            ->addRule($form::MAX, 'Může být nejvýše 999', 999)
         ;
         $form
             ->addInteger('is_coefficient', 'Koef./Procento')
@@ -967,7 +976,16 @@ final class DialsPresenter extends BaseAdminPresenter
             $entity = $group->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
 
-            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method, $group->getGroup(), $group->getMethod());
+            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid
+            (
+                $this->currentEntity,
+                $values->group_number,
+                $values->method,
+                $values->prefix,
+                $group->getGroup(),
+                $group->getMethod(),
+                $group->getPrefix()
+            );
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
@@ -992,6 +1010,7 @@ final class DialsPresenter extends BaseAdminPresenter
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
+                $values->prefix,
                 $values->years,
                 $values->months,
                 $isCoefficient,

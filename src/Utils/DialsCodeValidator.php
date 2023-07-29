@@ -79,7 +79,7 @@ class DialsCodeValidator
 
     public function isPlaceValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
     {
-        if ($code === $currentCode || !$code) {
+        if (!$code || $code === $currentCode) {
             return '';
         }
 
@@ -102,7 +102,7 @@ class DialsCodeValidator
 
     public function isCategoryValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
     {
-        if ($code === $currentCode || !$code) {
+        if (!$code || $code === $currentCode) {
             return '';
         }
 
@@ -123,9 +123,14 @@ class DialsCodeValidator
         return '';
     }
 
-    public function isDeprecationGroupValid(AccountingEntity $entity, ?int $groupNumber, ?int $method, ?int $currentGroupNumber = null, ?int $currentMethod = null): string
+    public function isDeprecationGroupValid(AccountingEntity $entity, ?int $groupNumber, ?int $method, ?string $prefix, ?int $currentGroupNumber = null, ?int $currentMethod = null, ?string $currentPrefix = null): string
     {
-        if ($groupNumber === $currentGroupNumber && $method === $currentMethod  || !$groupNumber || !$method) {
+        if (!$groupNumber || !$method) {
+            return '';
+        }
+
+        $prefixLowered = $this->lowerPrefixStr($prefix);
+        if ($groupNumber === $currentGroupNumber && $method === $currentMethod && $prefixLowered === $this->lowerPrefixStr($currentPrefix)) {
             return '';
         }
 
@@ -141,11 +146,19 @@ class DialsCodeValidator
          * @var DepreciationGroup $group
          */
         foreach ($groups as $group) {
-            if ($groupNumber === $group->getGroup() && $method === $group->getMethod()) {
+            if ($groupNumber === $group->getGroup() && $method === $group->getMethod() && $prefixLowered === $group->getPrefix()) {
                 return 'Odpisová skupina již existuje';
             }
         }
 
         return '';
+    }
+
+    protected function lowerPrefixStr(?string $prefix): ?string
+    {
+        if ($prefix === null) {
+            return null;
+        }
+        return strtolower($prefix);
     }
 }

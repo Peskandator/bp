@@ -39,6 +39,7 @@
                                 <input n:name="id" class="form-group-id">
                                 <input n:name="method" class="form-group-method">
                                 <input n:name="group_number" class="form-group-number">
+                                <input n:name="prefix" class="form-group-prefix">
                                 <input n:name="years" class="form-group-years">
                                 <input n:name="months" class="form-group-months">
                                 <input n:name="is_coefficient" class="form-group-coeff">
@@ -50,6 +51,7 @@
                                 <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
                                 <div n:foreach="$form['method']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Způsob odpisu -</b> {$error}</div>
                                 <div n:foreach="$form['group_number']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpis. skup. -</b> {$error}</div>
+                                <div n:foreach="$form['prefix']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Prefix -</b> {$error}</div>
                                 <div n:foreach="$form['years']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Počet let -</b> {$error}</div>
                                 <div n:foreach="$form['months']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Počet měsíců -</b> {$error}</div>
                                 <div n:foreach="$form['is_coefficient']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Koef. / procento -</b> {$error}</div>
@@ -69,9 +71,10 @@
                             <tr>
                                 <th>Způsob odpisu</th>
                                 <th>Odpis. skup.</th>
+                                <th>Prefix</th>
                                 <th>Počet let</th>
                                 <th>Počet měsíců</th>
-                                <th>Koef. / procento</th>
+                                <th>Koef./%</th>
                                 <th>Sazba 1. rok</th>
                                 <th>Sazba další roky</th>
                                 <th>Sazba zvýš. VC</th>
@@ -101,6 +104,12 @@
                                         <span class="group-number-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getGroup()}</span>
                                         <div class="form-group">
                                             <input type="number" class="group-number-{$groupId} form-control js-edit-input js-input-{$groupId}" style="display: none" value="{$group->getGroup()}" min="1" max="6">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="group-prefix-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getPrefix()}</span>
+                                        <div class="form-group">
+                                            <input type="text" class="group-prefix-{$groupId} form-control js-edit-input js-input-{$groupId}" style="display: none" value="{$group->getPrefix()}">
                                         </div>
                                     </td>
                                     <td>
@@ -192,14 +201,21 @@
                                     <small class="form-error" n:ifcontent>{inputError group_number}</small>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-1">
+                                <div class="form-group">
+                                    <label for="prefix">Prefix</label>
+                                    <input n:name="prefix" type="text" class="form-control" id="prefix">
+                                    <small class="form-error" n:ifcontent>{inputError prefix}</small>
+                                </div>
+                            </div>
+                            <div class="col-2">
                                 <div class="form-group">
                                     <label for="groupYears">Počet let</label>
                                     <input n:name="years" type="number" step="1" class="form-control" id="groupYears" min="1" max="100">
                                     <small class="form-error" n:ifcontent>{inputError years}</small>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-2">
                                 <div class="form-group">
                                     <label for="groupMonths">Počet měsíců</label>
                                     <input n:name="months" type="number" class="form-control" id="groupMonths" min="1" max="1000">
