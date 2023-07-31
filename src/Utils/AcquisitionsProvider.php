@@ -21,10 +21,12 @@ class AcquisitionsProvider
     public function provideAcquisitions(AccountingEntity $entity): array
     {
         $defaults = $this->acquisitionRepository->findDefaults();
-        $acquisitions = $entity->getAcquisitions()->toArray();
+        $acquisitions = $entity->getAcquisitionsAndDisposals()->toArray();
 
         return array_merge($defaults, $acquisitions);
     }
+
+    // TODO PROVIDE DISPOSALS
 
     public function provideDefaultAcquisitionsIds(): array
     {

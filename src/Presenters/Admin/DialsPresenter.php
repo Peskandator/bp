@@ -531,7 +531,7 @@ final class DialsPresenter extends BaseAdminPresenter
          * @var Location $location
          */
         foreach ($locations as $location) {
-            $locationIds[$location->getId()] = $location->getId() . ' - ' . $location->getName();
+            $locationIds[$location->getId()] = $location->getCode() . ' - ' . $location->getName();
         }
 
         return $locationIds;

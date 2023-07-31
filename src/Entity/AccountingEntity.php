@@ -67,6 +67,10 @@ class AccountingEntity
      * @ORM\OneToMany(targetEntity="App\Entity\AssetType", mappedBy="entity")
      */
     private Collection $assetTypes;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Asset", mappedBy="entity")
+     */
+    private Collection $assets;
 
     public function __construct(
         CreateEntityRequest $request,
@@ -77,6 +81,9 @@ class AccountingEntity
         $this->locations = new ArrayCollection();
         $this->acquisitions = new ArrayCollection();
         $this->assetTypes = new ArrayCollection();
+        $this->assets = new ArrayCollection();
+        $this->depreciationGroups = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function update(CreateEntityRequest $request)
@@ -144,9 +151,44 @@ class AccountingEntity
         return $this->locations;
     }
 
-    public function getAcquisitions(): Collection
+    public function getAcquisitionsAndDisposals(): Collection
     {
         return $this->acquisitions;
+    }
+
+
+    public function getAcquisitions(): Collection
+    {
+        $returnArr = [];
+        $acquisitions = $this->acquisitions;
+
+        /**
+         * @var Acquisition $acquisition
+         */
+        foreach ($acquisitions as $acquisition) {
+            if (!$acquisition->isDisposal()) {
+                $returnArr[] = $acquisition;
+            }
+        }
+
+        return new ArrayCollection($returnArr);
+    }
+
+    public function getDisposals(): Collection
+    {
+        $returnArr = [];
+        $acquisitions = $this->acquisitions;
+
+        /**
+         * @var Acquisition $acquisition
+         */
+        foreach ($acquisitions as $acquisition) {
+            if ($acquisition->isDisposal()) {
+                $returnArr[] = $acquisition;
+            }
+        }
+
+        return new ArrayCollection($returnArr);
     }
 
     public function getCategories(): Collection
@@ -162,6 +204,11 @@ class AccountingEntity
     public function getAssetTypes(): Collection
     {
         return $this->assetTypes;
+    }
+
+    public function getAssets(): Collection
+    {
+        return $this->assets;
     }
 
     public function getPlaces(): array

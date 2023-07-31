@@ -68,8 +68,8 @@ class AdminMenu extends Control
     private function buildAssetsItems(): array
     {
         $items[] = $this->createMenuItem(
-            'Majetek',
-            $this->getPresenter()->lazyLink(':Admin:Dashboard:default'),
+            'Přehled',
+            $this->getPresenter()->lazyLink(':Admin:Assets:default'),
             [],
             $this->getCurrentLinkCallable()
         );

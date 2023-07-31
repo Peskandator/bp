@@ -108,16 +108,16 @@
                                         </td>
                                         <td>
                                             {if $currentGroup}
-                                                <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</span>
+                                                <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getGroup()}{$currentGroup->getPrefix()} - {$currentGroup->getMethodText()}</span>
                                             {/if}
                                             <div class="form-group js-edit-depreciable-true-{$categoryId}">
                                                 <select class="category-group-{$categoryId} form-select js-edit-input js-input-{$categoryId}" style="display: none">
                                                     {if $currentGroup}
-                                                        <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()} - {$currentGroup->getMethodText()}</option>
+                                                        <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()}{$currentGroup->getPrefix()}  - {$currentGroup->getMethodText()}</option>
                                                     {/if}
                                                     {foreach $groups as $group}
                                                         {if ($currentGroup !== null && $currentGroup->getId())!== $group->getId() || $currentGroup === null}
-                                                            <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()}</option>
+                                                            <option value="{$group->getId()}">{$group->getGroup()}{$group->getPrefix()} - {$group->getMethodText()}</option>
                                                         {/if}
                                                     {/foreach}
                                                 </select>
@@ -196,7 +196,7 @@
                                     <select name="group" class="form-select" id="categoryGroup">
                                         <option value="0">Vyberte odpisovou skupinu</option>
                                         {foreach $groups as $group}
-                                            <option value="{$group->getId()}">{$group->getGroup()} - {$group->getMethodText()} ({$group->getYears()|yearsText:$group->getMonths()})</option>
+                                            <option value="{$group->getId()}">{$group->getGroup()}{$group->getPrefix()} - {$group->getMethodText()} ({$group->getYears()|yearsText:$group->getMonths()})</option>
                                         {/foreach}
                                     </select>
                                     <small class="form-error" n:ifcontent>{inputError group}</small>

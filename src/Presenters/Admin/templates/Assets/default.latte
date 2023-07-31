@@ -1,0 +1,82 @@
+{layout $adminlayoutPath}
+
+{block content}
+
+    <H1>Přehled majetků</H1>
+
+{*    TODO: Záložky - Vše Dlouhodobý Krátkodobý *}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="my-2 d-flex">
+                    <h4 class="">Majetky</h4>
+                    <a style="margin-left: auto" class="btn btn-primary" n:href=":Admin:Assets:create">Přidat majetek</a>
+                </div>
+            </div>
+            <div class="table-responsive px-3 card-body">
+        {*        <form n:name="deletePlaceForm" class="js-delete-form">*}
+        {*            <div class="form-errors" n:ifcontent>*}
+        {*                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
+        {*            </div>*}
+        {*            <input n:name="id" class="js-delete-record-id">*}
+        {*        </form>*}
+                <table class="table table-bordered mt-3">
+                    <thead>
+                    <tr>
+                        <th>Typ</th>
+                        <th>Inv. číslo</th>
+                        <th>Název</th>
+                        <th>Výrobce</th>
+                        <th>Zp. pořízení</th>
+                        <th>Úč. poř. cena</th>
+                        <th>Daň. poř. cena</th>
+                        <th>Datum pořízení</th>
+                        <th>Vyřazeno</th>
+                        <th>Akce</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $assets as $asset}
+                        <tr>
+                            <td>
+                                {$asset->getAssetType()->getName()}
+                            </td>
+                            <td>
+                                {$asset->getInventoryNumbe()}
+                            </td>
+                            <td>
+                                {$asset->getName()}
+                            </td>
+                            <td>
+                                {$asset->getProducer()}
+                            </td>
+                            <td>
+                                {$asset->getAcquisition()->getName()}
+                            </td>
+                            <td>
+                                {$asset->getEntryPriceAccounting()}
+                            </td>
+                            <td>
+                                {$asset->getEntryPriceTax()}
+                            </td>
+                            <td>
+                                {$asset->getInclusionDate()->format(('j.n.Y'))}
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" disabled {if $asset->isDisposed()}checked=""{/if} style="margin-top: 10px">
+                                </div>
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+{/block}

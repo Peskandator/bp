@@ -33,17 +33,23 @@ class Acquisition
      * @ORM\Column(name="is_default", type="boolean")
      */
     private bool $isDefault;
+    /**
+     * @ORM\Column(name="is_disposal", type="boolean")
+     */
+    private bool $isDisposal;
 
 
     public function __construct(
         AccountingEntity $entity,
         string $name,
-        int $code
+        int $code,
+        bool $isDisposal
     ){
         $this->entity = $entity;
         $this->name = $name;
         $this->code = $code;
         $this->isDefault = false;
+        $this->isDisposal = $isDisposal;
     }
 
     public function update(string $name, int $code): void
@@ -75,5 +81,10 @@ class Acquisition
     public function isDefault(): bool
     {
         return $this->isDefault;
+    }
+
+    public function isDisposal(): bool
+    {
+        return $this->isDisposal;
     }
 }

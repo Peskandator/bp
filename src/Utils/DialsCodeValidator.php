@@ -41,7 +41,7 @@ class DialsCodeValidator
             return 'Zadaný kód je již obsazen';
         }
 
-        $acquisitions = $entity->getAcquisitions();
+        $acquisitions = $entity->getAcquisitionsAndDisposals();
         /**
          * @var Acquisition $acquisition
          */
