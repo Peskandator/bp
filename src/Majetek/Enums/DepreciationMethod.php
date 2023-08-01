@@ -17,6 +17,14 @@ final class DepreciationMethod
         ]
     ;
 
+    public const NAMES_SHORT =
+        [
+            1 => 'R',
+            2 => 'Z',
+            3 => 'M'
+        ]
+    ;
+
     public static function getAll(): array
     {
         return [

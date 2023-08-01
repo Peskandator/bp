@@ -26,10 +26,6 @@ class Asset
      */
     private int $inventoryNumber;
     /**
-     * @ORM\Column(name="inclusion_date", type="date", nullable=true)
-     */
-    private ?\DateTimeInterface $inclusionDate;
-    /**
      * @ORM\Column(name="entry_date", type="date", nullable=true)
      */
     private ?\DateTimeInterface $entryDate;
@@ -42,9 +38,9 @@ class Asset
      */
     private ?float $increasedEntryPriceTax;
     /**
-     * @ORM\Column(name="disposal_price_tax", type="float", nullable=true)
+     * @ORM\Column(name="depreciated_amount_tax", type="float", nullable=true)
      */
-    private ?float $disposalPriceTax;
+    private ?float $depreciatedAmountTax;
     /**
      * @ORM\Column(name="entry_price_accounting", type="float", nullable=true)
      */
@@ -54,9 +50,9 @@ class Asset
      */
     private ?float $increasedEntryPriceAccounting;
     /**
-     * @ORM\Column(name="disposal_price_accounting", type="float", nullable=true)
+     * @ORM\Column(name="depreciated_amount_accounting", type="float", nullable=true)
      */
-    private ?float $disposalPriceAccounting;
+    private ?float $depreciatedAmountAccounting;
     /**
      * @ORM\Column(name="is_disposed", type="boolean")
      */
@@ -81,6 +77,18 @@ class Asset
      * @ORM\Column(name="invoice_number", type="integer", nullable=true)
      */
     private ?int $invoiceNumber;
+    /**
+     * @ORM\Column(name="units", type="integer", nullable=true)
+     */
+    private ?int $units;
+    /**
+     * @ORM\Column(name="depreciation_year_tax", type="integer", nullable=true)
+     */
+    private ?int $depreciationYearTax;
+    /**
+     * @ORM\Column(name="depreciation_increased_year_tax", type="integer", nullable=true)
+     */
+    private ?int $depreciationIncreasedYearTax;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="assets")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
@@ -111,6 +119,16 @@ class Asset
      * @ORM\JoinColumn(name="acquisition_id", referencedColumnName="id", nullable=true)
      */
     private ?Place $place;
+    /**
+     * @ORM\ManyToOne(targetEntity="DepreciationGroup")
+     * @ORM\JoinColumn(name="depreciation_group_tax", referencedColumnName="id", nullable=true)
+     */
+    private ?DepreciationGroup $depreciationGroupTax;
+    /**
+     * @ORM\ManyToOne(targetEntity="DepreciationGroup")
+     * @ORM\JoinColumn(name="depreciation_group_accounting", referencedColumnName="id", nullable=true)
+     */
+    private ?DepreciationGroup $depreciationGroupAccounting;
 
 
     public function __construct(
@@ -141,11 +159,6 @@ class Asset
         return $this->entity;
     }
 
-    public function getInclusionDate(): ?\DateTimeInterface
-    {
-        return $this->inclusionDate;
-    }
-
     public function getEntryDate(): ?\DateTimeInterface
     {
         return $this->entryDate;
@@ -161,9 +174,9 @@ class Asset
         return $this->increasedEntryPriceTax;
     }
 
-    public function getDisposalPriceTax(): float
+    public function getDepreciatedAmountTax(): float
     {
-        return $this->disposalPriceTax;
+        return $this->depreciatedAmountTax;
     }
 
     public function getEntryPriceAccounting(): float
@@ -176,14 +189,24 @@ class Asset
         return $this->increasedEntryPriceAccounting;
     }
 
-    public function getDisposalPriceAccounting(): float
+    public function getDepreciatedAmountAccounting(): float
     {
-        return $this->disposalPriceAccounting;
+        return $this->depreciatedAmountAccounting;
     }
 
     public function isDisposed(): bool
     {
         return $this->isDisposed;
+    }
+
+    public function getDepreciationYearTax(): ?int
+    {
+        return $this->depreciationYearTax;
+    }
+
+    public function getDepreciationIncreasedYearTax(): ?int
+    {
+        return $this->depreciationIncreasedYearTax;
     }
 
     public function isOnlyTax(): bool
@@ -243,5 +266,39 @@ class Asset
     public function getDisposal(): ?Acquisition
     {
         return $this->disposal;
+    }
+
+    public function getDepreciationGroupTax(): ?DepreciationGroup
+    {
+        return $this->depreciationGroupTax;
+    }
+    public function getDepreciationGroupAccounting(): ?DepreciationGroup
+    {
+        return $this->depreciationGroupAccounting;
+    }
+
+    public function getTotalDepreciationsTax(): float
+    {
+        return 0;
+    }
+
+    public function getTotalDepreciationsAccounting(): float
+    {
+        return 0;
+    }
+
+    public function getAmortisedPriceTax(): float
+    {
+        return $this->getEntryPriceTax() - $this->getTotalDepreciationsTax();
+    }
+
+    public function getAmortisedPriceAccounting(): float
+    {
+        return $this->getEntryPriceAccounting() - $this->getTotalDepreciationsAccounting();
+    }
+
+    public function getUnits(): ?int
+    {
+        return $this->units;
     }
 }

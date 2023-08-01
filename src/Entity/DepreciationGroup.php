@@ -168,4 +168,10 @@ class DepreciationGroup
     {
         return $this->rateIncreasedPrice;
     }
+
+    public function getFullShortName(): string
+    {
+        $methodShortNames = DepreciationMethod::NAMES_SHORT;
+        return $methodShortNames[$this->getMethod()] . $this->getGroup() . $this->getPrefix();
+    }
 }

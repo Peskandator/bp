@@ -143,3 +143,17 @@ h6 {
 .sidebar .links a:hover {
     background-color: #d2f4ea;
 }
+
+.create-asset-form .form-control {
+    padding: .1rem .5rem;
+}
+
+.create-asset-form .form-select {
+    padding: .1rem 2.25rem .1rem .75rem
+}
+
+.create-asset-form .card-body {
+    padding: 0.3rem 1rem 1.5rem;
+}
+
+

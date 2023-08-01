@@ -24,18 +24,17 @@
         {*        </form>*}
                 <table class="table table-bordered mt-3">
                     <thead>
-                    <tr>
-                        <th>Typ</th>
-                        <th>Inv. číslo</th>
-                        <th>Název</th>
-                        <th>Výrobce</th>
-                        <th>Zp. pořízení</th>
-                        <th>Úč. poř. cena</th>
-                        <th>Daň. poř. cena</th>
-                        <th>Datum pořízení</th>
-                        <th>Vyřazeno</th>
-                        <th>Akce</th>
-                    </tr>
+                        <tr>
+                            <th>Typ</th>
+                            <th>Inv. číslo</th>
+                            <th>Název</th>
+                            <th>Úč. poř. cena</th>
+                            <th>Oprávky</th>
+                            <th>Zůstatková cena</th>
+                            <th>Datum pořízení</th>
+                            <th>Vyřazeno</th>
+                            <th>Akce</th>
+                        </tr>
                     </thead>
                     <tbody>
                     {foreach $assets as $asset}
@@ -44,22 +43,22 @@
                                 {$asset->getAssetType()->getName()}
                             </td>
                             <td>
-                                {$asset->getInventoryNumbe()}
+                                {$asset->getInventoryNumber()}
                             </td>
                             <td>
                                 {$asset->getName()}
                             </td>
                             <td>
-                                {$asset->getProducer()}
+                                {$asset->getEntryPriceAccounting()}
                             </td>
                             <td>
-                                {$asset->getAcquisition()->getName()}
+                                {$asset->getTotalDepreciations()}
                             </td>
                             <td>
                                 {$asset->getEntryPriceAccounting()}
                             </td>
                             <td>
-                                {$asset->getEntryPriceTax()}
+                                {$asset->getDepreciationGroupTax()->getFullShortName()}
                             </td>
                             <td>
                                 {$asset->getInclusionDate()->format(('j.n.Y'))}
@@ -70,7 +69,7 @@
                                 </div>
                             </td>
                             <td>
-
+{*                                Akce*}
                             </td>
                         </tr>
                     {/foreach}
