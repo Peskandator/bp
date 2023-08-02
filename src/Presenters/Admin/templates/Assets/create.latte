@@ -42,6 +42,15 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
+                                        <label for="assetInventoryNumber">Inventární číslo</label>
+                                        <input n:name="inventory_number" type="number" step="1" class="form-control" id="assetInventoryNumber" min="0" max="9999999999">
+                                        <small class="form-error" n:ifcontent>{inputError inventory_number}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
                                         <label for="assetCategory">Kategorie</label>
                                         <select name="category" class="form-select" id="assetCategory">
                                             <option>Vyberte...</option>
@@ -52,9 +61,13 @@
                                         <small class="form-error" n:ifcontent>{inputError category}</small>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label for="assetUnits">Počet kusů</label>
+                                        <input n:name="units" type="number" step="1" class="form-control" id="assetUnits" min="0" max="100">
+                                        <small class="form-error" n:ifcontent>{inputError units}</small>
+                                    </div>
+                                </div>
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetEntryDate">Datum zařazení</label>
@@ -62,6 +75,8 @@
                                         <small class="form-error" n:ifcontent>{inputError entry_date}</small>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetLocation">Středisko</label>
@@ -87,6 +102,8 @@
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -226,9 +243,9 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetDepreciationIncreasedYear">Rok odpisu ze zvýš. ceny</label>
-                                        <input n:name="depreciation_increased_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationIncreasedYear" min="0" max="100">
-                                        <small class="form-error" n:ifcontent>{inputError depreciation_increased_year_tax}</small>
+                                        <label for="assetDepreciationYear">Rok odpisu</label>
+                                        <input n:name="depreciation_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationYear" min="0" max="100">
+                                        <small class="form-error" n:ifcontent>{inputError depreciation_year_tax}</small>
                                     </div>
                                 </div>
                             </div>
@@ -240,12 +257,11 @@
                                         <small class="form-error" n:ifcontent>{inputError increased_price_tax}</small>
                                     </div>
                                 </div>
-
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetDepreciationYear">Rok odpisu</label>
-                                        <input n:name="depreciation_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationYear" min="0" max="100">
-                                        <small class="form-error" n:ifcontent>{inputError depreciation_year_tax}</small>
+                                        <label for="assetDepreciationIncreasedYear">Rok odpisu ze zvýš. ceny</label>
+                                        <input n:name="depreciation_increased_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationIncreasedYear" min="0" max="100">
+                                        <small class="form-error" n:ifcontent>{inputError depreciation_increased_year_tax}</small>
                                     </div>
                                 </div>
                             </div>

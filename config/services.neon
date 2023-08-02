@@ -48,4 +48,5 @@ services:
 
 includes:
     - services/user.neon
+    - services/majetek.neon
 

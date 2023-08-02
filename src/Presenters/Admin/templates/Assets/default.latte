@@ -31,6 +31,7 @@
                             <th>Úč. poř. cena</th>
                             <th>Oprávky</th>
                             <th>Zůstatková cena</th>
+                            <th>Odpisová skupina</th>
                             <th>Datum pořízení</th>
                             <th>Vyřazeno</th>
                             <th>Akce</th>
@@ -52,7 +53,7 @@
                                 {$asset->getEntryPriceAccounting()}
                             </td>
                             <td>
-                                {$asset->getTotalDepreciations()}
+                                {$asset->getTotalDepreciationsTax()}
                             </td>
                             <td>
                                 {$asset->getEntryPriceAccounting()}
@@ -61,7 +62,7 @@
                                 {$asset->getDepreciationGroupTax()->getFullShortName()}
                             </td>
                             <td>
-                                {$asset->getInclusionDate()->format(('j.n.Y'))}
+                                {$asset->getEntryDate()->format(('j.n.Y'))}
                             </td>
                             <td>
                                 <div class="form-check">

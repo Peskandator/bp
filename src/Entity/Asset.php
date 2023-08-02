@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Majetek\Requests\CreateAssetRequest;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -106,14 +107,14 @@ class Asset
     private ?Category $category;
     /**
      * @ORM\ManyToOne(targetEntity="Acquisition")
-     * @ORM\JoinColumn(name="acquisition_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="acquisition_id", referencedColumnName="id", nullable=true)
      */
-    private Acquisition $acquisition;
+    private ?Acquisition $acquisition;
     /**
      * @ORM\ManyToOne(targetEntity="Acquisition")
-     * @ORM\JoinColumn(name="disposal_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="disposal_id", referencedColumnName="id", nullable=true)
      */
-    private Acquisition $disposal;
+    private ?Acquisition $disposal;
     /**
      * @ORM\ManyToOne(targetEntity="Place")
      * @ORM\JoinColumn(name="acquisition_id", referencedColumnName="id", nullable=true)
@@ -132,7 +133,36 @@ class Asset
 
 
     public function __construct(
-    ){
+        AccountingEntity $entity,
+        CreateAssetRequest $request
+    )
+    {
+        $this->entity = $entity;
+        $this->assetType = $request->type;
+        $this->name = $request->name;
+        $this->inventoryNumber = $request->inventoryNumber;
+        $this->producer = $request->producer;
+        $this->category = $request->category;
+        $this->acquisition = $request->acquisition;
+        $this->disposal = $request->disposal;
+        $this->place = $request->place;
+        $this->units = $request->units;
+        $this->isOnlyTax = $request->onlyTax;
+        $this->depreciationGroupTax = $request->depreciationGroupTax;
+        $this->entryPriceTax = $request->entryPriceTax;
+        $this->increasedEntryPriceTax = $request->increasedPriceTax;
+        $this->depreciatedAmountTax = $request->depreciatedAmountTax;
+        $this->depreciationYearTax = $request->depreciationYearTax;
+        $this->depreciationIncreasedYearTax = $request->depreciationIncreasedYearTax;
+        $this->depreciationGroupAccounting = $request->depreciationGroupAccounting;
+        $this->entryPriceAccounting = $request->entryPriceAccounting;
+        $this->increasedEntryPriceAccounting = $request->increasedPriceAccounting;
+        $this->depreciatedAmountAccounting = $request->depreciatedAmountAccounting;
+        $this->invoiceNumber = $request->invoiceNumber;
+        $this->variableSymbol = $request->variableSymbol;
+        $this->entryDate = $request->entryDate;
+        $this->disposalDate = $request->disposalDate;
+        $this->isDisposed = false;
     }
 
     public function update(): void

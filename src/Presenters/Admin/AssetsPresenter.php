@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Entity\DepreciationGroup;
+use App\Majetek\Action\CreateAssetAction;
+use App\Majetek\ORM\AcquisitionRepository;
+use App\Majetek\ORM\AssetTypeRepository;
+use App\Majetek\ORM\CategoryRepository;
+use App\Majetek\ORM\DepreciationGroupRepository;
+use App\Majetek\ORM\PlaceRepository;
+use App\Majetek\Requests\CreateAssetRequest;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
 use App\Utils\FlashMessageType;
@@ -13,13 +20,31 @@ use Nette\Application\UI\Form;
 final class AssetsPresenter extends BaseAdminPresenter
 {
     private AcquisitionsProvider $acquisitionsProvider;
+    private CreateAssetAction $createAssetAction;
+    private AssetTypeRepository $assetTypeRepository;
+    private CategoryRepository $categoryRepository;
+    private DepreciationGroupRepository $depreciationGroupRepository;
+    private AcquisitionRepository $acquisitionRepository;
+    private PlaceRepository $placeRepository;
 
     public function __construct(
-        AcquisitionsProvider $acquisitionsProvider
+        AcquisitionsProvider $acquisitionsProvider,
+        CreateAssetAction $createAssetAction,
+        AssetTypeRepository $assetTypeRepository,
+        CategoryRepository $categoryRepository,
+        DepreciationGroupRepository $depreciationGroupRepository,
+        AcquisitionRepository $acquisitionRepository,
+        PlaceRepository $placeRepository,
     )
     {
         parent::__construct();
         $this->acquisitionsProvider = $acquisitionsProvider;
+        $this->createAssetAction = $createAssetAction;
+        $this->assetTypeRepository = $assetTypeRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->depreciationGroupRepository = $depreciationGroupRepository;
+        $this->acquisitionRepository = $acquisitionRepository;
+        $this->placeRepository = $placeRepository;
     }
 
     public function actionDefault(): void
@@ -46,6 +71,11 @@ final class AssetsPresenter extends BaseAdminPresenter
         $assetTypesSelect = $this->getCollectionForSelect($assetTypes);
         $form
             ->addSelect('type', 'Typ', $assetTypesSelect)
+            ->setRequired(true)
+        ;
+        $form
+            ->addInteger('inventory_number', 'Inventární číslo')
+            ->addRule($form::MIN, 'Inventární číslo musí být nejméně 1', 1)
             ->setRequired(true)
         ;
         $form
@@ -88,7 +118,7 @@ final class AssetsPresenter extends BaseAdminPresenter
 
         $form
             ->addInteger('units', 'Kusů')
-            ->addRule($form::MIN, 'Počet kusů musí být minimálně 1')
+            ->addRule($form::MIN, 'Počet kusů musí být minimálně 1', 1)
         ;
 
         $isOnlyTax = $form->addCheckbox('only_tax');
@@ -121,13 +151,13 @@ final class AssetsPresenter extends BaseAdminPresenter
         ;
         $form
             ->addInteger('depreciation_year_tax', 'Rok odpisu')
-            ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0')
-            ->setRequired(true)
+            ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
+//            ->setRequired(true)
         ;
         $form
             ->addInteger('depreciation_increased_year_tax', 'Rok odpisu ze zvýšené ceny')
-            ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0')
-            ->setRequired(true)
+            ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
+//            ->setRequired(true)
         ;
 
         // Účetní box
@@ -162,35 +192,63 @@ final class AssetsPresenter extends BaseAdminPresenter
 
         $form
             ->addInteger('invoice_number', 'Evidenční číslo')
-            ->setRequired(true)
         ;
         $form
             ->addText('variable_symbol', 'VS')
-            ->setRequired(true)
         ;
         // TODO - datepicker dates
         $form
             ->addText('entry_date', 'Datum zařazení')
-            ->setRequired(true);
         ;
         $form
             ->addText('disposal_date', 'Datum vyřazení')
-            ->setRequired(true);
         ;
 
         $form->addSubmit('send', 'Přidat majetek');
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             bdump($values);
-//            $request = new CreateEntityRequest(
-//                $values->name,
-//                $values->company_id,
-//                $values->country,
-//                $values->city,
-//                $values->zip_code,
-//                $values->street
-//            );
-//            $newEntityId = $this->createEntityAction->__invoke($request);
+
+            $type = $this->assetTypeRepository->find($values->type);
+            $category = $this->categoryRepository->find($values->category);
+            $groupTax = $this->depreciationGroupRepository->find($values->group_tax);
+            $groupAccounting = $this->depreciationGroupRepository->find($values->group_accounting);
+            $place = $this->placeRepository->find($values->place);
+            $acquisition = $this->acquisitionRepository->find($values->acquisition);
+            $disposal = $this->acquisitionRepository->find($values->disposal);
+
+            $units = $values->units;
+            if (!$units) {
+                $units = 1;
+            }
+
+            $request = new CreateAssetRequest(
+                $type,
+                $values->name,
+                $values->inventory_number,
+                $values->producer,
+                $category,
+                $acquisition,
+                $disposal,
+                $place,
+                $units,
+                $values->only_tax,
+                $groupTax,
+                $values->entry_price_tax,
+                $values->increased_price_tax,
+                $values->depreciated_amount_tax,
+                $values->depreciation_year_tax,
+                $values->depreciation_increased_year_tax,
+                $groupAccounting,
+                $values->entry_price_accounting,
+                $values->increased_price_accounting,
+                $values->depreciated_amount_accounting,
+                $values->invoice_number,
+                $values->variable_symbol,
+                $this->changeToDateFormat($values->entry_date),
+                $this->changeToDateFormat($values->disposal_date)
+            );
+            $this->createAssetAction->__invoke($this->currentEntity, $request);
             $this->flashMessage('Majetek byl úspěšně přidán.', FlashMessageType::SUCCESS);
             $this->redirect(':Admin:Assets:default');
         };
@@ -230,5 +288,19 @@ final class AssetsPresenter extends BaseAdminPresenter
         }
 
         return $items;
+    }
+
+    protected function getDefaultDateValue(?\DateTimeInterface $date): string
+    {
+        return $date === null ? '' : $date->format('d. m. Y');
+    }
+
+    protected function changeToDateFormat(?string $dateTime): ?\DateTimeInterface
+    {
+        if ($dateTime === null) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($dateTime);
     }
 }
