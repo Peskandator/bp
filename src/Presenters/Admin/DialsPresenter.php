@@ -145,7 +145,7 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionCategories(): void
     {
-        $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
+        $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $this->template->categories = $this->sortByCode($this->currentEntity->getCategories()->toArray());
 
     }
@@ -154,7 +154,7 @@ final class DialsPresenter extends BaseAdminPresenter
     {
         $cpSelect = $this->getCoeffPercentageForSelect();
         $methodNames = DepreciationMethod::getNames();
-        $methodIds = [1,2,3];
+        $methodIds = [1,2,3,4];
 
         $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
         $this->template->cpSelect = $cpSelect;
@@ -244,6 +244,12 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addInteger('code', 'Kód')
             ->setRequired(true)
         ;
+
+        $form
+            ->addCheckbox('is_disposal', 'Způsob vyřazení')
+            ->setRequired(true)
+        ;
+
         $form->addSubmit('send', 'Přidat');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
@@ -256,8 +262,8 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $this->addAcquisitionAction->__invoke($this->currentEntity, $values->name, $values->code);
-            $this->flashMessage('Způsob pořízení byl přidán.', FlashMessageType::SUCCESS);
+            $this->addAcquisitionAction->__invoke($this->currentEntity, $values->name, $values->code, $values->is_disposal);
+            $this->flashMessage('Záznam byl přidán.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 
@@ -273,21 +279,24 @@ final class DialsPresenter extends BaseAdminPresenter
             ->setRequired(true)
         ;
         $form
-            ->addText('name', 'Způsob pořízení')
+            ->addText('name', 'Způsob pořízení/vyřazení')
             ->setRequired(true)
         ;
         $form
             ->addInteger('code', 'Kód')
             ->setRequired(true)
         ;
-        $form->addSubmit('send',);
+        $form
+            ->addCheckbox('is_disposal', 'Vyřazení')
+        ;
+        $form->addSubmit('send');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
             $acquisition = $this->acquisitionRepository->find((int)$values->id);
 
             if (!$acquisition) {
-                $form->addError('Způsob pořízení nebyl nalezen.');
-                $this->flashMessage('Způsob pořízení nebyl nalezen.', FlashMessageType::ERROR);
+                $form->addError('Záznam nebyl nalezen.');
+                $this->flashMessage('Záznam nebyl nalezen.', FlashMessageType::ERROR);
                 return;
             }
             $entity = $acquisition->getEntity();
@@ -303,8 +312,8 @@ final class DialsPresenter extends BaseAdminPresenter
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             $acquisition = $this->acquisitionRepository->find((int)$values->id);
-            $this->editAcquisitionAction->__invoke($acquisition, $values->name, $values->code);
-            $this->flashMessage('Způsob pořízení byl upraven.', FlashMessageType::SUCCESS);
+            $this->editAcquisitionAction->__invoke($acquisition, $values->name, $values->code, $values->is_disposal);
+            $this->flashMessage('Záznam byl upraven.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 
@@ -436,8 +445,8 @@ final class DialsPresenter extends BaseAdminPresenter
             $acquisition = $this->acquisitionRepository->find((int)$values->id);
 
             if (!$acquisition) {
-                $form->addError('Způsob pořízení nebyl nalezen.');
-                $this->flashMessage('Způsob pořízení nebyl nalezen.', FlashMessageType::ERROR);
+                $form->addError('Záznam nebyl nalezen.');
+                $this->flashMessage('Záznam nebyl nalezen.', FlashMessageType::ERROR);
                 return;
             }
             $entity = $acquisition->getEntity();
@@ -447,7 +456,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             $acquisition = $this->acquisitionRepository->find((int)$values->id);
             $this->deleteAcquisitionAction->__invoke($acquisition);
-            $this->flashMessage('Způsob pořízení byl smazán.', FlashMessageType::SUCCESS);
+            $this->flashMessage('Záznam byl smazán.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
 
@@ -590,7 +599,7 @@ final class DialsPresenter extends BaseAdminPresenter
             ->setDefaultValue(true)
         ;
 
-        $groups = $this->currentEntity->getDepreciationGroups()->toArray();
+        $groups = $this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray();
         $groupIds = $this->getDepreciationGroupsForSelect($groups);
         $groupIds[] = 0;
         $form

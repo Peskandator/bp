@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Majetek\Enums\DepreciationMethod;
 use App\Majetek\Requests\CreateEntityRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -196,10 +197,45 @@ class AccountingEntity
         return $this->categories;
     }
 
+
     public function getDepreciationGroups(): Collection
     {
         return $this->depreciationGroups;
     }
+
+    public function getDepreciationGroupsWithoutAccounting(): Collection
+    {
+        $groups = $this->depreciationGroups;
+        $groupsWithoutAccounting = [];
+        /**
+         * @var DepreciationGroup $group
+         */
+        foreach ($groups as $group) {
+            if ($group->getMethod() === DepreciationMethod::ACCOUNTING) {
+                continue;
+            }
+            $groupsWithoutAccounting[] = $group;
+        }
+
+        return new ArrayCollection($groupsWithoutAccounting);
+    }
+
+    public function getAccountingDepreciationGroups(): Collection
+    {
+        $groups = $this->depreciationGroups;
+        $accountingGroups = [];
+        /**
+         * @var DepreciationGroup $group
+         */
+        foreach ($groups as $group) {
+            if ($group->getMethod() === DepreciationMethod::ACCOUNTING) {
+                $accountingGroups[] = $group;
+            }
+        }
+
+        return new ArrayCollection($accountingGroups);
+    }
+
 
     public function getAssetTypes(): Collection
     {

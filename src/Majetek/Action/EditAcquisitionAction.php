@@ -16,9 +16,9 @@ class EditAcquisitionAction
         $this->entityManager = $entityManager;
     }
 
-    public function __invoke(Acquisition $acquisition, string $name, int $code): void
+    public function __invoke(Acquisition $acquisition, string $name, int $code, bool $isDisposal): void
     {
-        $acquisition->update($name, $code);
+        $acquisition->update($name, $code, $isDisposal);
         $this->entityManager->flush();
     }
 }

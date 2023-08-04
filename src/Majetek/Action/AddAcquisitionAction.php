@@ -16,10 +16,9 @@ class AddAcquisitionAction
         $this->entityManager = $entityManager;
     }
 
-    public function __invoke(AccountingEntity $entity, string $name, int $code): void
+    public function __invoke(AccountingEntity $entity, string $name, int $code, bool $isDisposal): void
     {
-        // TODO - IS DISPOSAL
-        $acquisition = new Acquisition($entity, $name, $code, false);
+        $acquisition = new Acquisition($entity, $name, $code, $isDisposal);
 
         $this->entityManager->persist($acquisition);
         $entity->getAcquisitionsAndDisposals()->add($acquisition);

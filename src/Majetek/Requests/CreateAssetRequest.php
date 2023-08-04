@@ -31,8 +31,8 @@ class CreateAssetRequest
         public ?float $entryPriceAccounting,
         public ?float $increasedPriceAccounting,
         public ?float $depreciatedAmountAccounting,
-        public ?int $invoiceNumber,
-        public ?string $variableSymbol,
+        public ?string $invoiceNumber,
+        public ?int $variableSymbol,
         public ?\DateTimeInterface $entryDate,
         public ?\DateTimeInterface $disposalDate,
     ) {

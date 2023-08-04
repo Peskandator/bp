@@ -9,6 +9,10 @@ $(document).ready(function(){
         let acquisitionId = $(this).attr('data-acquisition-id');
         let selectedName = $(`.acquisition-name-` + acquisitionId).val();
         let selectedCode = $(`.acquisition-code-` + acquisitionId).val();
+        let isDisposal = $(`.acquisition-disposal-` + acquisitionId)[0].checked;
+        if (isDisposal === true) {
+            $(`.form-acquisition-disposal`).prop("checked", true)
+        }
 
         $(`.form-acquisition-id`).val(acquisitionId);
         $(`.form-acquisition-name`).val(selectedName);

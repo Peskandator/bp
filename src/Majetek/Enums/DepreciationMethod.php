@@ -9,11 +9,13 @@ final class DepreciationMethod
     public const UNIFORM = 1;
     public const ACCELERATED = 2;
     public const EXTRAORDINARY= 3;
+    public const ACCOUNTING = 4;
     public const NAMES =
         [
             1 => 'Rovnoměrné',
             2 => 'Zrychlené',
-            3 => 'Mimořádné'
+            3 => 'Mimořádné',
+            4 => 'Účetní'
         ]
     ;
 
@@ -21,7 +23,8 @@ final class DepreciationMethod
         [
             1 => 'R',
             2 => 'Z',
-            3 => 'M'
+            3 => 'M',
+            4 => 'U'
         ]
     ;
 

@@ -21,12 +21,12 @@
 {/block}
 
 {block content}
-    <h1>Číselník způsobů pořízení</h1>
+    <h1>Číselník způsobů pořízení a vyřazení</h1>
     <div class="row">
         <div class="col-lg-8 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Seznam způsobů pořízení</h5>
+                    <h5>Seznam způsobů pořízení a vyřazení</h5>
                 </div>
                 <div class="card-header">
                     <div class="table-responsive px-3">
@@ -38,11 +38,13 @@
                                 <input n:name="id" class="form-acquisition-id">
                                 <input n:name="name" class="form-acquisition-name">
                                 <input n:name="code" class="form-acquisition-code">
+                                <input n:name="is_disposal" class="form-acquisition-disposal" type="checkbox">
                             </div>
                             <div class="form-errors d-block" n:ifcontent>
                                 <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
                                 <div n:foreach="$form['name']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Text -</b> {$error}</div>
                                 <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Kód -</b> {$error}</div>
+                                <div n:foreach="$form['is_disposal']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Vyřazení -</b> {$error}</div>
                             </div>
                         </form>
                         <form n:name="deleteAcquisitionForm" class="js-delete-form">
@@ -56,6 +58,7 @@
                             <tr>
                                 <th>Text</th>
                                 <th>Kód</th>
+                                <th>Vyřazení</th>
                                 <th>Akce</th>
                             </tr>
                             </thead>
@@ -78,6 +81,18 @@
                                                     <input type="number" class="acquisition-code-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
                                                 </div>
                                             {/if}
+                                        </td>
+                                        <td>
+                                            <div class="form-check acquisition-depreciable-text-{$acquisitionId} js-edit-text js-text-{$acquisitionId}">
+                                                <input class="form-check-input" type="checkbox" disabled {if $acquisition->isDisposal()}checked=""{/if} style="margin-top: 10px">
+                                            </div>
+
+                                            <div class="form-check">
+                                                <input style="display: none; margin-top: 10px"
+                                                       class="form-check-input acquisition-disposal-{$acquisitionId} js-edit-input js-input-{$acquisitionId}"
+                                                       type="checkbox" {if $acquisition->isDisposal()}checked=""{/if}
+                                                >
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="d-flex">
@@ -105,24 +120,31 @@
                     </div>
                 </div>
                 <div class="card-header">
-                    <h6 class="mt-1 mb-3">Přidat způsob pořízení</h6>
+                    <h6 class="mt-1">Přidat způsob pořízení/vyřazení</h6>
                     {form addAcquisitionForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
                         </div>
-                        <div class="row mb-4 px-2">
-                            <div class="col-6">
+                        <div class="row mb-4 px-2 d-flex justify-content-center align-content-center">
+                            <div class="col-4">
                                 <div class="form-group">
                                     <label for="acquisitionName">Text</label>
                                     <input n:name="name" type="text" class="form-control" id="acquisitionName">
                                     <small class="form-error" n:ifcontent>{inputError name}</small>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-4">
                                 <div class="form-group">
                                     <label for="acquisitionCode">Kód</label>
                                     <input n:name="code" type="number" class="form-control" id="acquisitionCode" min="7" max="999">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-check" style="margin-top: 38px">
+                                    <label class="form-check-label" for="isDisposal">Způsob vyřazení</label>
+                                    <input n:name="is_disposal" class="form-check-input" type="checkbox" id="isDisposal">
+                                    <small class="form-error" n:ifcontent>{inputError is_disposal}</small>
                                 </div>
                             </div>
                         </div>

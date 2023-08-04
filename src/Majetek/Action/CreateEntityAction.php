@@ -47,10 +47,10 @@ class CreateEntityAction
 
     protected function createDialsDefaults(AccountingEntity $entity): void
     {
-        $this->entityManager->persist(new AssetType($entity, 1, 'Odpisovaný', 10000000, 1));
-        $this->entityManager->persist(new AssetType($entity, 2, 'Neodpisovaný', 20000000, 1));
+        $this->entityManager->persist(new AssetType($entity, 1, 'DM Odpisovaný', 10000000, 1));
+        $this->entityManager->persist(new AssetType($entity, 2, 'DM Neodpisovaný', 20000000, 1));
         $this->entityManager->persist(new AssetType($entity, 3, 'Drobný', 30000000, 1));
-        $this->entityManager->persist(new AssetType($entity, 4, 'Leasingy', 40000000, 1));
+        $this->entityManager->persist(new AssetType($entity, 4, 'Leasing', 40000000, 1));
 
         $depreciationGroup1 = new DepreciationGroup($entity, DepreciationMethod::UNIFORM, 1, null, 3, null, false,20, 40, 33.3);
         $depreciationGroup2 = new DepreciationGroup($entity, DepreciationMethod::UNIFORM, 2, null, 5, null, false,11, 22.25, 20);

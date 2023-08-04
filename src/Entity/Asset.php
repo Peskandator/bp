@@ -71,13 +71,13 @@ class Asset
      */
     private ?\DateTimeInterface $disposalDate;
     /**
-     * @ORM\Column(name="variable_symbol", type="string", nullable=true)
+     * @ORM\Column(name="variable_symbol", type="integer", nullable=true)
      */
-    private ?string $variableSymbol;
+    private ?int $variableSymbol;
     /**
-     * @ORM\Column(name="invoice_number", type="integer", nullable=true)
+     * @ORM\Column(name="invoice_number", type="string", nullable=true)
      */
-    private ?int $invoiceNumber;
+    private ?string $invoiceNumber;
     /**
      * @ORM\Column(name="units", type="integer", nullable=true)
      */
@@ -194,32 +194,32 @@ class Asset
         return $this->entryDate;
     }
 
-    public function getEntryPriceTax(): float
+    public function getEntryPriceTax(): ?float
     {
         return $this->entryPriceTax;
     }
 
-    public function getIncreasedEntryPriceTax(): float
+    public function getIncreasedEntryPriceTax(): ?float
     {
         return $this->increasedEntryPriceTax;
     }
 
-    public function getDepreciatedAmountTax(): float
+    public function getDepreciatedAmountTax(): ?float
     {
         return $this->depreciatedAmountTax;
     }
 
-    public function getEntryPriceAccounting(): float
+    public function getEntryPriceAccounting(): ?float
     {
         return $this->entryPriceAccounting;
     }
 
-    public function getIncresedEntryPriceAccounting(): float
+    public function getIncresedEntryPriceAccounting(): ?float
     {
         return $this->increasedEntryPriceAccounting;
     }
 
-    public function getDepreciatedAmountAccounting(): float
+    public function getDepreciatedAmountAccounting(): ?float
     {
         return $this->depreciatedAmountAccounting;
     }
@@ -254,12 +254,12 @@ class Asset
         return $this->producer;
     }
 
-    public function getInvoiceNumber(): ?int
+    public function getInvoiceNumber(): ?string
     {
         return $this->invoiceNumber;
     }
 
-    public function getVariableSymbol(): ?string
+    public function getVariableSymbol(): ?int
     {
         return $this->variableSymbol;
     }
@@ -307,22 +307,22 @@ class Asset
         return $this->depreciationGroupAccounting;
     }
 
-    public function getTotalDepreciationsTax(): float
+    public function getTotalDepreciationsTax(): ?float
     {
         return 0;
     }
 
-    public function getTotalDepreciationsAccounting(): float
+    public function getTotalDepreciationsAccounting(): ?float
     {
         return 0;
     }
 
-    public function getAmortisedPriceTax(): float
+    public function getAmortisedPriceTax(): ?float
     {
         return $this->getEntryPriceTax() - $this->getTotalDepreciationsTax();
     }
 
-    public function getAmortisedPriceAccounting(): float
+    public function getAmortisedPriceAccounting(): ?float
     {
         return $this->getEntryPriceAccounting() - $this->getTotalDepreciationsAccounting();
     }

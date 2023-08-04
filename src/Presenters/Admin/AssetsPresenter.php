@@ -54,7 +54,8 @@ final class AssetsPresenter extends BaseAdminPresenter
 
     public function actionCreate(): void
     {
-        $this->template->depreciationGroups = $this->currentEntity->getDepreciationGroups();
+        $this->template->depreciationGroupsTax = $this->currentEntity->getDepreciationGroupsWithoutAccounting();
+        $this->template->depreciationGroupsAccounting = $this->currentEntity->getAccountingDepreciationGroups();
         $this->template->categories = $this->currentEntity->getCategories();
         $this->template->acquisitions = $this->acquisitionsProvider->provideAcquisitions($this->currentEntity);
         $this->template->locations = $this->currentEntity->getLocations();
@@ -119,33 +120,38 @@ final class AssetsPresenter extends BaseAdminPresenter
         $form
             ->addInteger('units', 'Kusů')
             ->addRule($form::MIN, 'Počet kusů musí být minimálně 1', 1)
+            ->setDefaultValue(1)
         ;
 
-        $isOnlyTax = $form->addCheckbox('only_tax');
-
-        $depreciationGroups = $this->currentEntity->getDepreciationGroups();
-        $depreciationGroupsSelect = $this->getDepreciationGroupForSelect($depreciationGroups);
+        $isOnlyTax =
+            $form->addCheckbox('only_tax')
+                ->setDefaultValue(true)
+        ;
 
         // Daňový box
+        $depreciationGroupsTax = $this->currentEntity->getDepreciationGroupsWithoutAccounting();
+        $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
         $form
-            ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsSelect)
+            ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsTaxSelect)
             ->setRequired(true)
         ;
         $form
             ->addText('entry_price_tax', 'Daňová vstupní cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
             ->setRequired(true)
         ;
         $form
             ->addText('increased_price_tax', 'Zvýšená daňová vstupní cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->setRequired(true)
         ;
         $form
             ->addText('depreciated_amount_tax', 'Oprávky daňové')
             ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
             ->setRequired(true)
         ;
@@ -161,14 +167,17 @@ final class AssetsPresenter extends BaseAdminPresenter
         ;
 
         // Účetní box
+        $depreciationGroupsAccounting = $this->currentEntity->getAccountingDepreciationGroups();
+        $depreciationGroupsAccountingSelect = $this->getDepreciationGroupForSelect($depreciationGroupsAccounting);
         $form
-            ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsSelect)
+            ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsAccountingSelect)
             ->addConditionOn($isOnlyTax, $form::EQUAL, false)
             ->setRequired(true)
         ;
         $form
             ->addText('entry_price_accounting', 'Účetní pořizovací cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
             ->addConditionOn($isOnlyTax, $form::EQUAL, false)
             ->setRequired(true)
@@ -176,13 +185,13 @@ final class AssetsPresenter extends BaseAdminPresenter
         $form
             ->addText('increased_price_accounting', 'Zvýšená účetní pořizovací cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->addConditionOn($isOnlyTax, $form::EQUAL, false)
-            ->setRequired(true)
         ;
         $form
             ->addText('depreciated_amount_accounting', 'Oprávky účetní')
             ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
             ->addConditionOn($isOnlyTax, $form::EQUAL, false)
             ->setRequired(true)
@@ -191,14 +200,15 @@ final class AssetsPresenter extends BaseAdminPresenter
         // Konec boxu
 
         $form
-            ->addInteger('invoice_number', 'Evidenční číslo')
+            ->addText('invoice_number', 'Doklad')
         ;
         $form
-            ->addText('variable_symbol', 'VS')
+            ->addInteger('variable_symbol', 'VS')
         ;
         // TODO - datepicker dates
         $form
             ->addText('entry_date', 'Datum zařazení')
+            ->setRequired(true)
         ;
         $form
             ->addText('disposal_date', 'Datum vyřazení')
@@ -206,8 +216,20 @@ final class AssetsPresenter extends BaseAdminPresenter
 
         $form->addSubmit('send', 'Přidat majetek');
 
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            if ($values->type == 0) {
+                $form['type']->addError('Toto pole je povinné');
+                $form->addError('Typ majetku je nutné vyplnit.');
+            }
+
+            if ($values->category === 0) {
+                $form['category']->addError('Toto pole je povinné');
+                $form->addError('Kategorii je nutné vyplnit.');
+            }
+        };
+
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            bdump($values);
+            // TODO - POVINNÉ HODNOTY VALIDACE NA ID=0 - odpisové skupiny
 
             $type = $this->assetTypeRepository->find($values->type);
             $category = $this->categoryRepository->find($values->category);
@@ -263,6 +285,7 @@ final class AssetsPresenter extends BaseAdminPresenter
         foreach ($array as $item) {
             $items[$item->getId()] = $item->getCode() . ' ' . $item->getName();
         }
+        $items[0] = 'Vyberte ...';
 
         return $items;
     }
@@ -273,6 +296,7 @@ final class AssetsPresenter extends BaseAdminPresenter
         foreach ($collection as $item) {
             $items[$item->getId()] = $item->getCode() . ' ' . $item->getName();
         }
+        $items[0] = 'Vyberte ...';
 
         return $items;
     }
@@ -284,8 +308,9 @@ final class AssetsPresenter extends BaseAdminPresenter
          * @var DepreciationGroup $item
          */
         foreach ($collection as $item) {
-            $items[$item->getId()] = $item->getFullShortName();
+            $items[$item->getId()] = $item->getFullName();
         }
+        $items[0] = 'Vyberte ...';
 
         return $items;
     }

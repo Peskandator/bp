@@ -110,7 +110,7 @@ class AdminMenu extends Control
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Způsoby pořízení',
+            'Způsoby pořízení/vyřazení',
             $this->getPresenter()->lazyLink(':Admin:Dials:acquisitions'),
             [],
             $this->getCurrentLinkCallable()

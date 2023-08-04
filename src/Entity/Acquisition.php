@@ -52,10 +52,11 @@ class Acquisition
         $this->isDisposal = $isDisposal;
     }
 
-    public function update(string $name, int $code): void
+    public function update(string $name, int $code, bool $isDisposal): void
     {
         $this->name = $name;
         $this->code = $code;
+        $this->isDisposal = $isDisposal;
     }
 
     public function getId(): int
