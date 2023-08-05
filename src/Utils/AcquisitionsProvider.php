@@ -63,9 +63,6 @@ class AcquisitionsProvider
         return $acquisitions;
     }
 
-
-    // TODO PROVIDE DISPOSALS
-
     public function provideDefaultAcquisitionsIds(): array
     {
         $ids = [];

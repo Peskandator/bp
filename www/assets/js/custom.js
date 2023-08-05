@@ -163,9 +163,9 @@ $(document).ready(function(){
 
     function checkOnlyTaxCheckbox(checkBox) {
         if (checkBox.prop("checked") === true) {
-            $(`.js-accounting-content`).show();
+            $(`.js-only-tax-false`).show();
         } else {
-            $(`.js-accounting-content`).hide();
+            $(`.js-only-tax-false`).hide();
         }
     }
 
@@ -219,7 +219,6 @@ $(document).ready(function(){
 
     $('#assetCategorySelect').change(function(){
         let groupId = $('#assetCategorySelect').find(':selected').attr('data-group-id');
-
 
         if (groupId && groupId !== 0 && groupId !== '') {
             // TODO : CHANGE ONLY WHEN EDITING WITH ALERT YES!
@@ -324,16 +323,26 @@ $(document).ready(function(){
             }
         }
     });
-
+    let currentYear = new Date().getFullYear();
     $('#assetEntryDate').change(function(){
         let val = $(this).val();
 
         let year = val.substring(0, 4);
-        let currentYear = new Date().getFullYear();
 
         if (currentYear >= year) {
             let depreciationYear = currentYear - year + 1;
             $('#assetDepreciationYear').val(depreciationYear);
+        }
+    });
+
+    $('#assetIncreaseDateTax').change(function(){
+        let val = $(this).val();
+
+        let year = val.substring(0, 4);
+
+        if (currentYear >= year) {
+            let increaseYear = currentYear - year + 1;
+            $('#assetDepreciationIncreasedYear').val(increaseYear);
         }
     });
 

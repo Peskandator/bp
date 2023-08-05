@@ -39,6 +39,10 @@ class Asset
      */
     private ?float $increasedEntryPriceTax;
     /**
+     * @ORM\Column(name="increase_date", type="date", nullable=true)
+     */
+    private ?\DateTimeInterface $increaseDate;
+    /**
      * @ORM\Column(name="depreciated_amount_tax", type="float", nullable=true)
      */
     private ?float $depreciatedAmountTax;
@@ -90,6 +94,10 @@ class Asset
      * @ORM\Column(name="depreciation_increased_year_tax", type="integer", nullable=true)
      */
     private ?int $depreciationIncreasedYearTax;
+    /**
+     * @ORM\Column(name="note", type="text", nullable=true)
+     */
+    private ?string $note;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="assets")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
@@ -151,6 +159,7 @@ class Asset
         $this->depreciationGroupTax = $request->depreciationGroupTax;
         $this->entryPriceTax = $request->entryPriceTax;
         $this->increasedEntryPriceTax = $request->increasedPriceTax;
+        $this->increaseDate = $request->increaseDate;
         $this->depreciatedAmountTax = $request->depreciatedAmountTax;
         $this->depreciationYearTax = $request->depreciationYearTax;
         $this->depreciationIncreasedYearTax = $request->depreciationIncreasedYearTax;
@@ -163,6 +172,7 @@ class Asset
         $this->entryDate = $request->entryDate;
         $this->disposalDate = $request->disposalDate;
         $this->isDisposed = false;
+        $this->note = $request->note;
     }
 
     public function update(): void
@@ -202,6 +212,11 @@ class Asset
     public function getIncreasedEntryPriceTax(): ?float
     {
         return $this->increasedEntryPriceTax;
+    }
+
+    public function getIncreaseDate(): ?\DateTimeInterface
+    {
+        return $this->increaseDate;
     }
 
     public function getDepreciatedAmountTax(): ?float
@@ -330,5 +345,10 @@ class Asset
     public function getUnits(): ?int
     {
         return $this->units;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
     }
 }

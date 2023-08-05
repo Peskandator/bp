@@ -24,6 +24,7 @@ class CreateAssetRequest
         public ?DepreciationGroup $depreciationGroupTax,
         public ?float $entryPriceTax,
         public ?float $increasedPriceTax,
+        public ?\DateTimeInterface $increaseDate,
         public ?float $depreciatedAmountTax,
         public ?int $depreciationYearTax,
         public ?int $depreciationIncreasedYearTax,
@@ -35,6 +36,7 @@ class CreateAssetRequest
         public ?int $variableSymbol,
         public ?\DateTimeInterface $entryDate,
         public ?\DateTimeInterface $disposalDate,
+        public ?string $note
     ) {
     }
 }

@@ -167,6 +167,15 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <label for="assetNote">Poznámka</label>
+                                        <textarea n:name="note" class="form-control" id="assetNote" rows="1"></textarea>
+                                        <small class="form-error" n:ifcontent>{inputError note}</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -215,7 +224,6 @@
                                     <div class="form-group">
                                         <label for="assetGroupTax1">
                                             Sazba 1. rok -
-{*                                            TODO : javascript*}
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
@@ -225,7 +233,6 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetGroupTax2">Sazba další r. -
-{*                                            TODO : javascript*}
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
@@ -235,7 +242,6 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetGroupTax3">Sazba zvýš. VC -
-{*                                            TODO : javascript*}
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
@@ -260,16 +266,23 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetIncreasedPriceTax">Daň. zvýš. VC <small>(nepovinné)</small></label>
                                         <input n:name="increased_price_tax" type="number" step="0.01" class="form-control" id="assetIncreasedPriceTax" min="0" max="1000000000">
                                         <small class="form-error" n:ifcontent>{inputError increased_price_tax}</small>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-5">
                                     <div class="form-group">
-                                        <label for="assetDepreciationIncreasedYear">Rok odpisu ze zvýš. VC <small>(nepovinné)</small></label>
+                                        <label for="assetIncreaseDateTax">Datum zvýšení VC <small>(nepovinné)</small></label>
+                                        <input n:name="increase_date" type="date" class="form-control" id="assetIncreaseDateTax">
+                                        <small class="form-error" n:ifcontent>{inputError increase_date}</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label for="assetDepreciationIncreasedYear">Rok odp. ze zvýš. VC <small>(nepovinné)</small></label>
                                         <input n:name="depreciation_increased_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationIncreasedYear" min="0" max="100">
                                         <small class="form-error" n:ifcontent>{inputError depreciation_increased_year_tax}</small>
                                     </div>
@@ -308,7 +321,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="js-accounting-content">
+                            <div class="js-only-tax-false">
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">

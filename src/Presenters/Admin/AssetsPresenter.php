@@ -97,14 +97,14 @@ final class AssetsPresenter extends BaseAdminPresenter
             ->setRequired(true)
         ;
 
-        $acquisitions = $this->currentEntity->getAcquisitions();
-        $acquisitionsSelect = $this->getCollectionForSelect($acquisitions);
+        $acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideOnlyAcquisitions($this->currentEntity));
+        $acquisitionsSelect = $this->getCollectionForSelectArray($acquisitions);
         $form
             ->addSelect('acquisition', 'Způsob pořízení', $acquisitionsSelect)
         ;
 
-        $disposals = $this->currentEntity->getDisposals();
-        $disposalsSelect = $this->getCollectionForSelect($disposals);
+        $disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideOnlyDisposals($this->currentEntity));
+        $disposalsSelect = $this->getCollectionForSelectArray($disposals);
         $form
             ->addSelect('disposal', 'Způsob vyřazení', $disposalsSelect)
         ;
@@ -137,14 +137,14 @@ final class AssetsPresenter extends BaseAdminPresenter
         $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
         $form
             ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsTaxSelect)
-            ->setRequired(true)
+//            ->setRequired(true)
         ;
         $form
             ->addText('entry_price_tax', 'Daňová vstupní cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->setRequired(true)
+//            ->setRequired(true)
         ;
         $form
             ->addText('increased_price_tax', 'Zvýšená daňová vstupní cena')
@@ -152,17 +152,22 @@ final class AssetsPresenter extends BaseAdminPresenter
             ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
         ;
+        // TODO - musí se vyplnit, když je vyplněná vst. cena
+        $form
+            ->addText('increase_date', 'Datum zvýšení VC')
+            ->setNullable()
+        ;
         $form
             ->addText('depreciated_amount_tax', 'Oprávky daňové')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
-            ->setRequired(true)
+//            ->setRequired(true)
         ;
         $form
             ->addInteger('depreciation_year_tax', 'Rok odpisu')
             ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
-            ->setRequired(true)
+//            ->setRequired(true)
         ;
         // required jen když vyplněno
         $form
@@ -210,7 +215,10 @@ final class AssetsPresenter extends BaseAdminPresenter
         $form
             ->addInteger('variable_symbol', 'VS')
         ;
-        // TODO - datepicker dates
+        $form
+            ->addTextArea('note', 'Poznámka')
+            ->setMaxLength(600)
+        ;
         $form
             ->addText('entry_date', 'Datum zařazení')
             ->setRequired(true)
@@ -222,7 +230,7 @@ final class AssetsPresenter extends BaseAdminPresenter
         $form->addSubmit('send', 'Přidat majetek');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            if ($values->type == 0) {
+            if ($values->type === 0) {
                 $form['type']->addError('Toto pole je povinné');
                 $form->addError('Typ majetku je nutné vyplnit.');
             }
@@ -263,6 +271,7 @@ final class AssetsPresenter extends BaseAdminPresenter
                 $groupTax,
                 $values->entry_price_tax,
                 $values->increased_price_tax,
+                $this->changeToDateFormat($values->increase_date),
                 $values->depreciated_amount_tax,
                 $values->depreciation_year_tax,
                 $values->depreciation_increased_year_tax,
@@ -273,7 +282,8 @@ final class AssetsPresenter extends BaseAdminPresenter
                 $values->invoice_number,
                 $values->variable_symbol,
                 $this->changeToDateFormat($values->entry_date),
-                $this->changeToDateFormat($values->disposal_date)
+                $this->changeToDateFormat($values->disposal_date),
+                $values->note
             );
             $this->createAssetAction->__invoke($this->currentEntity, $request);
             $this->flashMessage('Majetek byl úspěšně přidán.', FlashMessageType::SUCCESS);
