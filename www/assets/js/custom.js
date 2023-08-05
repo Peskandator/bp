@@ -153,5 +153,189 @@ $(document).ready(function(){
         $(`.form-assettype-step`).val(selectedStep);
         $(`.edit-assettype-form`).submit();
     });
+
+    $(`.js-only-tax-checkbox`).each(function () {
+        checkOnlyTaxCheckbox($(this));
+        $(this).change(function () {
+            checkOnlyTaxCheckbox($(this));
+        });
+    });
+
+    function checkOnlyTaxCheckbox(checkBox) {
+        if (checkBox.prop("checked") === true) {
+            $(`.js-accounting-content`).show();
+        } else {
+            $(`.js-accounting-content`).hide();
+        }
+    }
+
+    $('#assetAcquisitionSelect').change(function(){
+        let code = parseInt($('#assetAcquisitionSelect').find(':selected').attr('data-code'));
+        if (code === 1) {
+            $(`.js-invoice-content`).show();
+        } else {
+            $(`.js-invoice-content`).hide();
+        }
+    });
+
+
+    let assetGroupTaxSelect = $('#assetGroupTaxSelect');
+    assetGroupTaxSelect.change(function(){
+        changeDepreicationGroup();
+    });
+
+    function changeDepreicationGroup(){
+        let selectedOption = assetGroupTaxSelect.find(':selected');
+
+        let rateFirstYear = selectedOption.attr('data-rate-first');
+        let rate = selectedOption.attr('data-rate');
+        let rateIncreasedPrice = selectedOption.attr('data-rate-increased');
+        let years = selectedOption.attr('data-years');
+        let months = selectedOption.attr('data-months');
+        let isCoeff = selectedOption.attr('data-coeff');
+
+        if (isCoeff === '1') {
+            $('.assetGroupTaxPerc').hide();
+            $('.assetGroupTaxKoef').show();
+        } else {
+            $('.assetGroupTaxPerc').show();
+            $('.assetGroupTaxKoef').hide();
+        }
+
+        if (months && months !== '' && months !== 0) {
+            $('#assetGroupTaxMonthsText').show()
+            $('#assetGroupTaxYearsText').hide()
+            $('#assetGroupTaxYearsMonths').val(months)
+        } else {
+            $('#assetGroupTaxMonthsText').hide()
+            $('#assetGroupTaxYearsText').show()
+            $('#assetGroupTaxYearsMonths').val(years)
+        }
+
+        $('#assetGroupTax1').val(rateFirstYear);
+        $('#assetGroupTax2').val(rate);
+        $('#assetGroupTax3').val(rateIncreasedPrice);
+    }
+
+    $('#assetCategorySelect').change(function(){
+        let groupId = $('#assetCategorySelect').find(':selected').attr('data-group-id');
+
+
+        if (groupId && groupId !== 0 && groupId !== '') {
+            // TODO : CHANGE ONLY WHEN EDITING WITH ALERT YES!
+            // var value = $('#assetGroupTaxSelect').find(":selected").val();
+            // if (value === 0 || value === '0') {
+                assetGroupTaxSelect.val(groupId);
+                changeDepreicationGroup();
+            // }
+        }
+    });
+
+    let entryPriceTaxInput = $('#assetEntryPriceTax');
+    let increasedPriceTaxInput = $('#assetIncreasedPriceTax');
+    let depreciatedAmountTaxInput = $('#assetDepreciatedAmountTax');
+
+    entryPriceTaxInput.change(function(){
+        calculateResidualPriceTax();
+    });
+    increasedPriceTaxInput.change(function(){
+        calculateResidualPriceTax();
+    });
+    depreciatedAmountTaxInput.change(function(){
+        calculateResidualPriceTax();
+    });
+
+    function calculateResidualPriceTax() {
+        let entryPrice = entryPriceTaxInput.val();
+        let increasedPrice = increasedPriceTaxInput.val();
+        let depreciatedAmount = depreciatedAmountTaxInput.val();
+
+        let isEntryPriceNumeric = $.isNumeric(entryPrice);
+        let isIncreasedPriceNumeric = $.isNumeric(increasedPrice);
+
+        if (isEntryPriceNumeric || isIncreasedPriceNumeric && $.isNumeric(depreciatedAmount)) {
+            let firstValue = 0;
+            if (isEntryPriceNumeric) {
+                firstValue = entryPrice;
+            }
+            if (isIncreasedPriceNumeric) {
+                firstValue = increasedPrice;
+            }
+            let residualPrice = firstValue - depreciatedAmount;
+            $('#assetLeftAmountTax').val(residualPrice);
+        }
+    }
+
+    let entryPriceAccountingInput = $('#assetEntryPriceAccounting');
+    let increasedPriceAccountingInput = $('#assetIncreasedPriceAccounting');
+    let depreciatedAmountAccountingInput = $('#assetDepreciatedAmountAccounting');
+
+    entryPriceAccountingInput.change(function(){
+        calculateResidualPriceAccounting();
+    });
+    increasedPriceAccountingInput.change(function(){
+        calculateResidualPriceAccounting();
+    });
+    depreciatedAmountAccountingInput.change(function(){
+        calculateResidualPriceAccounting();
+    });
+
+    function calculateResidualPriceAccounting() {
+        let entryPrice = entryPriceAccountingInput.val();
+        let increasedPrice = increasedPriceAccountingInput.val();
+        let depreciatedAmount = depreciatedAmountAccountingInput.val();
+
+        let isEntryPriceNumeric = $.isNumeric(entryPrice);
+        let isIncreasedPriceNumeric = $.isNumeric(increasedPrice);
+
+        if (isEntryPriceNumeric || isIncreasedPriceNumeric && $.isNumeric(depreciatedAmount)) {
+            let firstValue = 0;
+            if (isEntryPriceNumeric) {
+                firstValue = entryPrice;
+            }
+            if (isIncreasedPriceNumeric) {
+                firstValue = increasedPrice;
+            }
+            let residualPrice = firstValue - depreciatedAmount;
+            $('#assetLeftAmountAccounting').val(residualPrice);
+        }
+    }
+
+    $('#assetTypeSelect').change(function(){
+        let typeCode = parseInt($('#assetTypeSelect').find(':selected').attr('data-code'));
+
+        let onlyTaxCheckbox = $('#jsOnlyTaxCheckbox');
+        let taxContent = $('.js-tax-content');
+        let accountingContent = $('.js-accounting-content');
+
+        if (typeCode && typeCode !== 0) {
+            if (typeCode === 2 || typeCode === 4) {
+                taxContent.hide();
+                accountingContent.hide();
+
+            } else if (typeCode === 3) {
+                taxContent.hide();
+                accountingContent.show();
+                onlyTaxCheckbox.hide();
+            } else {
+                taxContent.show();
+                accountingContent.show();
+                onlyTaxCheckbox.show();
+            }
+        }
+    });
+
+    $('#assetEntryDate').change(function(){
+        let val = $(this).val();
+
+        let year = val.substring(0, 4);
+        let currentYear = new Date().getFullYear();
+
+        if (currentYear >= year) {
+            let depreciationYear = currentYear - year + 1;
+            console.log(depreciationYear);
+            $('#assetDepreciationYear').val(depreciationYear);
+        }
+    });
 });
 

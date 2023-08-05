@@ -18,13 +18,51 @@ class AcquisitionsProvider
         $this->acquisitionRepository = $acquisitionRepository;
     }
 
-    public function provideAcquisitions(AccountingEntity $entity): array
+    public function provideOnlyAcquisitions(AccountingEntity $entity): array
+    {
+        $defaults = $this->filterDefaults($this->acquisitionRepository->findDefaults(), false);
+        $acquisitions = $entity->getAcquisitions()->toArray();
+
+        return array_merge($defaults, $acquisitions);
+    }
+
+    public function provideOnlyDisposals(AccountingEntity $entity): array
+    {
+        $defaults = $this->filterDefaults($this->acquisitionRepository->findDefaults(), true);
+        $acquisitions = $entity->getDisposals()->toArray();
+
+        return array_merge($defaults, $acquisitions);
+    }
+
+    public function provideAllAcquisitions(AccountingEntity $entity): array
     {
         $defaults = $this->acquisitionRepository->findDefaults();
         $acquisitions = $entity->getAcquisitionsAndDisposals()->toArray();
 
         return array_merge($defaults, $acquisitions);
     }
+
+    protected function filterDefaults(array $items, bool $onlyDisposals)
+    {
+        $disposals = [];
+        $acquisitions = [];
+        /**
+         * @var Acquisition $item
+         */
+        foreach ($items as $item) {
+            if ($item->isDisposal()) {
+                $disposals[] = $item;
+                continue;
+            }
+            $acquisitions[] = $item;
+        }
+
+        if ($onlyDisposals) {
+            return $disposals;
+        }
+        return $acquisitions;
+    }
+
 
     // TODO PROVIDE DISPOSALS
 

@@ -6,7 +6,7 @@
 
     {form createAssetForm}
         <div class="create-asset-form">
-            <div class="row">
+            <div class="row mb-1">
                 <div class="col-12 col-lg-6">
                     <div class="card">
                         <div class="card-header">
@@ -21,11 +21,11 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="assetType">Typ</label>
-                                        <select name="type" class="form-select" id="assetType">
+                                        <label for="assetTypeSelect">Typ</label>
+                                        <select name="type" class="form-select" id="assetTypeSelect">
                                             <option value="0">Vyberte...</option>
                                             {foreach $assetTypes as $type}
-                                                <option value="{$type->getId()}">{$type->getName()}</option>
+                                                <option value="{$type->getId()}" data-code="{$type->getCode()}">{$type->getName()}</option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError type}</small>
@@ -49,11 +49,11 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="assetCategory">Kategorie</label>
-                                        <select name="category" class="form-select" id="assetCategory">
+                                        <label for="assetCategorySelect">Kategorie</label>
+                                        <select name="category" class="form-select" id="assetCategorySelect">
                                             <option value="0">Vyberte...</option>
                                             {foreach $categories as $category}
-                                                <option value="{$category->getId()}">{$category->getCode()} - {$category->getName()} - {$category->getAccountAsset()}</option>
+                                                <option value="{$category->getId()}" data-group-id="{if $category->getDepreciationGroup()}{$category->getDepreciationGroup()->getId()}{/if}">{$category->getCode()} - {$category->getName()} - {$category->getAccountAsset()}</option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError category}</small>
@@ -117,28 +117,28 @@
                                         <small class="form-error" n:ifcontent>{inputError producer}</small>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-4">
+                                <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetAcquisition">Způsob pořízení <small>(nepovinné)</small></label>
-                                        <select name="acquisition" class="form-select" id="assetAcquisition">
+                                        <label for="assetAcquisitionSelect">Způsob pořízení <small>(nepovinné)</small></label>
+                                        <select name="acquisition" class="form-select" id="assetAcquisitionSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $acquisitions as $acquisition}
-                                                <option value="{$acquisition->getId()}">{$acquisition->getCode()} - {$acquisition->getName()}</option>
+                                                <option value="{$acquisition->getId()}" data-code="{$acquisition->getCode()}">{$acquisition->getCode()} - {$acquisition->getName()}</option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError category}</small>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
                                     <div class="form-group">
                                         <label for="assetInvoiceNumber">Doklad <small>(nepovinné)</small></label>
-                                        <input n:name="invoice_number" type="text" class="form-control" id="assetInvoiceNumber" >
+                                        <input n:name="invoice_number" type="text" class="form-control" id="assetInvoiceNumber">
                                         <small class="form-error" n:ifcontent>{inputError invoice_number}</small>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-6 js-invoice-content" style="display: none">
                                     <div class="form-group">
                                         <label for="assetVariableSymbol">Variabilní symbol <small>(nepovinné)</small></label>
                                         <input n:name="variable_symbol" type="number" class="form-control" id="assetVariableSymbol" min="0" max="9999999999">
@@ -172,7 +172,7 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-lg-6 col-12">
+                <div class="col-lg-6 col-12 js-tax-content">
                     <div class="card">
                         <div class="card-header">
                             <h5>Daňové odpisy</h5>
@@ -181,31 +181,32 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetGroupTax">Odpisová skupina</label>
-                                        <select name="group_tax" class="form-select" id="assetGroupTax">
+                                        <label for="assetGroupTaxSelect">Odp. sk. a způsob</label>
+                                        <select name="group_tax" class="form-select" id="assetGroupTaxSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $depreciationGroupsTax as $group}
-                                                <option value="{$group->getId()}">{$group->getFullName()}</option>
+                                                <option
+                                                    id="assetGroupTaxOption{$group->getId()}"
+                                                    value="{$group->getId()}"
+                                                    data-rate-first="{$group->getRateFirstYear()}"
+                                                    data-rate="{$group->getRate()}"
+                                                    data-rate-increased="{$group->getRateIncreasedPrice()}"
+                                                    data-method-text="{$group->getMethodText()}"
+                                                    data-years="{$group->getYears()}"
+                                                    data-months="{$group->getMonths()}"
+                                                    data-coeff="{if $group->isCoefficient()}1{else}0{/if}"
+                                                >
+                                                    {$group->getFullName()}
+                                                </option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError group_tax}</small>
                                     </div>
                                 </div>
-
-{*                                    TODO: JAVASCRIPT PŘI VYBRÁNÍ - sazby, rok, a propojit z kategorií
-
-                                        možná ani neni potřeba způsob odpisu
-*}
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="assetGroupTaxMethod">Způsob odpisu</label>
-                                        <input type="text" class="form-control" id="assetGroupTaxMethod" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="form-group">
-                                        <label for="assetGroupTaxYears">Počet let</label>
-                                        <input type="number" class="form-control" id="assetGroupTaxYears" value="50" disabled>
+                                        <label for="assetGroupTaxYearsMonths">Počet <span id="assetGroupTaxYearsText">let</span><span id="assetGroupTaxMonthsText" style="display: none">měsíců</span></label>
+                                        <input type="number" class="form-control" id="assetGroupTaxYearsMonths" value="" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -218,17 +219,17 @@
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
-                                        <input type="number" class="form-control" id="assetGroupTax1" value="50" disabled>
+                                        <input type="number" class="form-control" id="assetGroupTax1" value="" disabled>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="assetGroupTax2">Sazba další roky -
+                                        <label for="assetGroupTax2">Sazba další r. -
 {*                                            TODO : javascript*}
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
-                                        <input type="number" class="form-control" id="assetGroupTax2" value="50" disabled>
+                                        <input type="number" class="form-control" id="assetGroupTax2" value="" disabled>
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -238,14 +239,14 @@
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
-                                        <input type="number" class="form-control" id="assetGroupTax3" value="50" disabled>
+                                        <input type="number" class="form-control" id="assetGroupTax3" value="" disabled>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetEntryPriceTax">Daňová vstupní cena</label>
+                                        <label for="assetEntryPriceTax">Daň. VC</label>
                                         <input n:name="entry_price_tax" type="number" step="0.01" class="form-control" id="assetEntryPriceTax" min="0" max="1000000000">
                                         <small class="form-error" n:ifcontent>{inputError entry_price_tax}</small>
                                     </div>
@@ -261,14 +262,14 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetIncreasedPriceTax">Daňová zvýšená vstupní cena <small>(nepovinné)</small></label>
+                                        <label for="assetIncreasedPriceTax">Daň. zvýš. VC <small>(nepovinné)</small></label>
                                         <input n:name="increased_price_tax" type="number" step="0.01" class="form-control" id="assetIncreasedPriceTax" min="0" max="1000000000">
                                         <small class="form-error" n:ifcontent>{inputError increased_price_tax}</small>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        <label for="assetDepreciationIncreasedYear">Rok odpisu ze zvýš. ceny <small>(nepovinné)</small></label>
+                                        <label for="assetDepreciationIncreasedYear">Rok odpisu ze zvýš. VC <small>(nepovinné)</small></label>
                                         <input n:name="depreciation_increased_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationIncreasedYear" min="0" max="100">
                                         <small class="form-error" n:ifcontent>{inputError depreciation_increased_year_tax}</small>
                                     </div>
@@ -292,75 +293,67 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-12">
+                <div class="col-lg-6 col-12 js-accounting-content">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex">
                                 <h5>Účetní odpisy</h5>
-                                <div class="form-check" style="margin-top: 5px; margin-left: 50px; font-size: 19px">
+                                <div class="form-check" id="jsOnlyTaxCheckbox" style="margin-top: 5px; margin-left: 50px; font-size: 19px">
                                     <label class="form-check-label" for="onlyTax">
                                         daňové = účetní
                                     </label>
-                                    <input n:name="only_tax" class="form-check-input" type="checkbox" id="onlyTax">
+                                    <input n:name="only_tax" class="form-check-input js-only-tax-checkbox" type="checkbox">
                                     <small class="form-error" n:ifcontent>{inputError only_tax}</small>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="assetGroupAccounting">Odpisová skupina</label>
-                                        <select name="group_accounting" class="form-select" id="assetGroupAccounting">
-                                            <option value="0">Vyberte ...</option>
-                                            {foreach $depreciationGroupsAccounting as $group}
-                                                <option value="{$group->getId()}">{$group->getFullName()}</option>
-                                            {/foreach}
-                                        </select>
-                                        <small class="form-error" n:ifcontent>{inputError group_accounting}</small>
+                            <div class="js-accounting-content">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="assetGroupAccountingSelect">Odp. sk. a způsob</label>
+                                            <select name="group_accounting" class="form-select" id="assetGroupAccountingSelect">
+                                                <option value="0">Vyberte ...</option>
+                                                {foreach $depreciationGroupsAccounting as $group}
+                                                    <option value="{$group->getId()}" data-method-text="{$group->getMethodText()}">{$group->getFullName()}</option>
+                                                {/foreach}
+                                            </select>
+                                            <small class="form-error" n:ifcontent>{inputError group_accounting}</small>
+                                        </div>
                                     </div>
                                 </div>
-
-                                {*                                    TODO: JAVASCRIPT PŘI VYBRÁNÍ - sazby, rok
-                                                                        možná ani neni potřeba způsob odpisu
-                                *}
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label for="assetGroupAccountingMethod">Způsob odpisu</label>
-                                        <input type="text" class="form-control" id="assetGroupAccountingMethod" disabled>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="assetEntryPriceAccounting">Účetní vstupní cena</label>
+                                            <input n:name="entry_price_accounting" type="number" step="0.01" class="form-control" id="assetEntryPriceAccounting" min="0" max="1000000000">
+                                            <small class="form-error" n:ifcontent>{inputError entry_price_accounting}</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="assetEntryPriceAccounting">Účetní vstupní cena</label>
-                                        <input n:name="entry_price_accounting" type="number" step="0.01" class="form-control" id="assetEntryPriceAccounting" min="0" max="1000000000">
-                                        <small class="form-error" n:ifcontent>{inputError entry_price_accounting}</small>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="assetIncreasedPriceAccounting">Účetní zvýšená vstupní cena <small>(nepovinné)</small></label>
+                                            <input n:name="increased_price_accounting" type="number" step="0.01" class="form-control" id="assetIncreasedPriceAccounting" min="0" max="1000000000">
+                                            <small class="form-error" n:ifcontent>{inputError increased_price_accounting}</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="assetIncreasedPriceAccounting">Účetní zvýšená vstupní cena <small>(nepovinné)</small></label>
-                                        <input n:name="increased_price_accounting" type="number" step="0.01" class="form-control" id="assetIncreasedPriceAccounting" min="0" max="1000000000">
-                                        <small class="form-error" n:ifcontent>{inputError increased_price_accounting}</small>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="assetDepreciatedAmountAccounting">Oprávky účetní</label>
+                                            <input n:name="depreciated_amount_accounting" type="number" step="0.01" class="form-control" id="assetDepreciatedAmountAccounting" min="0" max="1000000000">
+                                            <small class="form-error" n:ifcontent>{inputError depreciated_amount_accounting}</small>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="assetDepreciatedAmountAccounting">Oprávky účetní</label>
-                                        <input n:name="depreciated_amount_accounting" type="number" step="0.01" class="form-control" id="assetDepreciatedAmountAccounting" min="0" max="1000000000">
-                                        <small class="form-error" n:ifcontent>{inputError depreciated_amount_accounting}</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="assetLeftAmountAccounting">Účetní zůstatková cena</label>
-                                        <input type="number" class="form-control" id="assetLeftAmountAccounting" disabled>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="assetLeftAmountAccounting">Účetní zůstatková cena</label>
+                                            <input type="number" class="form-control" id="assetLeftAmountAccounting" disabled>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -368,8 +361,8 @@
                     </div>
                 </div>
             </div>
-
-            <input n:name="send" class="mt-3 btn rounded-3 btn-primary" type="submit">
         </div>
+
+        <input n:name="send" class="mt-3 btn rounded-3 btn-primary" type="submit">
     {/form}
 {/block}

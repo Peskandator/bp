@@ -57,10 +57,10 @@ final class AssetsPresenter extends BaseAdminPresenter
         $this->template->depreciationGroupsTax = $this->currentEntity->getDepreciationGroupsWithoutAccounting();
         $this->template->depreciationGroupsAccounting = $this->currentEntity->getAccountingDepreciationGroups();
         $this->template->categories = $this->currentEntity->getCategories();
-        $this->template->acquisitions = $this->acquisitionsProvider->provideAcquisitions($this->currentEntity);
+        $this->template->acquisitions = $this->acquisitionsProvider->provideOnlyAcquisitions($this->currentEntity);
         $this->template->locations = $this->currentEntity->getLocations();
         $this->template->places = $this->currentEntity->getPlaces();
-        $this->template->disposals = $this->currentEntity->getDisposals();
+        $this->template->disposals = $this->acquisitionsProvider->provideOnlyDisposals($this->currentEntity);
         $this->template->assetTypes = $this->currentEntity->getAssetTypes();
     }
 
@@ -158,8 +158,9 @@ final class AssetsPresenter extends BaseAdminPresenter
         $form
             ->addInteger('depreciation_year_tax', 'Rok odpisu')
             ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
-//            ->setRequired(true)
+            ->setRequired(true)
         ;
+        // required jen když vyplněno
         $form
             ->addInteger('depreciation_increased_year_tax', 'Rok odpisu ze zvýšené ceny')
             ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)

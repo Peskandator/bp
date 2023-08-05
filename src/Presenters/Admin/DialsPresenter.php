@@ -135,7 +135,7 @@ final class DialsPresenter extends BaseAdminPresenter
     {
         $defaultAcquisitionsIds = $this->acquisitionsProvider->provideDefaultAcquisitionsIds();
         $this->template->defaultAcquisitionsIds = $defaultAcquisitionsIds;
-        $this->template->acquisitions = $this->sortByCode($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
+        $this->template->acquisitions = $this->sortByCode($this->acquisitionsProvider->provideAllAcquisitions($this->currentEntity));
     }
 
     public function actionAssetTypes(): void
