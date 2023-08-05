@@ -35,6 +35,7 @@ use App\Majetek\Requests\CreateDepreciationGroupRequest;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
 use App\Utils\DialsCodeValidator;
+use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
@@ -65,6 +66,7 @@ final class DialsPresenter extends BaseAdminPresenter
     private AddDepreciationGroupAction $addDepreciationGroupAction;
     private EditDepreciationGroupAction $editDepreciationGroupAction;
     private EditCategoryAction $editCategoryAction;
+    private EnumerableSorter $enumerableSorter;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -90,7 +92,8 @@ final class DialsPresenter extends BaseAdminPresenter
         EditAssetTypeAction $editAssetTypeAction,
         AddDepreciationGroupAction $addDepreciationGroupAction,
         EditDepreciationGroupAction $editDepreciationGroupAction,
-        EditCategoryAction $editCategoryAction
+        EditCategoryAction $editCategoryAction,
+        EnumerableSorter $enumerableSorter
     )
     {
         parent::__construct();
@@ -118,35 +121,36 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->addDepreciationGroupAction = $addDepreciationGroupAction;
         $this->editDepreciationGroupAction = $editDepreciationGroupAction;
         $this->editCategoryAction = $editCategoryAction;
+        $this->enumerableSorter = $enumerableSorter;
     }
 
     public function actionLocations(): void
     {
-        $this->template->locations = $this->sortByCode($this->currentEntity->getLocations()->toArray());
+        $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
     }
 
     public function actionPlaces(): void
     {
-        $this->template->locations = $this->sortByCode($this->currentEntity->getLocations()->toArray());
-        $this->template->places = $this->sortByCode($this->currentEntity->getPlaces());
+        $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
+        $this->template->places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
     }
 
     public function actionAcquisitions(): void
     {
         $defaultAcquisitionsIds = $this->acquisitionsProvider->provideDefaultAcquisitionsIds();
         $this->template->defaultAcquisitionsIds = $defaultAcquisitionsIds;
-        $this->template->acquisitions = $this->sortByCode($this->acquisitionsProvider->provideAllAcquisitions($this->currentEntity));
+        $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAllAcquisitions($this->currentEntity));
     }
 
     public function actionAssetTypes(): void
     {
-        $this->template->assetTypes = $this->sortByCode($this->currentEntity->getAssetTypes()->toArray());
+        $this->template->assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
     }
 
     public function actionCategories(): void
     {
-        $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
-        $this->template->categories = $this->sortByCode($this->currentEntity->getCategories()->toArray());
+        $this->template->groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
+        $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
 
     }
 
@@ -156,7 +160,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $methodNames = DepreciationMethod::getNames();
         $methodIds = [1,2,3,4];
 
-        $this->template->groups = $this->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
+        $this->template->groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
         $this->template->cpSelect = $cpSelect;
         $this->template->methods = $methodIds;
         $this->template->methodNames = $methodNames;
@@ -544,43 +548,6 @@ final class DialsPresenter extends BaseAdminPresenter
         }
 
         return $locationIds;
-    }
-
-    protected function sortByCode(array $records): array
-    {
-        usort($records, function ($first, $second) {
-            if ($first->getCode() > $second->getCode()) {
-                return 1;
-            }
-            if ($first->getCode() > $second->getCode()) {
-                return -1;
-            };
-            return 0;
-        });
-
-        return $records;
-    }
-
-    protected function sortGroupsByMethodAndNumber(array $groups): array
-    {
-        usort($groups, function ($first, $second) {
-            if ($first->getGroup() > $second->getGroup()) {
-                return 1;
-            }
-            if ($first->getGroup() < $second->getGroup()) {
-                return -1;
-            };
-            if ($first->getMethod() > $second->getMethod()) {
-                return 1;
-            }
-            if ($first->getMethod() < $second->getMethod()) {
-                return -1;
-            };
-
-            return 0;
-        });
-
-        return $groups;
     }
 
     protected function createComponentAddCategoryForm(): Form

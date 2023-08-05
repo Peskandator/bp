@@ -77,11 +77,11 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="assetLocation">Středisko <small>(nepovinné)</small></label>
-                                        <select name="location" class="form-select" id="assetLocation">
+                                        <label for="assetLocationSelect">Středisko <small>(nepovinné)</small></label>
+                                        <select name="location" class="form-select" id="assetLocationSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $locations as $location}
-                                                <option value="{$location->getId()}">{$location->getCode()} - {$location->getName()}</option>
+                                                <option value="{$location->getId()}" id="locationOption{$location->getId()}" data-location-id="{$location->getId()}">{$location->getCode()} - {$location->getName()}</option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError location}</small>
@@ -89,11 +89,11 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label for="assetPlace">Místo <small>(nepovinné)</small></label>
-                                        <select name="place" class="form-select" id="assetPlace">
+                                        <label for="assetPlaceSelect">Místo <small>(nepovinné)</small></label>
+                                        <select name="place" class="form-select" id="assetPlaceSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $places as $place}
-                                                <option value="{$place->getId()}">{$place->getCode()} - {$place->getName()}</option>
+                                                <option value="{$place->getId()}" data-location-id="{$place->getLocation()->getId()}" class="place-option">{$place->getCode()} - {$place->getName()}</option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError place}</small>

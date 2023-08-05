@@ -11,6 +11,7 @@ services:
     - App\Utils\SrcDir(dir: '%srcDir%')
     - App\Utils\AcquisitionsProvider
     - App\Utils\DialsCodeValidator
+    - App\Utils\EnumerableSorter
     - App\Components\AdminMenu\AdminMenuFactoryInterface
 
     - App\Majetek\ORM\AccountingEntityRepository

@@ -13,6 +13,7 @@ use App\Majetek\ORM\PlaceRepository;
 use App\Majetek\Requests\CreateAssetRequest;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
+use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Doctrine\Common\Collections\Collection;
 use Nette\Application\UI\Form;
@@ -26,6 +27,7 @@ final class AssetsPresenter extends BaseAdminPresenter
     private DepreciationGroupRepository $depreciationGroupRepository;
     private AcquisitionRepository $acquisitionRepository;
     private PlaceRepository $placeRepository;
+    private EnumerableSorter $enumerableSorter;
 
     public function __construct(
         AcquisitionsProvider $acquisitionsProvider,
@@ -35,6 +37,7 @@ final class AssetsPresenter extends BaseAdminPresenter
         DepreciationGroupRepository $depreciationGroupRepository,
         AcquisitionRepository $acquisitionRepository,
         PlaceRepository $placeRepository,
+        EnumerableSorter $enumerableSorter
     )
     {
         parent::__construct();
@@ -45,6 +48,7 @@ final class AssetsPresenter extends BaseAdminPresenter
         $this->depreciationGroupRepository = $depreciationGroupRepository;
         $this->acquisitionRepository = $acquisitionRepository;
         $this->placeRepository = $placeRepository;
+        $this->enumerableSorter = $enumerableSorter;
     }
 
     public function actionDefault(): void
@@ -54,14 +58,14 @@ final class AssetsPresenter extends BaseAdminPresenter
 
     public function actionCreate(): void
     {
-        $this->template->depreciationGroupsTax = $this->currentEntity->getDepreciationGroupsWithoutAccounting();
-        $this->template->depreciationGroupsAccounting = $this->currentEntity->getAccountingDepreciationGroups();
-        $this->template->categories = $this->currentEntity->getCategories();
-        $this->template->acquisitions = $this->acquisitionsProvider->provideOnlyAcquisitions($this->currentEntity);
-        $this->template->locations = $this->currentEntity->getLocations();
-        $this->template->places = $this->currentEntity->getPlaces();
-        $this->template->disposals = $this->acquisitionsProvider->provideOnlyDisposals($this->currentEntity);
-        $this->template->assetTypes = $this->currentEntity->getAssetTypes();
+        $this->template->depreciationGroupsTax = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
+        $this->template->depreciationGroupsAccounting = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getAccountingDepreciationGroups()->toArray());
+        $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
+        $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideOnlyAcquisitions($this->currentEntity));
+        $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
+        $this->template->places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
+        $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideOnlyDisposals($this->currentEntity));
+        $this->template->assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
     }
 
     protected function createComponentCreateAssetForm(): Form

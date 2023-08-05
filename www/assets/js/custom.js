@@ -333,9 +333,34 @@ $(document).ready(function(){
 
         if (currentYear >= year) {
             let depreciationYear = currentYear - year + 1;
-            console.log(depreciationYear);
             $('#assetDepreciationYear').val(depreciationYear);
         }
     });
+
+    let locationSelect = $('#assetLocationSelect');
+    locationSelect.change(function(){
+        let locationId = parseInt(locationSelect.find(':selected').attr('data-location-id'));
+        if (locationId && locationId !== 0) {
+            $('.place-option').each(function() {
+                let locationIdPlace = parseInt($(this).attr('data-location-id'));
+                if (locationIdPlace === 0 || locationIdPlace === locationId) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            })
+        } else {
+            $('.place-option').show();
+        }
+    });
+
+    let placeSelect = $('#assetPlaceSelect');
+    placeSelect.change(function(){
+        let locationId =  parseInt(placeSelect.find(':selected').attr('data-location-id'));
+        if (locationId && locationId !== 0) {
+            locationSelect.val(locationId);
+        }
+    });
+
 });
 
