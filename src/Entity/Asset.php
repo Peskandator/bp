@@ -55,6 +55,10 @@ class Asset
      */
     private ?float $increasedEntryPriceAccounting;
     /**
+     * @ORM\Column(name="increase_date_accounting", type="date", nullable=true)
+     */
+    private ?\DateTimeInterface $increaseDateAccounting;
+    /**
      * @ORM\Column(name="depreciated_amount_accounting", type="float", nullable=true)
      */
     private ?float $depreciatedAmountAccounting;
@@ -94,6 +98,14 @@ class Asset
      * @ORM\Column(name="depreciation_increased_year_tax", type="integer", nullable=true)
      */
     private ?int $depreciationIncreasedYearTax;
+    /**
+     * @ORM\Column(name="depreciation_year_accounting", type="integer", nullable=true)
+     */
+    private ?int $depreciationYearAccounting;
+    /**
+     * @ORM\Column(name="depreciation_increased_year_accounting", type="integer", nullable=true)
+     */
+    private ?int $depreciationIncreasedYearAccounting;
     /**
      * @ORM\Column(name="note", type="text", nullable=true)
      */
@@ -166,7 +178,10 @@ class Asset
         $this->depreciationGroupAccounting = $request->depreciationGroupAccounting;
         $this->entryPriceAccounting = $request->entryPriceAccounting;
         $this->increasedEntryPriceAccounting = $request->increasedPriceAccounting;
+        $this->increaseDateAccounting = $request->increaseDateAccounting;
         $this->depreciatedAmountAccounting = $request->depreciatedAmountAccounting;
+        $this->depreciationYearAccounting = $request->depreciationYearAccounting;
+        $this->depreciationIncreasedYearAccounting = $request->depreciationIncreasedYearAccounting;
         $this->invoiceNumber = $request->invoiceNumber;
         $this->variableSymbol = $request->variableSymbol;
         $this->entryDate = $request->entryDate;
@@ -214,7 +229,7 @@ class Asset
         return $this->increasedEntryPriceTax;
     }
 
-    public function getIncreaseDate(): ?\DateTimeInterface
+    public function getIncreaseDateTax(): ?\DateTimeInterface
     {
         return $this->increaseDate;
     }
@@ -232,6 +247,11 @@ class Asset
     public function getIncresedEntryPriceAccounting(): ?float
     {
         return $this->increasedEntryPriceAccounting;
+    }
+
+    public function getIncreaseDateAccounting(): ?\DateTimeInterface
+    {
+        return $this->increaseDateAccounting;
     }
 
     public function getDepreciatedAmountAccounting(): ?float
@@ -252,6 +272,16 @@ class Asset
     public function getDepreciationIncreasedYearTax(): ?int
     {
         return $this->depreciationIncreasedYearTax;
+    }
+
+    public function getDepreciationYearAccounting(): ?int
+    {
+        return $this->depreciationYearAccounting;
+    }
+
+    public function getDepreciationIncreasedYearAccounting(): ?int
+    {
+        return $this->depreciationIncreasedYearAccounting;
     }
 
     public function isOnlyTax(): bool

@@ -6,6 +6,9 @@
 
     {form createAssetForm}
         <div class="create-asset-form">
+            <div class="form-errors mt-3" n:ifcontent>
+                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+            </div>
             <div class="row mb-1">
                 <div class="col-12 col-lg-6">
                     <div class="card">
@@ -14,18 +17,19 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="form-errors mt-3" n:ifcontent>
-                                    <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetTypeSelect">Typ</label>
                                         <select name="type" class="form-select" id="assetTypeSelect">
                                             <option value="0">Vyberte...</option>
                                             {foreach $assetTypes as $type}
-                                                <option value="{$type->getId()}" data-code="{$type->getCode()}">{$type->getName()}</option>
+                                                <option
+                                                    value="{$type->getId()}"
+                                                    data-code="{$type->getCode()}"
+                                                    data-next-inventory-number="{$nextInventoryNumbers[$type->getId()]}"
+                                                >
+                                                    {$type->getName()}
+                                                </option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError type}</small>
@@ -344,13 +348,34 @@
                                             <small class="form-error" n:ifcontent>{inputError entry_price_accounting}</small>
                                         </div>
                                     </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="assetDepreciationYearAccounting">Rok odpisu</label>
+                                            <input n:name="depreciation_year_accounting" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationYearAccounting" min="0" max="100">
+                                            <small class="form-error" n:ifcontent>{inputError depreciation_year_accounting}</small>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <div class="form-group">
                                             <label for="assetIncreasedPriceAccounting">Účetní zvýšená vstupní cena <small>(nepovinné)</small></label>
                                             <input n:name="increased_price_accounting" type="number" step="0.01" class="form-control" id="assetIncreasedPriceAccounting" min="0" max="1000000000">
                                             <small class="form-error" n:ifcontent>{inputError increased_price_accounting}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        <div class="form-group">
+                                            <label for="assetIncreaseDateAccounting">Datum zvýšení VC <small>(nepovinné)</small></label>
+                                            <input n:name="increase_date_accounting" type="date" class="form-control" id="assetIncreaseDateAccounting">
+                                            <small class="form-error" n:ifcontent>{inputError increase_date_accounting}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="assetDepreciationIncreasedYearAccounting">Rok odp. ze zvýš. VC <small>(nepovinné)</small></label>
+                                            <input n:name="depreciation_increased_year_accounting" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationIncreasedYearAccounting" min="0" max="100">
+                                            <small class="form-error" n:ifcontent>{inputError depreciation_increased_year_accounting}</small>
                                         </div>
                                     </div>
                                 </div>

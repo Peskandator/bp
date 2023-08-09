@@ -163,9 +163,9 @@ $(document).ready(function(){
 
     function checkOnlyTaxCheckbox(checkBox) {
         if (checkBox.prop("checked") === true) {
-            $(`.js-only-tax-false`).show();
-        } else {
             $(`.js-only-tax-false`).hide();
+        } else {
+            $(`.js-only-tax-false`).show();
         }
     }
 
@@ -300,9 +300,17 @@ $(document).ready(function(){
         }
     }
 
-    $('#assetTypeSelect').change(function(){
-        let typeCode = parseInt($('#assetTypeSelect').find(':selected').attr('data-code'));
+    let typeSelect = $('#assetTypeSelect');
+    typeSelect.change(function(){
+        let selectedOption = typeSelect.find(':selected');
 
+        let nextInventoryNumber = parseInt(selectedOption.attr('data-next-inventory-number'));
+        if (nextInventoryNumber) {
+            $('#assetInventoryNumber').val(nextInventoryNumber);
+
+        }
+
+        let typeCode = parseInt(selectedOption.attr('data-code'));
         let onlyTaxCheckbox = $('#jsOnlyTaxCheckbox');
         let taxContent = $('.js-tax-content');
         let accountingContent = $('.js-accounting-content');
@@ -332,6 +340,7 @@ $(document).ready(function(){
         if (currentYear >= year) {
             let depreciationYear = currentYear - year + 1;
             $('#assetDepreciationYear').val(depreciationYear);
+            $('#assetDepreciationYearAccounting').val(depreciationYear);
         }
     });
 
@@ -343,6 +352,17 @@ $(document).ready(function(){
         if (currentYear >= year) {
             let increaseYear = currentYear - year + 1;
             $('#assetDepreciationIncreasedYear').val(increaseYear);
+        }
+    });
+
+    $('#assetIncreaseDateAccounting').change(function(){
+        let val = $(this).val();
+
+        let year = val.substring(0, 4);
+
+        if (currentYear >= year) {
+            let increaseYear = currentYear - year + 1;
+            $('#assetDepreciationIncreasedYearAccounting').val(increaseYear);
         }
     });
 

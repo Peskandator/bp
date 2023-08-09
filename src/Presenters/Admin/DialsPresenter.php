@@ -687,12 +687,14 @@ final class DialsPresenter extends BaseAdminPresenter
         ;
         $form
             ->addInteger('series', 'Číselná řada')
-            ->addRule($form::MAX_LENGTH, 'Maximální délka číselné řady je 8 čísel')
+            ->addRule($form::MAX_LENGTH, 'Maximální délka číselné řady je 8 čísel',8)
+            ->addRule($form::MIN, 'Minimální číselná řada je 1', 1)
             ->setRequired(true)
         ;
         $form
             ->addInteger('step', 'Krok')
-            ->addRule($form::MAX_LENGTH, 'Maximální délka číselné řady je 8 čísel')
+            ->addRule($form::MAX_LENGTH, 'Maximální délka kroku řady je 8 čísel', 8)
+            ->addRule($form::MIN, 'Minimální krok je 1', 1)
             ->setRequired(true)
         ;
         $form->addSubmit('send', 'Uložit');
@@ -707,10 +709,10 @@ final class DialsPresenter extends BaseAdminPresenter
             $entity = $assetType->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
 
-            if ($values->step * 10 > $values->series) {
-                $form->addError('Krok musí být alespoň 10x menší než číselná řada');
-                return;
-            }
+//            if ($values->step * 10 > $values->series) {
+//                $form->addError('Krok musí být alespoň 10x menší než číselná řada');
+//                return;
+//            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
