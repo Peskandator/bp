@@ -282,7 +282,7 @@ class AssetFormFactory
             $values->disposal_date = $this->changeToDateFormat($values->disposal_date);
             $today = new \DateTimeImmutable('today');
 
-            if (!$this->isInventoryNumberAvailable($currentEntity, $values->inventory_number)){
+            if (!$this->isInventoryNumberAvailable($currentEntity, $values->inventory_number) && !$editing){
                 $form['inventory_number']->addError('Majetek s tímto inventárním číslem již existuje');
                 $form->addError('Majetek s tímto inventárním číslem již existuje');
                 return;
@@ -445,10 +445,11 @@ class AssetFormFactory
                     $form->getPresenter()->redirect(':Admin:Assets:default');
                 }
                 $this->editAssetAction->__invoke($currentEntity, $asset, $request);
+                $form->getPresenter()->flashMessage('Majetek byl úspěšně upraven.', FlashMessageType::SUCCESS);
             } else {
                 $this->createAssetAction->__invoke($currentEntity, $request);
+                $form->getPresenter()->flashMessage('Majetek byl úspěšně přidán.', FlashMessageType::SUCCESS);
             }
-            $form->getPresenter()->flashMessage('Majetek byl úspěšně přidán.', FlashMessageType::SUCCESS);
             $form->getPresenter()->redirect(':Admin:Assets:default');
         };
 
@@ -458,24 +459,17 @@ class AssetFormFactory
     public function fillInForm(Form $form, Asset $asset): Form
     {
         $form->setDefaults([
-            'type' => $asset->getAssetType()->getId(),
             'name' => $asset->getName(),
             'inventory_number' => $asset->getInventoryNumber(),
             'producer' => $asset->getProducer(),
-            'category' => $this->getEntityId($asset->getCategory()),
-            'acquisition' => $this->getEntityId($asset->getAcquisition()),
-            'disposal' => $this->getEntityId($asset->getDisposal()),
-            'place' => $this->getEntityId($asset->getPlace()),
             'units' => $asset->getUnits(),
             'only_tax' => $asset->isOnlyTax(),
-            'groupTax' => $this->getEntityId($asset->getDepreciationGroupTax()),
             'entry_price_tax' => $asset->getEntryPriceTax(),
             'increased_price_tax' => $asset->getIncreasedEntryPriceTax(),
             'increase_date' => $this->getDefaultDateValue($asset->getIncreaseDateTax()),
             'depreciated_amount_tax' => $asset->getDepreciatedAmountTax(),
             'depreciation_year_tax' => $asset->getDepreciationYearTax(),
             'depreciation_increased_year_tax' => $asset->getDepreciationIncreasedYearTax(),
-            'groupAccounting' => $this->getEntityId($asset->getDepreciationGroupAccounting()),
             'entry_price_accounting' => $asset->getEntryPriceAccounting(),
             'increased_price_accounting' => $asset->getIncreasedEntryPriceAccounting(),
             'increase_date_accounting' => $this->getDefaultDateValue($asset->getIncreaseDateAccounting()),
@@ -503,7 +497,7 @@ class AssetFormFactory
 
     protected function getDefaultDateValue(?\DateTimeInterface $date): string
     {
-        return $date === null ? '' : $date->format('d. m. Y');
+        return $date === null ? '' : $date->format('Y-m-d');
     }
 
     protected function getCollectionForSelectArray(array $array): array
@@ -521,11 +515,16 @@ class AssetFormFactory
     {
         $items = [];
         foreach ($collection as $item) {
-            $items[$item->getId()] = $item->getCode() . ' ' . $item->getName();
+            $items[$item->getId()] = $this->createSelectOptionFromItem($item);
         }
         $items[0] = 'Vyberte ...';
 
         return $items;
+    }
+
+    protected function createSelectOptionFromItem($item): string
+    {
+        return $item->getCode() . ' ' . $item->getName();
     }
 
     protected function changeToDateFormat(?string $dateTime): ?\DateTimeInterface

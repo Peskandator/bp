@@ -130,12 +130,12 @@
                                             <span class="disposal-code-text-{$disposalId} js-edit-text js-text-{$disposalId}">{$disposal->getCode()}</span>
                                             {if !$disposal->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="number" class="disposal-code-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getCode()}" min="7" max="999">
+                                                    <input type="number" class="disposal-code-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getCode()}" min="1" max="999">
                                                 </div>
                                             {/if}
                                         </td>
                                         <td>
-                                            <div class="form-check disposal-depreciable-text-{$disposalId} js-edit-text js-text-{$disposalId}">
+                                            <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" disabled checked="" style="margin-top: 10px">
                                             </div>
                                         </td>
@@ -181,7 +181,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="acquisitionCode">Kód</label>
-                                    <input n:name="code" type="number" class="form-control" id="acquisitionCode" min="7" max="999">
+                                    <input n:name="code" type="number" class="form-control" id="acquisitionCode" min="1" max="999">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
                                 </div>
                             </div>

@@ -6,7 +6,6 @@ namespace App\Presenters\Admin;
 use App\Entity\Asset;
 use App\Entity\AssetType;
 use App\Majetek\Forms\AssetFormFactory;
-use App\Majetek\ORM\AssetRepository;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
 use App\Utils\EnumerableSorter;

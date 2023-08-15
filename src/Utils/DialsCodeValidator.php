@@ -61,11 +61,11 @@ class DialsCodeValidator
         }
 
         if (!$this->validateCode($code)) {
-            return 'Kód musí být v rozmezí 7-999';
+            return 'Kód musí být v rozmezí 1-999';
         }
 
         // defaults
-        if ($code < 7) {
+        if ($code < 1) {
             return 'Zadaný kód je již obsazen';
         }
 

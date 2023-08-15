@@ -256,6 +256,10 @@ $(document).ready(function(){
         calculateResidualPriceTax();
     });
 
+    if (entryPriceTaxInput.length > 0) {
+        calculateResidualPriceTax();
+    }
+
     function calculateResidualPriceTax() {
         let entryPrice = entryPriceTaxInput.val();
         let increasedPrice = increasedPriceTaxInput.val();
@@ -291,6 +295,9 @@ $(document).ready(function(){
         calculateResidualPriceAccounting();
     });
 
+    if (entryPriceAccountingInput.length > 0) {
+        calculateResidualPriceAccounting();
+    }
     function calculateResidualPriceAccounting() {
         let entryPrice = entryPriceAccountingInput.val();
         let increasedPrice = increasedPriceAccountingInput.val();

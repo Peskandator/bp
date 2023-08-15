@@ -27,6 +27,7 @@
                                                     value="{$type->getId()}"
                                                     data-code="{$type->getCode()}"
                                                     data-next-inventory-number="{$nextInventoryNumbers[$type->getId()]}"
+                                                    {if $asset->getAssetType()->getId() === $type->getId()}selected{/if}
                                                 >
                                                     {$type->getName()}
                                                 </option>
@@ -57,7 +58,13 @@
                                         <select name="category" class="form-select" id="assetCategorySelect">
                                             <option value="0">Vyberte...</option>
                                             {foreach $categories as $category}
-                                                <option value="{$category->getId()}" data-group-id="{if $category->getDepreciationGroup()}{$category->getDepreciationGroup()->getId()}{/if}">{$category->getCode()} - {$category->getName()} - {$category->getAccountAsset()}</option>
+                                                <option
+                                                    value="{$category->getId()}"
+                                                    data-group-id="{if $category->getDepreciationGroup()}{$category->getDepreciationGroup()->getId()}{/if}"
+                                                    {if $asset->getCategory()->getId() === $category->getId()}selected{/if}
+                                                >
+                                                    {$category->getCode()} - {$category->getName()} - {$category->getAccountAsset()}
+                                                </option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError category}</small>
@@ -85,7 +92,14 @@
                                         <select name="location" class="form-select" id="assetLocationSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $locations as $location}
-                                                <option value="{$location->getId()}" id="locationOption{$location->getId()}" data-location-id="{$location->getId()}">{$location->getCode()} - {$location->getName()}</option>
+                                                <option
+                                                    value="{$location->getId()}"
+                                                    id="locationOption{$location->getId()}"
+                                                    data-location-id="{$location->getId()}"
+                                                    {if $asset->getLocation() && $asset->getLocation()->getId() === $location->getId()}selected{/if}
+                                                >
+                                                    {$location->getCode()} - {$location->getName()}
+                                                </option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError location}</small>
@@ -97,7 +111,14 @@
                                         <select name="place" class="form-select" id="assetPlaceSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $places as $place}
-                                                <option value="{$place->getId()}" data-location-id="{$place->getLocation()->getId()}" class="place-option">{$place->getCode()} - {$place->getName()}</option>
+                                                <option
+                                                    value="{$place->getId()}"
+                                                    data-location-id="{$place->getLocation()->getId()}"
+                                                    class="place-option"
+                                                    {if $asset->getPlace() && $asset->getPlace()->getId() === $place->getId()}selected{/if}
+                                                >
+                                                    {$place->getCode()} - {$place->getName()}
+                                                </option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError place}</small>
@@ -127,10 +148,16 @@
                                         <select name="acquisition" class="form-select" id="assetAcquisitionSelect">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $acquisitions as $acquisition}
-                                                <option value="{$acquisition->getId()}" data-code="{$acquisition->getCode()}">{$acquisition->getCode()} - {$acquisition->getName()}</option>
+                                                <option
+                                                    value="{$acquisition->getId()}"
+                                                    data-code="{$acquisition->getCode()}"
+                                                    {if $asset->getAcquisition() && $asset->getAcquisition()->getId() === $acquisition->getId()}selected{/if}
+                                                >
+                                                    {$acquisition->getCode()} - {$acquisition->getName()}
+                                                </option>
                                             {/foreach}
                                         </select>
-                                        <small class="form-error" n:ifcontent>{inputError category}</small>
+                                        <small class="form-error" n:ifcontent>{inputError acquisition}</small>
                                     </div>
                                 </div>
                             </div>
@@ -157,7 +184,12 @@
                                         <select name="disposal" class="form-select" id="assetDisposal">
                                             <option value="0">Vyberte ...</option>
                                             {foreach $disposals as $disposal}
-                                                <option value="{$disposal->getId()}">{$disposal->getCode()} - {$disposal->getName()}</option>
+                                                <option
+                                                    value="{$disposal->getId()}"
+                                                    {if $asset->getDisposal() && $asset->getDisposal()->getId() === $disposal->getId()}selected{/if}
+                                                >
+                                                    {$disposal->getCode()} - {$disposal->getName()}
+                                                </option>
                                             {/foreach}
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError disposal}</small>
@@ -204,10 +236,10 @@
                                                     data-rate-first="{$group->getRateFirstYear()}"
                                                     data-rate="{$group->getRate()}"
                                                     data-rate-increased="{$group->getRateIncreasedPrice()}"
-                                                    data-method-text="{$group->getMethodText()}"
                                                     data-years="{$group->getYears()}"
                                                     data-months="{$group->getMonths()}"
                                                     data-coeff="{if $group->isCoefficient()}1{else}0{/if}"
+                                                    {if $asset->getDepreciationGroupTax() && $asset->getDepreciationGroupTax()->getId() === $group->getId()}selected{/if}
                                                 >
                                                     {$group->getFullName()}
                                                 </option>
@@ -217,9 +249,27 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
+
+                                    {var $valueYears = 0}
+                                    {var $valueIsYears = true}
+                                    {if $asset->getDepreciationGroupTax()}
+                                        {if $asset->getDepreciationGroupTax()->getYears() !== null}
+                                            {var $valueYears = $asset->getDepreciationGroupTax()->getYears()}
+                                        {else}
+                                            {var $valueYears = $asset->getDepreciationGroupTax()->getMonths()}
+                                            {var $valueIsYears = false}
+                                        {/if}
+                                    {/if}
+
                                     <div class="form-group">
-                                        <label for="assetGroupTaxYearsMonths">Počet <span id="assetGroupTaxYearsText">let</span><span id="assetGroupTaxMonthsText" style="display: none">měsíců</span></label>
-                                        <input type="number" class="form-control" id="assetGroupTaxYearsMonths" value="" disabled>
+                                        <label for="assetGroupTaxYearsMonths">Počet <span id="assetGroupTaxYearsText" {if !$valueIsYears}style="display: none"{/if}>let</span><span id="assetGroupTaxMonthsText" {if $valueIsYears}style="display: none"{/if}>měsíců</span></label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="assetGroupTaxYearsMonths"
+                                            disabled
+                                            value="{$valueYears}"
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -231,7 +281,13 @@
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
-                                        <input type="number" class="form-control" id="assetGroupTax1" value="" disabled>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="assetGroupTax1"
+                                            value="{if $asset->getDepreciationGroupTax()}{$asset->getDepreciationGroupTax()->getRateFirstYear()}{/if}"
+                                            disabled
+                                        >
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -240,7 +296,13 @@
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
-                                        <input type="number" class="form-control" id="assetGroupTax2" value="" disabled>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="assetGroupTax2"
+                                            value="{if $asset->getDepreciationGroupTax()}{$asset->getDepreciationGroupTax()->getRate()}{/if}"
+                                            disabled
+                                        >
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -249,7 +311,13 @@
                                             <span class="assetGroupTaxPerc">%</span>
                                             <span class="assetGroupTaxKoef" style="display: none">koef.</span>
                                         </label>
-                                        <input type="number" class="form-control" id="assetGroupTax3" value="" disabled>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="assetGroupTax3"
+                                            value="{if $asset->getDepreciationGroupTax()}{$asset->getDepreciationGroupTax()->getRateIncreasedPrice()}{/if}"
+                                            disabled
+                                        >
                                     </div>
                                 </div>
                             </div>
@@ -333,7 +401,12 @@
                                             <select name="group_accounting" class="form-select" id="assetGroupAccountingSelect">
                                                 <option value="0">Vyberte ...</option>
                                                 {foreach $depreciationGroupsAccounting as $group}
-                                                    <option value="{$group->getId()}" data-method-text="{$group->getMethodText()}">{$group->getFullName()}</option>
+                                                    <option
+                                                        value="{$group->getId()}"
+                                                        {if $asset->getDepreciationGroupAccounting() && $asset->getDepreciationGroupAccounting()->getId() === $group->getId()}selected{/if}
+                                                    >
+                                                        {$group->getFullName()}
+                                                    </option>
                                                 {/foreach}
                                             </select>
                                             <small class="form-error" n:ifcontent>{inputError group_accounting}</small>

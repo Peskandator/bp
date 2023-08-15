@@ -263,7 +263,6 @@ final class DialsPresenter extends BaseAdminPresenter
 
         $form
             ->addCheckbox('is_disposal', 'Způsob vyřazení')
-            ->setRequired(true)
         ;
 
         $form->addSubmit('send', 'Přidat');
