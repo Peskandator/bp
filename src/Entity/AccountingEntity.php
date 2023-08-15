@@ -57,6 +57,10 @@ class AccountingEntity
      */
     private Collection $acquisitions;
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Disposal", mappedBy="entity")
+     */
+    private Collection $disposals;
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\DepreciationGroup", mappedBy="entity")
      */
     private Collection $depreciationGroups;
@@ -81,6 +85,7 @@ class AccountingEntity
         $this->entityUsers = new ArrayCollection();
         $this->locations = new ArrayCollection();
         $this->acquisitions = new ArrayCollection();
+        $this->disposals = new ArrayCollection();
         $this->assetTypes = new ArrayCollection();
         $this->assets = new ArrayCollection();
         $this->depreciationGroups = new ArrayCollection();
@@ -152,51 +157,20 @@ class AccountingEntity
         return $this->locations;
     }
 
-    public function getAcquisitionsAndDisposals(): Collection
+    public function getAcquisitions(): Collection
     {
         return $this->acquisitions;
     }
 
-
-    public function getAcquisitions(): Collection
-    {
-        $returnArr = [];
-        $acquisitions = $this->acquisitions;
-
-        /**
-         * @var Acquisition $acquisition
-         */
-        foreach ($acquisitions as $acquisition) {
-            if (!$acquisition->isDisposal()) {
-                $returnArr[] = $acquisition;
-            }
-        }
-
-        return new ArrayCollection($returnArr);
-    }
-
     public function getDisposals(): Collection
     {
-        $returnArr = [];
-        $acquisitions = $this->acquisitions;
-
-        /**
-         * @var Acquisition $acquisition
-         */
-        foreach ($acquisitions as $acquisition) {
-            if ($acquisition->isDisposal()) {
-                $returnArr[] = $acquisition;
-            }
-        }
-
-        return new ArrayCollection($returnArr);
+        return $this->disposals;
     }
 
     public function getCategories(): Collection
     {
         return $this->categories;
     }
-
 
     public function getDepreciationGroups(): Collection
     {

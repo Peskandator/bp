@@ -41,12 +41,40 @@ class DialsCodeValidator
             return 'Zadaný kód je již obsazen';
         }
 
-        $acquisitions = $entity->getAcquisitionsAndDisposals();
+        $acquisitions = $entity->getAcquisitions();
         /**
          * @var Acquisition $acquisition
          */
         foreach ($acquisitions as $acquisition) {
             if ($code === $acquisition->getCode()) {
+                return 'Zadaný kód je již obsazen';
+            }
+        }
+
+        return '';
+    }
+
+    public function isDisposalValid(AccountingEntity $entity, ?int $code, ?int $currentCode = null): string
+    {
+        if ($code === $currentCode || !$code) {
+            return '';
+        }
+
+        if (!$this->validateCode($code)) {
+            return 'Kód musí být v rozmezí 7-999';
+        }
+
+        // defaults
+        if ($code < 7) {
+            return 'Zadaný kód je již obsazen';
+        }
+
+        $disposals = $entity->getDisposals();
+        /**
+         * @var Acquisition $acquisition
+         */
+        foreach ($disposals as $disposal) {
+            if ($code === $disposal->getCode()) {
                 return 'Zadaný kód je již obsazen';
             }
         }

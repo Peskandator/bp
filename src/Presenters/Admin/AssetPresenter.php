@@ -6,38 +6,34 @@ namespace App\Presenters\Admin;
 use App\Entity\Asset;
 use App\Entity\AssetType;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Majetek\ORM\AssetRepository;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
 use App\Utils\EnumerableSorter;
 use Nette\Application\UI\Form;
 
-final class AssetsPresenter extends BaseAdminPresenter
+final class AssetPresenter extends BaseAdminPresenter
 {
+    private AssetFormFactory $assetFormFactory;
     private AcquisitionsProvider $acquisitionsProvider;
     private EnumerableSorter $enumerableSorter;
-    private AssetFormFactory $assetFormFactory;
 
     public function __construct(
+        AssetFormFactory $assetFormFactory,
         AcquisitionsProvider $acquisitionsProvider,
         EnumerableSorter $enumerableSorter,
-        AssetFormFactory $assetFormFactory
     )
     {
         parent::__construct();
+        $this->assetFormFactory = $assetFormFactory;
         $this->acquisitionsProvider = $acquisitionsProvider;
         $this->enumerableSorter = $enumerableSorter;
-        $this->assetFormFactory = $assetFormFactory;
     }
 
-    public function actionDefault(?int $view = null): void
+    public function actionDefault(int $assetId): void
     {
-        $assets = $this->getFilteredAssets($view);;
-        $this->template->assets = $assets;
-        $this->template->activeTab = $view;
-    }
-
-    public function actionCreate(): void
-    {
+        $asset = $this->findAssetById($assetId);
+        $this->template->asset = $asset;
         $this->template->depreciationGroupsTax = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $this->template->depreciationGroupsAccounting = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getAccountingDepreciationGroups()->toArray());
         $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
@@ -50,9 +46,11 @@ final class AssetsPresenter extends BaseAdminPresenter
         $this->template->nextInventoryNumbers = $this->getNextNumberForAssetTypes($assetTypes);
     }
 
-    protected function createComponentCreateAssetForm(): Form
+    protected function createComponentEditAssetForm(): Form
     {
-        $form = $this->assetFormFactory->create($this->currentEntity, false);
+        $asset = $this->template->asset;
+        $form = $this->assetFormFactory->create($this->currentEntity, true, $asset);
+        $this->assetFormFactory->fillInForm($form, $asset);
         return $form;
     }
 
@@ -98,25 +96,5 @@ final class AssetsPresenter extends BaseAdminPresenter
             }
         }
         return true;
-    }
-
-    protected function getFilteredAssets(?int $view): array
-    {
-        $assets = $this->currentEntity->getAssets();
-        $filteredAssets = [];
-
-        if ($view !== null && $view < 5 && $view > 0) {
-            /**
-             * @var Asset $asset
-             */
-            foreach ($assets as $asset) {
-                if ($asset->getAssetType()->getCode() === $view) {
-                    $filteredAssets[] = $asset;
-                }
-            }
-            return $filteredAssets;
-        }
-
-        return $assets->toArray();
     }
 }

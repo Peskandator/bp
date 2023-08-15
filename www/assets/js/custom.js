@@ -9,12 +9,24 @@ $(document).ready(function(){
         let acquisitionId = $(this).attr('data-acquisition-id');
         let selectedName = $(`.acquisition-name-` + acquisitionId).val();
         let selectedCode = $(`.acquisition-code-` + acquisitionId).val();
-        let isDisposal = $(`.acquisition-disposal-` + acquisitionId)[0].checked;
-        if (isDisposal === true) {
-            $(`.form-acquisition-disposal`).prop("checked", true)
-        }
+
+        $(`.form-acquisition-disposal`).prop("checked", false)
 
         $(`.form-acquisition-id`).val(acquisitionId);
+        $(`.form-acquisition-name`).val(selectedName);
+        $(`.form-acquisition-code`).val(selectedCode);
+        $(`.edit-acquisition-form`).submit();
+    });
+
+    $(`.edit-disposal-button`).click(function (event) {
+        event.preventDefault();
+        let disposalId = $(this).attr('data-disposal-id');
+        let selectedName = $(`.disposal-name-` + disposalId).val();
+        let selectedCode = $(`.disposal-code-` + disposalId).val();
+
+        $(`.form-acquisition-disposal`).prop("checked", true)
+
+        $(`.form-acquisition-id`).val(disposalId);
         $(`.form-acquisition-name`).val(selectedName);
         $(`.form-acquisition-code`).val(selectedCode);
         $(`.edit-acquisition-form`).submit();

@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="acquisition")
+ * @ORM\Table(name="disposal")
  */
-class Acquisition
+class Disposal
 {
     /**
      * @ORM\Id()
@@ -25,14 +25,14 @@ class Acquisition
      */
     private ?int $code;
     /**
+     * @ORM\Column(name="is_default", type="boolean")
+     */
+    private bool $isDefault;
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="locations")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=true)
      */
     private ?AccountingEntity $entity;
-    /**
-     * @ORM\Column(name="is_default", type="boolean")
-     */
-    private bool $isDefault;
 
     public function __construct(
         AccountingEntity $entity,

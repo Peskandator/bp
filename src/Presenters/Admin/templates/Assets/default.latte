@@ -2,10 +2,29 @@
 
 {block content}
 
-    <H1>Přehled majetků</H1>
+<h1>Přehled majetků</h1>
 
-{*    TODO: Záložky - Vše Dlouhodobý Krátkodobý *}
-
+<div class="row mb-3">
+    <div class="col-12">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link {if $activeTab !== 1 && $activeTab !== 2 && $activeTab !== 3 && $activeTab !== 4}active{/if}" n:href=":Admin:Assets:default">Vše</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {if $activeTab === 1}active{/if}" n:href=":Admin:Assets:default, 1">Odpisované</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {if $activeTab === 2}active{/if}" n:href=":Admin:Assets:default, 2">Neodpisované</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {if $activeTab === 3}active{/if}" n:href=":Admin:Assets:default, 3">Drobné</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {if $activeTab === 4}active{/if}" n:href=":Admin:Assets:default, 4">Leasingy</a>
+            </li>
+        </ul>
+    </div>
+</div>
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -61,7 +80,7 @@
                                 {$asset->getInventoryNumber()}
                             </td>
                             <td>
-                                {$asset->getName()}
+                                <a n:href=":Admin:Asset:default, $asset->getId()">{$asset->getName()}</a>
                             </td>
                             <td>
                                 {$asset->getEntryDate()->format(('j.n.Y'))}

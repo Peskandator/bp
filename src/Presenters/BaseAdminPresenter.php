@@ -5,8 +5,10 @@ namespace App\Presenters;
 use App\Components\AdminMenu\AdminMenu;
 use App\Components\AdminMenu\AdminMenuFactoryInterface;
 use App\Entity\AccountingEntity;
+use App\Entity\Asset;
 use App\Entity\User;
 use App\Majetek\ORM\AccountingEntityRepository;
+use App\Majetek\ORM\AssetRepository;
 use App\Utils\CurrentUser;
 use App\Utils\FlashMessageType;
 use Nette\Application\Attributes\Persistent;
@@ -20,12 +22,15 @@ abstract class BaseAdminPresenter extends Presenter
     private AccountingEntityRepository $entityRepository;
     public AccountingEntity $currentEntity;
     private AdminMenuFactoryInterface $adminMenuFactory;
+    private AssetRepository $assetRepository;
 
 
     public function injectBaseDeps(
-        AccountingEntityRepository $entityRepository
+        AccountingEntityRepository $entityRepository,
+        AssetRepository $assetRepository
     ) {
         $this->entityRepository = $entityRepository;
+        $this->assetRepository = $assetRepository;
     }
 
     public function injectAdminMenuFactory(
@@ -113,5 +118,28 @@ abstract class BaseAdminPresenter extends Presenter
         if (!$currentUser->isEntityAdmin($currentEntity)) {
             $this->addNoPermissionError();
         }
+    }
+
+    public function findAssetById(int $assetId): Asset
+    {
+        if (!$this->currentEntity) {
+            $this->addNoPermissionError();
+        }
+
+        $asset = $this->assetRepository->find($assetId);
+
+        if (!$asset) {
+            $this->flashMessage(
+                'Majetek neexistuje',
+                FlashMessageType::ERROR
+            );
+            $this->redirect(':Admin:Assets:default');
+        }
+
+        if ($asset->getEntity()->getId() !== $this->currentEntity->getId()) {
+            $this->addNoPermissionError();
+        }
+
+        return $asset;
     }
 }

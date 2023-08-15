@@ -84,13 +84,13 @@
                                         </td>
                                         <td>
                                             <div class="form-check acquisition-depreciable-text-{$acquisitionId} js-edit-text js-text-{$acquisitionId}">
-                                                <input class="form-check-input" type="checkbox" disabled {if $acquisition->isDisposal()}checked=""{/if} style="margin-top: 10px">
+                                                <input class="form-check-input" type="checkbox" disabled style="margin-top: 10px">
                                             </div>
 
                                             <div class="form-check">
                                                 <input style="display: none; margin-top: 10px"
                                                        class="form-check-input acquisition-disposal-{$acquisitionId} js-edit-input js-input-{$acquisitionId}"
-                                                       type="checkbox" {if $acquisition->isDisposal()}checked=""{/if}
+                                                       type="checkbox" checked=""
                                                 >
                                             </div>
                                         </td>
@@ -105,6 +105,51 @@
                                                        data-bs-target="#deleteAcquisitionModal"
                                                        data-record-name="{$acquisition->getName()}"
                                                        data-record-id={$acquisition->getId()}
+                                                    ></i>
+                                                {else}
+                                                    {* TODO: DODĚLAT HOVNO*}
+                                                    <i class="fas fa-solid fa-pencil-slash icon"></i>
+                                                    <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
+                                                {/if}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                                {foreach $disposals as $disposal}
+                                    {var $disposalId = strval($disposal->getId())}
+                                    <tr>
+                                        <td>
+                                            <span class="disposal-name-text-{$disposalId} js-edit-text js-text-{$disposalId}">{$disposal->getName()}</span>
+                                            {if !$disposal->isDefault()}
+                                                <div class="form-group">
+                                                    <input type="text" class="disposal-name-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getName()}">
+                                                </div>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            <span class="disposal-code-text-{$disposalId} js-edit-text js-text-{$disposalId}">{$disposal->getCode()}</span>
+                                            {if !$disposal->isDefault()}
+                                                <div class="form-group">
+                                                    <input type="number" class="disposal-code-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getCode()}" min="7" max="999">
+                                                </div>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            <div class="form-check disposal-depreciable-text-{$disposalId} js-edit-text js-text-{$disposalId}">
+                                                <input class="form-check-input" type="checkbox" disabled checked="" style="margin-top: 10px">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
+                                                {if !$disposal->isDefault()}
+                                                    <button class="edit-disposal-button btn-primary btn btn-sm js-edit-input" style="display: none" data-disposal-id="{$disposal->getId()}">OK</button>
+                                                    <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$disposal->getId()}"></i>
+                                                    <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
+                                                       title="Odstranit"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#deleteAcquisitionModal"
+                                                       data-record-name="{$disposal->getName()}"
+                                                       data-record-id={$disposal->getId()}
                                                     ></i>
                                                 {else}
                                                     {* TODO: DODĚLAT HOVNO*}

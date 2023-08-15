@@ -6,6 +6,7 @@ use App\Entity\Acquisition;
 use App\Entity\AssetType;
 use App\Entity\Category;
 use App\Entity\DepreciationGroup;
+use App\Entity\Disposal;
 use App\Entity\Place;
 
 class CreateAssetRequest
@@ -17,7 +18,7 @@ class CreateAssetRequest
         public ?string $producer,
         public Category $category,
         public ?Acquisition $acquisition,
-        public ?Acquisition $disposal,
+        public ?Disposal $disposal,
         public ?Place $place,
         public ?int $units,
         public bool $onlyTax,

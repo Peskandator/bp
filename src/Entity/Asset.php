@@ -131,13 +131,13 @@ class Asset
      */
     private ?Acquisition $acquisition;
     /**
-     * @ORM\ManyToOne(targetEntity="Acquisition")
+     * @ORM\ManyToOne(targetEntity="Disposal")
      * @ORM\JoinColumn(name="disposal_id", referencedColumnName="id", nullable=true)
      */
-    private ?Acquisition $disposal;
+    private ?Disposal $disposal;
     /**
      * @ORM\ManyToOne(targetEntity="Place")
-     * @ORM\JoinColumn(name="acquisition_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="place_id", referencedColumnName="id", nullable=true)
      */
     private ?Place $place;
     /**
@@ -157,7 +157,21 @@ class Asset
         CreateAssetRequest $request
     )
     {
+        $this->updateFromRequest($request);
         $this->entity = $entity;
+        $this->isDisposed = false;
+        $this->note = $request->note;
+    }
+
+    public function update(CreateAssetRequest $request): void
+    {
+        $this->updateFromRequest($request);
+        $this->isDisposed = false;
+        $this->note = $request->note;
+    }
+
+    protected function updateFromRequest(CreateAssetRequest $request)
+    {
         $this->assetType = $request->type;
         $this->name = $request->name;
         $this->inventoryNumber = $request->inventoryNumber;
@@ -186,12 +200,6 @@ class Asset
         $this->variableSymbol = $request->variableSymbol;
         $this->entryDate = $request->entryDate;
         $this->disposalDate = $request->disposalDate;
-        $this->isDisposed = false;
-        $this->note = $request->note;
-    }
-
-    public function update(): void
-    {
     }
 
     public function getId(): int
@@ -244,7 +252,7 @@ class Asset
         return $this->entryPriceAccounting;
     }
 
-    public function getIncresedEntryPriceAccounting(): ?float
+    public function getIncreasedEntryPriceAccounting(): ?float
     {
         return $this->increasedEntryPriceAccounting;
     }
@@ -338,7 +346,7 @@ class Asset
         return $this->acquisition;
     }
 
-    public function getDisposal(): ?Acquisition
+    public function getDisposal(): ?Disposal
     {
         return $this->disposal;
     }

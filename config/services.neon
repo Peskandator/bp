@@ -18,10 +18,11 @@ services:
     - App\Majetek\ORM\EntityUserRepository
     - App\Majetek\ORM\LocationRepository
     - App\Majetek\ORM\AcquisitionRepository
+    - App\Majetek\ORM\DisposalRepository
     - App\Majetek\ORM\PlaceRepository
     - App\Majetek\ORM\CategoryRepository
     - App\Majetek\ORM\DepreciationGroupRepository
-    - App\Majetek\ORM\AssetTypeRepository
+
 
     - App\Majetek\Action\CreateEntityAction
     - App\Majetek\Action\EditEntityAction
@@ -32,6 +33,7 @@ services:
     - App\Majetek\Action\AddAcquisitionAction
     - App\Majetek\Action\AddPlaceAction
     - App\Majetek\Action\EditAcquisitionAction
+    - App\Majetek\Action\EditDisposalAction
     - App\Majetek\Action\EditLocationAction
     - App\Majetek\Action\EditPlaceAction
     - App\Majetek\Action\DeleteAcquisitionAction

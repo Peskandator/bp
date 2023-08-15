@@ -1,2 +1,13 @@
 services:
+    - App\Majetek\Forms\AssetFormFactory
+
+    - App\Majetek\ORM\AssetTypeRepository
+    - App\Majetek\ORM\AssetRepository
+
     - App\Majetek\Action\CreateAssetAction
+    - App\Majetek\Action\EditAssetAction
+
+
+
+
+

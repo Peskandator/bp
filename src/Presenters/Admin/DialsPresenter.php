@@ -21,6 +21,7 @@ use App\Majetek\Action\EditAcquisitionAction;
 use App\Majetek\Action\EditAssetTypeAction;
 use App\Majetek\Action\EditCategoryAction;
 use App\Majetek\Action\EditDepreciationGroupAction;
+use App\Majetek\Action\EditDisposalAction;
 use App\Majetek\Action\EditLocationAction;
 use App\Majetek\Action\EditPlaceAction;
 use App\Majetek\Enums\DepreciationMethod;
@@ -28,6 +29,7 @@ use App\Majetek\ORM\AcquisitionRepository;
 use App\Majetek\ORM\AssetTypeRepository;
 use App\Majetek\ORM\CategoryRepository;
 use App\Majetek\ORM\DepreciationGroupRepository;
+use App\Majetek\ORM\DisposalRepository;
 use App\Majetek\ORM\LocationRepository;
 use App\Majetek\ORM\PlaceRepository;
 use App\Majetek\Requests\CreateCategoryRequest;
@@ -67,6 +69,8 @@ final class DialsPresenter extends BaseAdminPresenter
     private EditDepreciationGroupAction $editDepreciationGroupAction;
     private EditCategoryAction $editCategoryAction;
     private EnumerableSorter $enumerableSorter;
+    private DisposalRepository $disposalRepository;
+    private EditDisposalAction $editDisposalAction;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -93,7 +97,9 @@ final class DialsPresenter extends BaseAdminPresenter
         AddDepreciationGroupAction $addDepreciationGroupAction,
         EditDepreciationGroupAction $editDepreciationGroupAction,
         EditCategoryAction $editCategoryAction,
-        EnumerableSorter $enumerableSorter
+        EnumerableSorter $enumerableSorter,
+        DisposalRepository $disposalRepository,
+        EditDisposalAction $editDisposalAction
     )
     {
         parent::__construct();
@@ -122,6 +128,8 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->editDepreciationGroupAction = $editDepreciationGroupAction;
         $this->editCategoryAction = $editCategoryAction;
         $this->enumerableSorter = $enumerableSorter;
+        $this->disposalRepository = $disposalRepository;
+        $this->editDisposalAction = $editDisposalAction;
     }
 
     public function actionLocations(): void
@@ -137,9 +145,13 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionAcquisitions(): void
     {
-        $defaultAcquisitionsIds = $this->acquisitionsProvider->provideDefaultAcquisitionsIds();
-        $this->template->defaultAcquisitionsIds = $defaultAcquisitionsIds;
-        $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAllAcquisitions($this->currentEntity));
+        $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
+        $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
+    }
+
+    protected function getHighestIdFromAcquisitions(array $acquisitions) {
+
+
     }
 
     public function actionAssetTypes(): void
@@ -257,7 +269,12 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send', 'Přidat');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $validationMsg = $this->dialsCodeValidator->isAcquisitionValid($this->currentEntity, $values->code);
+            if ($values->is_disposal) {
+                $validationMsg = $this->dialsCodeValidator->isDisposalValid($this->currentEntity, $values->code);
+            } else {
+                $validationMsg = $this->dialsCodeValidator->isAcquisitionValid($this->currentEntity, $values->code);
+            }
+
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
@@ -296,17 +313,30 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
-            $acquisition = $this->acquisitionRepository->find((int)$values->id);
+            if ($values->is_disposal) {
+                $disposal = $this->disposalRepository->find((int)$values->id);
+                if (!$disposal) {
+                    $form->addError('Záznam nebyl nalezen.');
+                    $this->flashMessage('Záznam nebyl nalezen.', FlashMessageType::ERROR);
+                    return;
+                }
+                $entity = $disposal->getEntity();
+                $form = $this->checkAccessToElementsEntity($form, $entity);
 
-            if (!$acquisition) {
-                $form->addError('Záznam nebyl nalezen.');
-                $this->flashMessage('Záznam nebyl nalezen.', FlashMessageType::ERROR);
-                return;
+                $validationMsg = $this->dialsCodeValidator->isDisposalValid($entity, $values->code, $disposal->getCode());
+            } else {
+                $acquisition = $this->acquisitionRepository->find((int)$values->id);
+                if (!$acquisition) {
+                    $form->addError('Záznam nebyl nalezen.');
+                    $this->flashMessage('Záznam nebyl nalezen.', FlashMessageType::ERROR);
+                    return;
+                }
+                $entity = $acquisition->getEntity();
+                $form = $this->checkAccessToElementsEntity($form, $entity);
+
+                $validationMsg = $this->dialsCodeValidator->isAcquisitionValid($entity, $values->code, $acquisition->getCode());
             }
-            $entity = $acquisition->getEntity();
-            $form = $this->checkAccessToElementsEntity($form, $entity);
 
-            $validationMsg = $this->dialsCodeValidator->isAcquisitionValid($entity, $values->code, $acquisition->getCode());
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
@@ -315,8 +345,14 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $acquisition = $this->acquisitionRepository->find((int)$values->id);
-            $this->editAcquisitionAction->__invoke($acquisition, $values->name, $values->code, $values->is_disposal);
+            if ($values->is_disposal) {
+                $disposal = $this->disposalRepository->find((int)$values->id);
+                $this->editDisposalAction->__invoke($disposal, $values->name, $values->code);
+
+            } else {
+                $acquisition = $this->acquisitionRepository->find((int)$values->id);
+                $this->editAcquisitionAction->__invoke($acquisition, $values->name, $values->code);
+            }
             $this->flashMessage('Záznam byl upraven.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };

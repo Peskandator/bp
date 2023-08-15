@@ -4,9 +4,10 @@ namespace App\Majetek\Action;
 
 use App\Entity\AccountingEntity;
 use App\Entity\Acquisition;
+use App\Entity\Disposal;
 use Doctrine\ORM\EntityManagerInterface;
 
-class EditAcquisitionAction
+class EditDisposalAction
 {
     private EntityManagerInterface $entityManager;
 
@@ -16,9 +17,9 @@ class EditAcquisitionAction
         $this->entityManager = $entityManager;
     }
 
-    public function __invoke(Acquisition $acquisition, string $name, int $code): void
+    public function __invoke(Disposal $disposal, string $name, int $code): void
     {
-        $acquisition->update($name, $code);
+        $disposal->update($name, $code);
         $this->entityManager->flush();
     }
 }

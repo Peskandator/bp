@@ -3,10 +3,11 @@
 namespace App\Majetek\Action;
 
 use App\Entity\AccountingEntity;
-use App\Entity\Acquisition;
+use App\Entity\Asset;
+use App\Majetek\Requests\CreateAssetRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
-class EditAcquisitionAction
+class EditAssetAction
 {
     private EntityManagerInterface $entityManager;
 
@@ -16,9 +17,9 @@ class EditAcquisitionAction
         $this->entityManager = $entityManager;
     }
 
-    public function __invoke(Acquisition $acquisition, string $name, int $code): void
+    public function __invoke(AccountingEntity $entity, Asset $asset, CreateAssetRequest $request): void
     {
-        $acquisition->update($name, $code);
+        $asset->update($request);
         $this->entityManager->flush();
     }
 }
