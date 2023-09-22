@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
 use App\Majetek\Requests\CreateDepreciationGroupRequest;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -59,6 +61,14 @@ class DepreciationGroup
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
      */
     private AccountingEntity $entity;
+    /**
+     * @ORM\OneToMany(targetEntity="DepreciationTax", mappedBy="asset")
+     */
+    private Collection $depreciationsTax;
+    /**
+     * @ORM\OneToMany(targetEntity="DepreciationAccounting", mappedBy="asset")
+     */
+    private Collection $depreciationsAccounting;
 
 
     public function __construct(
@@ -83,6 +93,8 @@ class DepreciationGroup
         $this->rateFirstYear = $rateFirstYear;
         $this->rate = $rate;
         $this->rateIncreasedPrice = $rateIncreasedPrice;
+        $this->depreciationsTax = new ArrayCollection();
+        $this->depreciationsAccounting = new ArrayCollection();
     }
 
 
@@ -173,5 +185,27 @@ class DepreciationGroup
     {
         $methodNames = DepreciationMethod::NAMES;
         return $this->getGroup() . $this->getPrefix() . ' - ' . $methodNames[$this->getMethod()];
+    }
+
+    public function getTaxDepreciations(): Collection
+    {
+        return $this->depreciationsTax;
+    }
+
+    public function getAccountingDepreciations(): Collection
+    {
+        return $this->depreciationsAccounting;
+    }
+
+    public function addTaxDepreciation(DepreciationTax $depreciation): void
+    {
+        $depreciations = $this->getTaxDepreciations();
+        $depreciations->add($depreciation);
+    }
+
+    public function addAccountingDepreciation(DepreciationAccounting $depreciation): void
+    {
+        $depreciations = $this->getAccountingDepreciations();
+        $depreciations->add($depreciation);
     }
 }

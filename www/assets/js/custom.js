@@ -193,10 +193,10 @@ $(document).ready(function(){
 
     let assetGroupTaxSelect = $('#assetGroupTaxSelect');
     assetGroupTaxSelect.change(function(){
-        changeDepreicationGroup();
+        changeDepreciationGroup();
     });
 
-    function changeDepreicationGroup(){
+    function changeDepreciationGroup(){
         let selectedOption = assetGroupTaxSelect.find(':selected');
 
         let rateFirstYear = selectedOption.attr('data-rate-first');
@@ -237,7 +237,7 @@ $(document).ready(function(){
             // var value = $('#assetGroupTaxSelect').find(":selected").val();
             // if (value === 0 || value === '0') {
                 assetGroupTaxSelect.val(groupId);
-                changeDepreicationGroup();
+            changeDepreciationGroup();
             // }
         }
     });
@@ -320,17 +320,24 @@ $(document).ready(function(){
     }
 
     let typeSelect = $('#assetTypeSelect');
+    changeAssetTypeSelect();
+
     typeSelect.change(function(){
+        changeAssetTypeSelect();
+    });
+
+    function changeAssetTypeSelect() {
         let selectedOption = typeSelect.find(':selected');
 
         let nextInventoryNumber = parseInt(selectedOption.attr('data-next-inventory-number'));
         if (nextInventoryNumber) {
             $('#assetInventoryNumber').val(nextInventoryNumber);
-
         }
 
         let typeCode = parseInt(selectedOption.attr('data-code'));
         let onlyTaxCheckbox = $('#jsOnlyTaxCheckbox');
+        let onlyTaxCheckboxLabel = $('#only-tax-label');
+        let onlyTaxCheckboxLabelSmall = $('#only-tax-label-small');
         let taxContent = $('.js-tax-content');
         let accountingContent = $('.js-accounting-content');
 
@@ -338,18 +345,23 @@ $(document).ready(function(){
             if (typeCode === 2 || typeCode === 4) {
                 taxContent.hide();
                 accountingContent.hide();
-
+                onlyTaxCheckboxLabelSmall.hide();
             } else if (typeCode === 3) {
                 taxContent.hide();
                 accountingContent.show();
-                onlyTaxCheckbox.hide();
+                onlyTaxCheckbox.show();
+                onlyTaxCheckboxLabel.hide()
+                onlyTaxCheckboxLabelSmall.show();
             } else {
                 taxContent.show();
                 accountingContent.show();
                 onlyTaxCheckbox.show();
+                onlyTaxCheckboxLabel.show()
+                onlyTaxCheckboxLabelSmall.hide();
             }
         }
-    });
+    }
+
     let currentYear = new Date().getFullYear();
     $('#assetEntryDate').change(function(){
         let val = $(this).val();
@@ -360,28 +372,6 @@ $(document).ready(function(){
             let depreciationYear = currentYear - year + 1;
             $('#assetDepreciationYear').val(depreciationYear);
             $('#assetDepreciationYearAccounting').val(depreciationYear);
-        }
-    });
-
-    $('#assetIncreaseDateTax').change(function(){
-        let val = $(this).val();
-
-        let year = val.substring(0, 4);
-
-        if (currentYear >= year) {
-            let increaseYear = currentYear - year + 1;
-            $('#assetDepreciationIncreasedYear').val(increaseYear);
-        }
-    });
-
-    $('#assetIncreaseDateAccounting').change(function(){
-        let val = $(this).val();
-
-        let year = val.substring(0, 4);
-
-        if (currentYear >= year) {
-            let increaseYear = currentYear - year + 1;
-            $('#assetDepreciationIncreasedYearAccounting').val(increaseYear);
         }
     });
 

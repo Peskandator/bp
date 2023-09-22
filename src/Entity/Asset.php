@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Requests\CreateAssetRequest;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -95,17 +96,9 @@ class Asset
      */
     private ?int $depreciationYearTax;
     /**
-     * @ORM\Column(name="depreciation_increased_year_tax", type="integer", nullable=true)
-     */
-    private ?int $depreciationIncreasedYearTax;
-    /**
      * @ORM\Column(name="depreciation_year_accounting", type="integer", nullable=true)
      */
     private ?int $depreciationYearAccounting;
-    /**
-     * @ORM\Column(name="depreciation_increased_year_accounting", type="integer", nullable=true)
-     */
-    private ?int $depreciationIncreasedYearAccounting;
     /**
      * @ORM\Column(name="note", type="text", nullable=true)
      */
@@ -150,7 +143,14 @@ class Asset
      * @ORM\JoinColumn(name="depreciation_group_accounting", referencedColumnName="id", nullable=true)
      */
     private ?DepreciationGroup $depreciationGroupAccounting;
-
+    /**
+     * @ORM\OneToMany(targetEntity="DepreciationTax", mappedBy="asset")
+     */
+    private Collection $depreciationsTax;
+    /**
+     * @ORM\OneToMany(targetEntity="DepreciationAccounting", mappedBy="asset")
+     */
+    private Collection $depreciationsAccounting;
 
     public function __construct(
         AccountingEntity $entity,
@@ -161,6 +161,8 @@ class Asset
         $this->entity = $entity;
         $this->isDisposed = false;
         $this->note = $request->note;
+        $this->depreciationsTax = new ArrayCollection();
+        $this->depreciationsAccounting = new ArrayCollection();
     }
 
     public function update(CreateAssetRequest $request): void
@@ -188,14 +190,12 @@ class Asset
         $this->increaseDate = $request->increaseDate;
         $this->depreciatedAmountTax = $request->depreciatedAmountTax;
         $this->depreciationYearTax = $request->depreciationYearTax;
-        $this->depreciationIncreasedYearTax = $request->depreciationIncreasedYearTax;
         $this->depreciationGroupAccounting = $request->depreciationGroupAccounting;
         $this->entryPriceAccounting = $request->entryPriceAccounting;
         $this->increasedEntryPriceAccounting = $request->increasedPriceAccounting;
         $this->increaseDateAccounting = $request->increaseDateAccounting;
         $this->depreciatedAmountAccounting = $request->depreciatedAmountAccounting;
         $this->depreciationYearAccounting = $request->depreciationYearAccounting;
-        $this->depreciationIncreasedYearAccounting = $request->depreciationIncreasedYearAccounting;
         $this->invoiceNumber = $request->invoiceNumber;
         $this->variableSymbol = $request->variableSymbol;
         $this->entryDate = $request->entryDate;
@@ -237,6 +237,17 @@ class Asset
         return $this->increasedEntryPriceTax;
     }
 
+    public function getCorrectEntryPriceTax(): ?float
+    {
+        $increasedPrice = $this->increasedEntryPriceTax;
+        $entryPrice = $this->entryPriceTax;
+        if ($increasedPrice !== null) {
+            return $increasedPrice;
+        }
+
+        return $entryPrice;
+    }
+
     public function getIncreaseDateTax(): ?\DateTimeInterface
     {
         return $this->increaseDate;
@@ -255,6 +266,17 @@ class Asset
     public function getIncreasedEntryPriceAccounting(): ?float
     {
         return $this->increasedEntryPriceAccounting;
+    }
+
+    public function getCorrectEntryPriceAccounting(): ?float
+    {
+        $increasedPrice = $this->increasedEntryPriceAccounting;
+        $entryPrice = $this->entryPriceAccounting;
+        if ($increasedPrice !== null) {
+            return $increasedPrice;
+        }
+
+        return $entryPrice;
     }
 
     public function getIncreaseDateAccounting(): ?\DateTimeInterface
@@ -277,19 +299,9 @@ class Asset
         return $this->depreciationYearTax;
     }
 
-    public function getDepreciationIncreasedYearTax(): ?int
-    {
-        return $this->depreciationIncreasedYearTax;
-    }
-
     public function getDepreciationYearAccounting(): ?int
     {
         return $this->depreciationYearAccounting;
-    }
-
-    public function getDepreciationIncreasedYearAccounting(): ?int
-    {
-        return $this->depreciationIncreasedYearAccounting;
     }
 
     public function isOnlyTax(): bool
@@ -388,5 +400,47 @@ class Asset
     public function getNote(): ?string
     {
         return $this->note;
+    }
+
+    public function hasTaxDepreciations(): bool
+    {
+        $typeCode = $this->getAssetType()->getCode();
+        if ($typeCode === 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function hasAccountingDepreciations(): bool
+    {
+        $typeCode = $this->getAssetType()->getCode();
+        if ($typeCode === 1 || $typeCode === 3) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getTaxDepreciations(): Collection
+    {
+        return $this->depreciationsTax;
+    }
+
+    public function getAccountingDepreciations(): Collection
+    {
+        return $this->depreciationsAccounting;
+    }
+
+    public function addTaxDepreciation(DepreciationTax $depreciation): void
+    {
+        $depreciations = $this->getTaxDepreciations();
+        $depreciations->add($depreciation);
+    }
+
+    public function addAccountingDepreciation(DepreciationAccounting $depreciation): void
+    {
+        $depreciations = $this->getAccountingDepreciations();
+        $depreciations->add($depreciation);
     }
 }
