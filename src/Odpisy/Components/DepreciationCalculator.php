@@ -48,13 +48,15 @@ class DepreciationCalculator
         $totalDepreciationYears = $group->getYears();
         $entryPrice = $asset->getEntryPriceTax();
         $correctEntryPrice = $asset->getCorrectEntryPriceTax();
-        $residualPrice = $correctEntryPrice;
+        $depreciatedAmount = $asset->getDepreciatedAmountTax();
+        $residualPrice = null;
 
-        while ($depreciationYear !== ($totalDepreciationYears + 1)) {
-            if ($depreciationYear > $totalDepreciationYears || ($disposalYear && $year > $disposalYear)) {
-                $this->entityManager->flush();
-
-                return;
+        while (true) {
+            if ($disposalYear && $year > $disposalYear) {
+                break;
+            }
+            if ($depreciationYear > ($totalDepreciationYears + 1) && $residualPrice !== 0) {
+                break;
             }
             if ($depreciationYear === 0) {
                 $year++;
@@ -62,9 +64,11 @@ class DepreciationCalculator
                 continue;
             }
 
+            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
             $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateTax());
             $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice);
-            $residualPrice = $residualPrice - $depreciationAmount;
+            $depreciatedAmount += $depreciationAmount;
+            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
 
             $depreciation = new DepreciationTax(
                 $asset,
@@ -73,7 +77,7 @@ class DepreciationCalculator
                 $depreciationYear,
                 $depreciationAmount,
                 100,
-                $depreciationAmount,
+                $depreciatedAmount,
                 $residualPrice,
                 true,
                 $rate
@@ -86,6 +90,7 @@ class DepreciationCalculator
             $year++;
             $depreciationYear++;
         }
+        $this->entityManager->flush();
     }
 
     public function createDepreciationPlanAccounting(Asset $asset): void
@@ -109,12 +114,15 @@ class DepreciationCalculator
         $totalDepreciationYears = $group->getYears();
         $entryPrice = $asset->getEntryPriceAccounting();
         $correctEntryPrice = $asset->getCorrectEntryPriceAccounting();
-        $residualPrice = $correctEntryPrice;
+        $depreciatedAmount = $asset->getDepreciatedAmountAccounting();
+        $residualPrice = null;
 
-        while ($depreciationYear !== ($totalDepreciationYears + 1)) {
-            if ($depreciationYear > $totalDepreciationYears || ($disposalYear && $year > $disposalYear)) {
-                $this->entityManager->flush();
-                return;
+        while (true) {
+            if ($disposalYear && $year > $disposalYear) {
+                break;
+            }
+            if ($depreciationYear > ($totalDepreciationYears + 1) && ($residualPrice !== 0 && $asset->getIncreasedEntryPriceAccounting())) {
+                break;
             }
             if ($depreciationYear === 0) {
                 $year++;
@@ -122,12 +130,13 @@ class DepreciationCalculator
                 continue;
             }
 
+            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
             $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateAccounting());
             $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice);
-            $residualPrice = $residualPrice - $depreciationAmount;
+            $depreciatedAmount += $depreciationAmount;
+            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
 
             $depreciation = new DepreciationAccounting(
-
             );
             $depreciation->update
             (
@@ -137,7 +146,7 @@ class DepreciationCalculator
                 $depreciationYear,
                 $depreciationAmount,
                 100,
-                $depreciationAmount,
+                $depreciatedAmount,
                 $residualPrice,
                 true,
                 $rate
@@ -167,6 +176,15 @@ class DepreciationCalculator
             $group->addAccountingDepreciation($copiedAccountingDepreciation);
         }
         $this->entityManager->flush();
+    }
+
+    protected function getResidualPrice(float $entryPrice, float $correctEntryPrice, float $depreciatedAmount, int $depreciationYear): float
+    {
+        $residualPriceBase = $correctEntryPrice;
+        if ($depreciationYear === 1) {
+            $residualPriceBase = $entryPrice;
+        }
+        return $residualPriceBase - $depreciatedAmount;
     }
 
     protected function getDepreciationAmount(int $method, int $depreciationYear, float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice): float
