@@ -80,7 +80,7 @@
                                 {$asset->getInventoryNumber()}
                             </td>
                             <td>
-                                <a n:href=":Admin:Asset:default, $asset->getId()">{$asset->getName()}</a>
+                                <a n:href=":Admin:Asset:default, $asset->getId()" class="clickable-link">{$asset->getName()}</a>
                             </td>
                             <td>
                                 {$asset->getEntryDate()->format(('j.n.Y'))}

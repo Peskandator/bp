@@ -43,6 +43,25 @@ final class AssetPresenter extends BaseAdminPresenter
         $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
         $this->template->assetTypes = $assetTypes;
         $this->template->nextInventoryNumbers = $this->getNextNumberForAssetTypes($assetTypes);
+
+        $this->template->activeTab = 1;
+    }
+
+    public function actionMovements(int $assetId): void
+    {
+        $asset = $this->findAssetById($assetId);
+        $this->template->asset = $asset;
+        $this->template->activeTab = 2;
+    }
+
+    public function actionDepreciations(int $assetId): void
+    {
+        $asset = $this->findAssetById($assetId);
+
+        $this->template->asset = $asset;
+        $this->template->taxDepreciations = $asset->getTaxDepreciations();
+        $this->template->accountingDepreciations = $asset->getAccountingDepreciations();
+        $this->template->activeTab = 3;
     }
 
     protected function createComponentEditAssetForm(): Form

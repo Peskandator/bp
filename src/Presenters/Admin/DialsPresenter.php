@@ -149,11 +149,6 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
     }
 
-    protected function getHighestIdFromAcquisitions(array $acquisitions) {
-
-
-    }
-
     public function actionAssetTypes(): void
     {
         $this->template->assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
@@ -163,7 +158,6 @@ final class DialsPresenter extends BaseAdminPresenter
     {
         $this->template->groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
-
     }
 
     public function actionDepreciationGroups(): void

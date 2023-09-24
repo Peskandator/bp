@@ -17,7 +17,7 @@ class EnumerableSorter
             if ($first->getCode() > $second->getCode()) {
                 return 1;
             }
-            if ($first->getCode() > $second->getCode()) {
+            if ($first->getCode() < $second->getCode()) {
                 return -1;
             };
             return 0;
@@ -32,7 +32,7 @@ class EnumerableSorter
             if ($first->getCode() > $second->getCode()) {
                 return 1;
             }
-            if ($first->getCode() > $second->getCode()) {
+            if ($first->getCode() < $second->getCode()) {
                 return -1;
             };
             return 0;

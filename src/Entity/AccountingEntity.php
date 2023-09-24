@@ -221,6 +221,21 @@ class AccountingEntity
         return $this->assets;
     }
 
+    public function getAssetsSorted(): array
+    {
+        $assets = $this->assets->toArray();
+        usort($assets, function (Asset $first, Asset $second) {
+            if ($first->getInventoryNumber() > $second->getInventoryNumber()) {
+                return 1;
+            }
+            if ($first->getInventoryNumber() < $second->getInventoryNumber()) {
+                return -1;
+            };
+            return 0;
+        });
+        return $assets;
+    }
+
     public function getPlaces(): array
     {
         $places = [];
@@ -251,5 +266,35 @@ class AccountingEntity
         }
 
         return false;
+    }
+
+    public function getTaxDepreciations(): array
+    {
+        $depreciations = [];
+        $assets = $this->getAssets();
+        /**
+         * @var Asset $asset
+         */
+        foreach ($assets as $asset) {
+            $assetDepreciations = $asset->getTaxDepreciations();
+            $depreciations = array_merge($depreciations, $assetDepreciations);
+        }
+
+        return $depreciations;
+    }
+
+    public function getAccountingDepreciations(): array
+    {
+        $depreciations = [];
+        $assets = $this->getAssets();
+        /**
+         * @var Asset $asset
+         */
+        foreach ($assets as $asset) {
+            $assetDepreciations = $asset->getAccountingDepreciations();
+            $depreciations = array_merge($depreciations, $assetDepreciations);
+        }
+
+        return $depreciations;
     }
 }

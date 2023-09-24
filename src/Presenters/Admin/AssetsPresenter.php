@@ -102,7 +102,7 @@ final class AssetsPresenter extends BaseAdminPresenter
 
     protected function getFilteredAssets(?int $view): array
     {
-        $assets = $this->currentEntity->getAssets();
+        $assets = $this->currentEntity->getAssetsSorted();
         $filteredAssets = [];
 
         if ($view !== null && $view < 5 && $view > 0) {
@@ -117,6 +117,6 @@ final class AssetsPresenter extends BaseAdminPresenter
             return $filteredAssets;
         }
 
-        return $assets->toArray();
+        return $assets;
     }
 }

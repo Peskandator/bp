@@ -56,6 +56,12 @@ class AdminMenu extends Control
             $assetsItems
         );
 
+        $depreciationsItems = $this->buildDepreciationsItems();
+        $menuItems[] = $this->createMenuSection(
+            'Odpisy',
+            $depreciationsItems
+        );
+
         $dialsItems = $this->buildDialsItems();
         $menuItems[] = $this->createMenuSection(
             'Číselníky',
@@ -70,6 +76,18 @@ class AdminMenu extends Control
         $items[] = $this->createMenuItem(
             'Přehled',
             $this->getPresenter()->lazyLink(':Admin:Assets:default'),
+            [],
+            $this->getCurrentLinkCallable()
+        );
+
+        return $items;
+    }
+
+    private function buildDepreciationsItems(): array
+    {
+        $items[] = $this->createMenuItem(
+            'Odpisy',
+            $this->getPresenter()->lazyLink(':Admin:Depreciations:default'),
             [],
             $this->getCurrentLinkCallable()
         );

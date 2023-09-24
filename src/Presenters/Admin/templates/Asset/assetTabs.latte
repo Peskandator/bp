@@ -1,0 +1,17 @@
+{define assetTabs}
+    <div class="row mb-3">
+        <div class="col-12">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link {if $activeTab === 1}active{/if}" n:href=":Admin:Asset:default, $asset->getId()">Základní údaje</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {if $activeTab === 2}active{/if}" n:href=":Admin:Asset:movements, $asset->getId()">Pohyby</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {if $activeTab === 3}active{/if}" n:href=":Admin:Asset:depreciations, $asset->getId()">Odpisy</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{/define}

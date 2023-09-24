@@ -1,2 +1,5 @@
 services:
     - App\Odpisy\Components\DepreciationCalculator
+
+    - App\Odpisy\ORM\DepreciationTaxRepository
+    - App\Odpisy\ORM\DepreciationAccountingRepository

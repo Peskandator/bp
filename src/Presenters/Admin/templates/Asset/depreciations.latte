@@ -1,0 +1,135 @@
+{layout $adminlayoutPath}
+
+{block content}
+
+<h1>Odpisy</h1>
+
+{include assetTabs from 'assetTabs.latte'}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Daňové odpisy</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive px-3 card-body">
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th>Rok</th>
+                            <th>Rok odpisu</th>
+                            <th>Sazba</th>
+                            <th>Odepsáno</th>
+                            <th>ZC</th>
+                            <th>Oprávky</th>
+                            <th>%</th>
+                            <th>Provedeno</th>
+                            <th>Provést</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach $taxDepreciations as $depreciation}
+                            <tr>
+                                <td>
+                                    {$depreciation->getYear()}
+                                </td>
+                                <td>
+                                    {$depreciation->getDepreciationYear()}
+                                </td>
+                                <td>
+                                    {$depreciation->getRate()}
+                                </td>
+                                <td>
+                                    {$depreciation->getDepreciationAmount()}
+                                </td>
+                                <td>
+                                    {$depreciation->getResidualPrice()}
+                                </td>
+                                <td>
+                                    {$depreciation->getDepreciatedAmount()}
+                                </td>
+                                <td>
+                                    {$depreciation->getPercentage()} %
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
+                                </td>
+                            </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-1">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Účetní odpisy</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive px-3 card-body">
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th>Rok</th>
+                            <th>Rok odpisu</th>
+                            <th>Sazba</th>
+                            <th>Odepsáno</th>
+                            <th>ZC</th>
+                            <th>Oprávky</th>
+                            <th>%</th>
+                            <th>Provedeno</th>
+                            <th>Provést</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach $accountingDepreciations as $depreciation}
+                            <tr>
+                                <td>
+                                    {$depreciation->getYear()}
+                                </td>
+                                <td>
+                                    {$depreciation->getDepreciationYear()}
+                                </td>
+                                <td>
+                                    {$depreciation->getRate()}
+                                </td>
+                                <td>
+                                    {$depreciation->getDepreciationAmount()}
+                                </td>
+                                <td>
+                                    {$depreciation->getResidualPrice()}
+                                </td>
+                                <td>
+                                    {$depreciation->getDepreciatedAmount()}
+                                </td>
+                                <td>
+                                    {$depreciation->getPercentage()} %
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
+                                </td>
+                            </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{/block}

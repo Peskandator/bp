@@ -163,8 +163,6 @@ class AssetFormFactory
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
-            ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
-            ->setRequired(true)
         ;
         $form
             ->addInteger('depreciation_year_tax', 'Rok odpisu')
@@ -207,9 +205,6 @@ class AssetFormFactory
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
-            ->addConditionOn($isOnlyTax, $form::EQUAL, false)
-            ->addConditionOn($typeSelect, $form::IS_IN, $accountingAllowedTypes)
-            ->setRequired(true)
         ;
         $form
             ->addInteger('depreciation_year_accounting', 'Rok odpisu')
@@ -293,9 +288,15 @@ class AssetFormFactory
                     $form->addError('Prosím vyberte daňovou odpisovou skupinu');
                 }
 
+                $depreciatedAmountTax = $values->depreciated_amount_tax;
+                if (!$depreciatedAmountTax) {
+                    $depreciatedAmountTax = 0;
+                }
+
+
+
                 $entryPriceTax = $values->entry_price_tax;
                 $increasedPriceTax = $values->increased_price_tax;
-                $depreciatedAmountTax = $values->depreciated_amount_tax;
                 $depreciatedAmountValidationTax = $entryPriceTax > $depreciatedAmountTax;
                 if (!$depreciatedAmountValidationTax && $increasedPriceTax) {
                     $depreciatedAmountValidationTax = $increasedPriceTax > $depreciatedAmountTax;
@@ -334,9 +335,13 @@ class AssetFormFactory
                     $form->addError('Prosím vyberte účetní odp. skupinu');
                 }
 
+                $depreciatedAmountAccounting = $values->depreciated_amount_accounting;
+                if (!$depreciatedAmountAccounting) {
+                    $depreciatedAmountAccounting = 0;
+                }
+
                 $entryPriceAccounting = $values->entry_price_accounting;
                 $increasedPriceAccounting = $values->increased_price_accounting;
-                $depreciatedAmountAccounting = $values->depreciated_amount_accounting;
                 $depreciatedAmountValidationAccounting = $entryPriceAccounting > $depreciatedAmountAccounting;
                 if (!$depreciatedAmountValidationAccounting && $increasedPriceAccounting) {
                     $depreciatedAmountValidationAccounting = $increasedPriceAccounting > $depreciatedAmountAccounting;

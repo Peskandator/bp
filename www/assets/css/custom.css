@@ -156,4 +156,11 @@ h6 {
     padding: 0.3rem 1rem 1.5rem;
 }
 
+.clickable-link {
+    text-decoration: none;
+}
+
+.clickable-link:hover {
+    text-decoration: underline;
+}
 
