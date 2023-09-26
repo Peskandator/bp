@@ -20,17 +20,13 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetTypeSelect">Typ</label>
-                                        <select name="type" class="form-select" id="assetTypeSelect">
-                                            <option value="0">Vyberte...</option>
-                                            {foreach $assetTypes as $type}
-                                                <option
-                                                    value="{$type->getId()}"
-                                                    data-code="{$type->getCode()}"
-                                                    data-next-inventory-number="{$nextInventoryNumbers[$type->getId()]}"
-                                                >
-                                                    {$type->getName()}
-                                                </option>
-                                            {/foreach}
+                                        <select
+                                            n:name="type"
+                                            class="form-select"
+                                            id="assetTypeSelect"
+                                            data-next-inventory-numbers-json="{$nextInventoryNumbers}"
+                                            data-codes-json="{$assetTypeCodes}"
+                                        >
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError type}</small>
                                     </div>
@@ -96,11 +92,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetPlaceSelect">Místo <small>(nepovinné)</small></label>
-                                        <select name="place" class="form-select" id="assetPlaceSelect">
-                                            <option value="0">Vyberte ...</option>
-                                            {foreach $places as $place}
-                                                <option value="{$place->getId()}" data-location-id="{$place->getLocation()->getId()}" class="place-option">{$place->getCode()} - {$place->getName()}</option>
-                                            {/foreach}
+                                        <select n:name="place" class="form-select" id="assetPlaceSelect">
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError place}</small>
                                     </div>
@@ -126,11 +118,12 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="assetAcquisitionSelect">Způsob pořízení <small>(nepovinné)</small></label>
-                                        <select name="acquisition" class="form-select" id="assetAcquisitionSelect">
-                                            <option value="0">Vyberte ...</option>
-                                            {foreach $acquisitions as $acquisition}
-                                                <option value="{$acquisition->getId()}" data-code="{$acquisition->getCode()}">{$acquisition->getCode()} - {$acquisition->getName()}</option>
-                                            {/foreach}
+                                        <select
+                                            n:name="acquisition"
+                                            class="form-select"
+                                            id="assetAcquisitionSelect"
+                                            data-codes-json="{$acquisitionCodes}"
+                                        >
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError acquisition}</small>
                                     </div>
@@ -156,11 +149,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetDisposal">Způsob vyřazení <small>(nepovinné)</small></label>
-                                        <select name="disposal" class="form-select" id="assetDisposal">
-                                            <option value="0">Vyberte ...</option>
-                                            {foreach $disposals as $disposal}
-                                                <option value="{$disposal->getId()}">{$disposal->getCode()} - {$disposal->getName()}</option>
-                                            {/foreach}
+                                        <select n:name="disposal" class="form-select" id="assetDisposal">
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError disposal}</small>
                                     </div>
@@ -197,22 +186,12 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label for="assetGroupTaxSelect">Odp. sk. a způsob</label>
-                                        <select name="group_tax" class="form-select" id="assetGroupTaxSelect">
-                                            <option value="0">Vyberte ...</option>
-                                            {foreach $depreciationGroupsTax as $group}
-                                                <option
-                                                    id="assetGroupTaxOption{$group->getId()}"
-                                                    value="{$group->getId()}"
-                                                    data-rate-first="{$group->getRateFirstYear()}"
-                                                    data-rate="{$group->getRate()}"
-                                                    data-rate-increased="{$group->getRateIncreasedPrice()}"
-                                                    data-years="{$group->getYears()}"
-                                                    data-months="{$group->getMonths()}"
-                                                    data-coeff="{if $group->isCoefficient()}1{else}0{/if}"
-                                                >
-                                                    {$group->getFullName()}
-                                                </option>
-                                            {/foreach}
+                                        <select
+                                            n:name="group_tax"
+                                            class="form-select"
+                                            id="assetGroupTaxSelect"
+                                            data-groups-info-json="{$groupsInfoJson}"
+                                        >
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError group_tax}</small>
                                     </div>
@@ -325,11 +304,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="assetGroupAccountingSelect">Odp. sk. a způsob</label>
-                                            <select name="group_accounting" class="form-select" id="assetGroupAccountingSelect">
-                                                <option value="0">Vyberte ...</option>
-                                                {foreach $depreciationGroupsAccounting as $group}
-                                                    <option value="{$group->getId()}">{$group->getFullName()}</option>
-                                                {/foreach}
+                                            <select n:name="group_accounting" class="form-select" id="assetGroupAccountingSelect">
                                             </select>
                                             <small class="form-error" n:ifcontent>{inputError group_accounting}</small>
                                         </div>

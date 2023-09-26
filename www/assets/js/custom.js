@@ -181,8 +181,12 @@ $(document).ready(function(){
         }
     }
 
-    $('#assetAcquisitionSelect').change(function(){
-        let code = parseInt($('#assetAcquisitionSelect').find(':selected').attr('data-code'));
+    const acquisitionSelect = $('#assetAcquisitionSelect');
+    const acquisitionCodeJson = acquisitionSelect.attr('data-codes-json');
+    const acquisitionCodes = jQuery.parseJSON(acquisitionCodeJson);
+    acquisitionSelect.change(function(){
+        let acquisitionId = parseInt(acquisitionSelect.find(':selected').val());
+        let code = acquisitionCodes[acquisitionId];
         if (code === 1) {
             $(`.js-invoice-content`).show();
         } else {
@@ -190,21 +194,24 @@ $(document).ready(function(){
         }
     });
 
-
     let assetGroupTaxSelect = $('#assetGroupTaxSelect');
+
+    const groupInfoJson = assetGroupTaxSelect.attr('data-groups-info-json');
+    const groupInfoObj = jQuery.parseJSON(groupInfoJson);
+
     assetGroupTaxSelect.change(function(){
         changeDepreciationGroup();
     });
 
     function changeDepreciationGroup(){
-        let selectedOption = assetGroupTaxSelect.find(':selected');
+        let groupId = assetGroupTaxSelect.find(':selected').val();
 
-        let rateFirstYear = selectedOption.attr('data-rate-first');
-        let rate = selectedOption.attr('data-rate');
-        let rateIncreasedPrice = selectedOption.attr('data-rate-increased');
-        let years = selectedOption.attr('data-years');
-        let months = selectedOption.attr('data-months');
-        let isCoeff = selectedOption.attr('data-coeff');
+        let rateFirstYear = groupInfoObj[groupId]['rate-first'];
+        let rate = groupInfoObj[groupId]['rate'];
+        let rateIncreasedPrice = groupInfoObj[groupId]['rate-increased'];
+        let years = groupInfoObj[groupId]['years'];
+        let months = groupInfoObj[groupId]['months'];
+        let isCoeff = groupInfoObj[groupId]['coeff'];
 
         if (isCoeff === '1') {
             $('.assetGroupTaxPerc').hide();
@@ -325,21 +332,25 @@ $(document).ready(function(){
     }
 
     let typeSelect = $('#assetTypeSelect');
-    changeAssetTypeSelect();
+    const assetTypeCodesJson = typeSelect.attr('data-codes-json');
+    const assetTypeCodes = jQuery.parseJSON(assetTypeCodesJson);
+    const nextInventoryNumbersJson = typeSelect.attr('data-next-inventory-numbers-json');
+    const nextInventoryNumbers = jQuery.parseJSON(nextInventoryNumbersJson);
 
     typeSelect.change(function(){
         changeAssetTypeSelect();
     });
 
+    changeAssetTypeSelect();
     function changeAssetTypeSelect() {
-        let selectedOption = typeSelect.find(':selected');
+        let assetTypeId = typeSelect.find(':selected').val();
 
-        let nextInventoryNumber = parseInt(selectedOption.attr('data-next-inventory-number'));
+        let nextInventoryNumber = parseInt(nextInventoryNumbers[assetTypeId]);
         if (nextInventoryNumber) {
             $('#assetInventoryNumber').val(nextInventoryNumber);
         }
 
-        let typeCode = parseInt(selectedOption.attr('data-code'));
+        let typeCode = parseInt(assetTypeCodes[assetTypeId]);
         let onlyTaxCheckbox = $('#jsOnlyTaxCheckbox');
         let onlyTaxCheckboxLabel = $('#only-tax-label');
         let onlyTaxCheckboxLabelSmall = $('#only-tax-label-small');
@@ -383,10 +394,10 @@ $(document).ready(function(){
 
     let placeSelect = $('#assetPlaceSelect');
     let locationSelect = $('#assetLocationSelect');
-    locationSelect.change(changeLocationSelect);
     const placesLocationsJson = locationSelect.attr('data-places-locations-json');
     const placesLocationsObj = jQuery.parseJSON(placesLocationsJson);
 
+    locationSelect.change(changeLocationSelect);
     function changeLocationSelect() {
         let locationId = parseInt(locationSelect.find(':selected').val());
         if (locationId && locationId !== 0) {

@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Entity\Acquisition;
 use App\Entity\Asset;
 use App\Entity\AssetType;
 use App\Entity\Category;
+use App\Entity\DepreciationGroup;
 use App\Entity\Place;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Presenters\BaseAdminPresenter;
@@ -44,15 +46,18 @@ final class AssetsPresenter extends BaseAdminPresenter
         $this->template->depreciationGroupsAccounting = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getAccountingDepreciationGroups()->toArray());
         $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
         $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
-        $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
         $this->template->places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
         $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
-        $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
-        $this->template->assetTypes = $assetTypes;
-        $this->template->nextInventoryNumbers = $this->getNextNumberForAssetTypes($assetTypes);
 
         $this->template->categoriesGroupsJson = $this->createCategoriesGroupsJson();
         $this->template->placesLocationsJson = $this->createPlacesLocationsJson();
+        $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
+        $this->template->assetTypes = $assetTypes;
+        $this->template->nextInventoryNumbers = $this->getNextNumberForAssetTypesJson($assetTypes);
+        $this->template->assetTypeCodes = $this->getAssetTypeCodesJson($assetTypes);
+        $this->template->acquisitionCodes = $this->getAcquisitionCodesJson();
+
+        $this->template->groupsInfoJson = $this->getGroupsInfoJson();
     }
 
     protected function createCategoriesGroupsJson(): string
@@ -97,7 +102,7 @@ final class AssetsPresenter extends BaseAdminPresenter
         return $form;
     }
 
-    protected function getNextNumberForAssetTypes(array $assetTypes): array
+    protected function getNextNumberForAssetTypesJson(array $assetTypes): string
     {
 
         $nextNumbers = [];
@@ -118,13 +123,25 @@ final class AssetsPresenter extends BaseAdminPresenter
                     $counter++;
                     continue;
                 }
-                $nextNumbers[$assetType->getId()] = $newSeriesNumber;
+                $nextNumbers[(string)$assetType->getId()] = $newSeriesNumber;
                 $numberFound = true;
             }
-
         }
 
-        return $nextNumbers;
+        return json_encode($nextNumbers);
+    }
+
+    protected function getAssetTypeCodesJson(array $assetTypes): string
+    {
+        $assetTypeCodes = [];
+        /**
+         * @var AssetType $assetType
+         */
+        foreach ($assetTypes as $assetType) {
+            $assetTypeCodes[(string)$assetType->getId()] = $assetType->getCode();
+        }
+
+        return json_encode($assetTypeCodes);
     }
 
     protected function isInventoryNumberAvailable(int $number): bool
@@ -159,5 +176,39 @@ final class AssetsPresenter extends BaseAdminPresenter
         }
 
         return $assets;
+    }
+
+    private function getAcquisitionCodesJson(): string
+    {
+        $codes = [];
+        $acquisitions = $this->currentEntity->getAcquisitions();
+
+        /**
+         * @var Acquisition $acquisition
+         */
+        foreach ($acquisitions as $acquisition) {
+            $codes[(string)$acquisition->getId()] = $acquisition->getCode();
+        }
+
+        return json_encode($codes);
+    }
+
+    private function getGroupsInfoJson(): string
+    {
+        $info = [];
+        $groups = $this->currentEntity->getDepreciationGroups();
+        /**
+         * @var DepreciationGroup $group
+         */
+        foreach ($groups as $group) {
+            $info[(string)$group->getId()]['rate-first'] = $group->getRateFirstYear();
+            $info[(string)$group->getId()]['rate'] = $group->getRate();
+            $info[(string)$group->getId()]['rate-increased'] = $group->getRateIncreasedPrice();
+            $info[(string)$group->getId()]['years'] = $group->getYears();
+            $info[(string)$group->getId()]['months'] = $group->getMonths();
+            $info[(string)$group->getId()]['coeff'] = $group->isCoefficient() ? 1 : 0;
+        }
+
+        return json_encode($info);
     }
 }
