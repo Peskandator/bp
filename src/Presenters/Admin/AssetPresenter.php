@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
-use App\Entity\Asset;
-use App\Entity\AssetType;
+use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
@@ -16,17 +15,20 @@ final class AssetPresenter extends BaseAdminPresenter
     private AssetFormFactory $assetFormFactory;
     private AcquisitionsProvider $acquisitionsProvider;
     private EnumerableSorter $enumerableSorter;
+    private AssetFormJsonGenerator $jsonGenerator;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
         AcquisitionsProvider $acquisitionsProvider,
         EnumerableSorter $enumerableSorter,
+        AssetFormJsonGenerator $jsonGenerator
     )
     {
         parent::__construct();
         $this->assetFormFactory = $assetFormFactory;
         $this->acquisitionsProvider = $acquisitionsProvider;
         $this->enumerableSorter = $enumerableSorter;
+        $this->jsonGenerator = $jsonGenerator;
     }
 
     public function actionDefault(int $assetId): void
@@ -37,12 +39,16 @@ final class AssetPresenter extends BaseAdminPresenter
         $this->template->depreciationGroupsAccounting = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getAccountingDepreciationGroups()->toArray());
         $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
         $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
-        $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
         $this->template->places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
         $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
+        $this->template->categoriesGroupsJson = $this->jsonGenerator->createCategoriesGroupsJson($this->currentEntity);
+        $this->template->placesLocationsJson = $this->jsonGenerator->createPlacesLocationsJson($this->currentEntity);
         $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
         $this->template->assetTypes = $assetTypes;
-        $this->template->nextInventoryNumbers = $this->getNextNumberForAssetTypes($assetTypes);
+        $this->template->nextInventoryNumbers = $this->jsonGenerator->getNextNumberForAssetTypesJson($this->currentEntity, $assetTypes);
+        $this->template->assetTypeCodes = $this->jsonGenerator->getAssetTypeCodesJson($this->currentEntity, $assetTypes);
+        $this->template->acquisitionCodes = $this->jsonGenerator->getAcquisitionCodesJson($this->currentEntity);
+        $this->template->groupsInfoJson = $this->jsonGenerator->getGroupsInfoJson($this->currentEntity);
 
         $this->template->activeTab = 1;
     }
@@ -70,49 +76,5 @@ final class AssetPresenter extends BaseAdminPresenter
         $form = $this->assetFormFactory->create($this->currentEntity, true, $asset);
         $this->assetFormFactory->fillInForm($form, $asset);
         return $form;
-    }
-
-    protected function getNextNumberForAssetTypes(array $assetTypes): array
-    {
-
-        $nextNumbers = [];
-
-        /**
-         * @var AssetType $assetType
-         */
-        foreach ($assetTypes as $assetType) {
-            $series = $assetType->getSeries();
-            $step = $assetType->getStep();
-            $numberFound = false;
-
-            $counter = 0;
-
-            while ($numberFound === false) {
-                $newSeriesNumber = $series + $step * $counter;
-                if (!$this->isInventoryNumberAvailable($newSeriesNumber)) {
-                    $counter++;
-                    continue;
-                }
-                $nextNumbers[$assetType->getId()] = $newSeriesNumber;
-                $numberFound = true;
-            }
-
-        }
-
-        return $nextNumbers;
-    }
-
-    protected function isInventoryNumberAvailable(int $number): bool
-    {
-        $assets = $this->currentEntity->getAssets();
-        /**
-         * @var Asset $asset
-         */
-        foreach ($assets as $asset) {
-            if ($asset->getInventoryNumber() === $number) {
-                return false;
-            }
-        }
-        return true;
     }
 }

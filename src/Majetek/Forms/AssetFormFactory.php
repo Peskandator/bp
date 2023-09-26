@@ -466,8 +466,27 @@ class AssetFormFactory
             'variable_symbol' => $asset->getVariableSymbol(),
             'entry_date' => $this->getDefaultDateValue($asset->getEntryDate()),
             'disposal_date' => $this->getDefaultDateValue($asset->getDisposalDate()),
-            'note' => $asset->getNote(),
+            'note' => $asset->getNote(),// odsud nově
+
         ]);
+
+        $locationId = $asset->getLocation() ? $asset->getLocation()->getId() : null;
+        $placeId = $asset->getPlace()?->getId();
+        $acquisitionId = $asset->getAcquisition()?->getId();
+        $disposalId = $asset->getDisposal()?->getId();
+        $groupTaxId = $asset->getDepreciationGroupTax()?->getId();
+        $groupAccountingId = $asset->getDepreciationGroupAccounting()?->getId();
+
+        $form->setValues(array(
+            'type' => $asset->getAssetType()->getId(),
+            'category' => $asset->getCategory()->getId(),
+            'location' => $locationId,
+            'place' => $placeId,
+            'acquisition' => $acquisitionId,
+            'disposal' => $disposalId,
+            'group_tax' => $groupTaxId,
+            'group_accounting' => $groupAccountingId
+        ));
 
         return $form;
     }
@@ -531,13 +550,14 @@ class AssetFormFactory
     protected function getDepreciationGroupForSelect(Collection $collection): array
     {
         $items = [];
+        $items[0] = 'Vyberte ...';
+
         /**
          * @var DepreciationGroup $item
          */
         foreach ($collection as $item) {
             $items[$item->getId()] = $item->getFullName();
         }
-        $items[0] = 'Vyberte ...';
 
         return $items;
     }

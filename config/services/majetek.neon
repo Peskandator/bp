@@ -1,13 +1,10 @@
 services:
-    - App\Majetek\Forms\AssetFormFactory
+    - App\Majetek\Components\AssetFormJsonGenerator
 
-    - App\Majetek\ORM\AssetTypeRepository
-    - App\Majetek\ORM\AssetRepository
+    - App\Majetek\Forms\AssetFormFactory
 
     - App\Majetek\Action\CreateAssetAction
     - App\Majetek\Action\EditAssetAction
 
-
-
-
-
+    - App\Majetek\ORM\AssetTypeRepository
+    - App\Majetek\ORM\AssetRepository

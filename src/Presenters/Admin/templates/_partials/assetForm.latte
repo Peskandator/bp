@@ -1,0 +1,360 @@
+{define assetForm}
+    <div class="row mb-1">
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Základní údaje</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetTypeSelect">Typ</label>
+                                <select
+                                        n:name="type"
+                                        class="form-select"
+                                        id="assetTypeSelect"
+                                        data-next-inventory-numbers-json="{$nextInventoryNumbers}"
+                                        data-codes-json="{$assetTypeCodes}"
+                                >
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError type}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetName">Název</label>
+                                <input n:name="name" type="text" class="form-control" id="assetName">
+                                <small class="form-error" n:ifcontent>{inputError name}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetInventoryNumber">Inventární číslo</label>
+                                <input n:name="inventory_number" type="number" step="1" class="form-control" id="assetInventoryNumber" min="0" max="9999999999">
+                                <small class="form-error" n:ifcontent>{inputError inventory_number}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetCategorySelect">Kategorie</label>
+                                <select
+                                        n:name="category"
+                                        class="form-select"
+                                        id="assetCategorySelect"
+                                        data-categories-groups-json="{$categoriesGroupsJson}"
+                                >
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError category}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetUnits">Počet kusů <small>(nepovinné)</small></label>
+                                <input n:name="units" type="number" step="1" class="form-control" id="assetUnits" min="0" max="100">
+                                <small class="form-error" n:ifcontent>{inputError units}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetEntryDate">Datum zařazení</label>
+                                <input n:name="entry_date" type="date" class="form-control" id="assetEntryDate">
+                                <small class="form-error" n:ifcontent>{inputError entry_date}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetLocationSelect">Středisko <small>(nepovinné)</small></label>
+                                <select
+                                        n:name="location"
+                                        class="form-select"
+                                        id="assetLocationSelect"
+                                        data-places-locations-json="{$placesLocationsJson}"
+                                >
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError location}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetPlaceSelect">Místo <small>(nepovinné)</small></label>
+                                <select n:name="place" class="form-select" id="assetPlaceSelect">
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError place}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Pořízení/Vyřazení</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetProducer">Výrobce <small>(nepovinné)</small></label>
+                                <input n:name="producer" type="text" class="form-control" id="assetProducer">
+                                <small class="form-error" n:ifcontent>{inputError producer}</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetAcquisitionSelect">Způsob pořízení <small>(nepovinné)</small></label>
+                                <select
+                                        n:name="acquisition"
+                                        class="form-select"
+                                        id="assetAcquisitionSelect"
+                                        data-codes-json="{$acquisitionCodes}"
+                                >
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError acquisition}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetInvoiceNumber">Doklad <small>(nepovinné)</small></label>
+                                <input n:name="invoice_number" type="text" class="form-control" id="assetInvoiceNumber">
+                                <small class="form-error" n:ifcontent>{inputError invoice_number}</small>
+                            </div>
+                        </div>
+                        <div class="col-6 js-invoice-content" style="display: none">
+                            <div class="form-group">
+                                <label for="assetVariableSymbol">Variabilní symbol <small>(nepovinné)</small></label>
+                                <input n:name="variable_symbol" type="number" class="form-control" id="assetVariableSymbol" min="0" max="9999999999">
+                                <small class="form-error" n:ifcontent>{inputError variable_symbol}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetDisposal">Způsob vyřazení <small>(nepovinné)</small></label>
+                                <select n:name="disposal" class="form-select" id="assetDisposal">
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError disposal}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetDisposalDate">Datum vyřazení <small>(nepovinné)</small></label>
+                                <input n:name="disposal_date" type="date" class="form-control" id="assetDisposalDate">
+                                <small class="form-error" n:ifcontent>{inputError disposal_date}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label for="assetNote">Poznámka <small>(nepovinné)</small></label>
+                                <textarea n:name="note" class="form-control" id="assetNote" rows="1"></textarea>
+                                <small class="form-error" n:ifcontent>{inputError note}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-lg-6 col-12 js-tax-content">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Daňové odpisy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetGroupTaxSelect">Odp. sk. a způsob</label>
+                                <select
+                                        n:name="group_tax"
+                                        class="form-select"
+                                        id="assetGroupTaxSelect"
+                                        data-groups-info-json="{$groupsInfoJson}"
+                                >
+                                </select>
+                                <small class="form-error" n:ifcontent>{inputError group_tax}</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetGroupTaxYearsMonths">Počet <span id="assetGroupTaxYearsText">let</span><span id="assetGroupTaxMonthsText" style="display: none">měsíců</span></label>
+                                <input type="number" class="form-control" id="assetGroupTaxYearsMonths" value="" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetGroupTax1">
+                                    Sazba 1. rok -
+                                    <span class="assetGroupTaxPerc">%</span>
+                                    <span class="assetGroupTaxKoef" style="display: none">koef.</span>
+                                </label>
+                                <input type="number" class="form-control" id="assetGroupTax1" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetGroupTax2">Sazba další r. -
+                                    <span class="assetGroupTaxPerc">%</span>
+                                    <span class="assetGroupTaxKoef" style="display: none">koef.</span>
+                                </label>
+                                <input type="number" class="form-control" id="assetGroupTax2" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetGroupTax3">Sazba zvýš. VC -
+                                    <span class="assetGroupTaxPerc">%</span>
+                                    <span class="assetGroupTaxKoef" style="display: none">koef.</span>
+                                </label>
+                                <input type="number" class="form-control" id="assetGroupTax3" value="" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetEntryPriceTax">Daň. VC</label>
+                                <input n:name="entry_price_tax" type="number" step="0.01" class="form-control" id="assetEntryPriceTax" min="0" max="1000000000">
+                                <small class="form-error" n:ifcontent>{inputError entry_price_tax}</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetDepreciationYear">Rok odpisu</label>
+                                <input n:name="depreciation_year_tax" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationYear" min="0" max="100">
+                                <small class="form-error" n:ifcontent>{inputError depreciation_year_tax}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="assetIncreasedPriceTax">Daň. zvýš. VC <small>(nepovinné)</small></label>
+                                <input n:name="increased_price_tax" type="number" step="0.01" class="form-control" id="assetIncreasedPriceTax" min="0" max="1000000000">
+                                <small class="form-error" n:ifcontent>{inputError increased_price_tax}</small>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="form-group">
+                                <label for="assetIncreaseDateTax">Datum zvýšení VC <small>(nepovinné)</small></label>
+                                <input n:name="increase_date" type="date" class="form-control" id="assetIncreaseDateTax">
+                                <small class="form-error" n:ifcontent>{inputError increase_date}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetDepreciatedAmountTax">Oprávky daňové</label>
+                                <input n:name="depreciated_amount_tax" type="number" step="0.01" class="form-control" id="assetDepreciatedAmountTax" min="0" max="1000000000">
+                                <small class="form-error" n:ifcontent>{inputError depreciated_amount_tax}</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="assetLeftAmountTax">Daňová zůstatková cena</label>
+                                <input type="number" class="form-control" id="assetLeftAmountTax" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12 js-accounting-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex">
+                        <h5>Účetní odpisy</h5>
+                        <div class="form-check" id="jsOnlyTaxCheckbox" style="margin-top: 5px; margin-left: auto; font-size: 19px; margin-right: 20px">
+                            <label class="form-check-label" for="onlyTax">
+                                <span id="only-tax-label">daňové = účetní</span>
+                                <span id="only-tax-label-small" style="display: none">Nemá účetní odpisy</span>
+                            </label>
+                            <input n:name="only_tax" class="form-check-input js-only-tax-checkbox" type="checkbox">
+                            <small class="form-error" n:ifcontent>{inputError only_tax}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="js-only-tax-false">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="assetGroupAccountingSelect">Odp. sk. a způsob</label>
+                                    <select n:name="group_accounting" class="form-select" id="assetGroupAccountingSelect">
+                                    </select>
+                                    <small class="form-error" n:ifcontent>{inputError group_accounting}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="assetEntryPriceAccounting">Účetní VC</label>
+                                    <input n:name="entry_price_accounting" type="number" step="0.01" class="form-control" id="assetEntryPriceAccounting" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError entry_price_accounting}</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="assetDepreciationYearAccounting">Rok odpisu</label>
+                                    <input n:name="depreciation_year_accounting" style="max-width: 150px" type="number" step="1" class="form-control" id="assetDepreciationYearAccounting" min="0" max="100">
+                                    <small class="form-error" n:ifcontent>{inputError depreciation_year_accounting}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="assetIncreasedPriceAccounting">Účetní zvýšená vstupní cena <small>(nepovinné)</small></label>
+                                    <input n:name="increased_price_accounting" type="number" step="0.01" class="form-control" id="assetIncreasedPriceAccounting" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError increased_price_accounting}</small>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label for="assetIncreaseDateAccounting">Datum zvýšení VC <small>(nepovinné)</small></label>
+                                    <input n:name="increase_date_accounting" type="date" class="form-control" id="assetIncreaseDateAccounting">
+                                    <small class="form-error" n:ifcontent>{inputError increase_date_accounting}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="assetDepreciatedAmountAccounting">Oprávky účetní</label>
+                                    <input n:name="depreciated_amount_accounting" type="number" step="0.01" class="form-control" id="assetDepreciatedAmountAccounting" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError depreciated_amount_accounting}</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="assetLeftAmountAccounting">Účetní zůstatková cena</label>
+                                    <input type="number" class="form-control" id="assetLeftAmountAccounting" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{/define}
