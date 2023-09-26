@@ -193,11 +193,7 @@
                             <div class="col-4 js-depreciable-true">
                                 <div class="form-group">
                                     <label for="categoryGroup">Odpisová skupina</label>
-                                    <select name="group" class="form-select" id="categoryGroup">
-                                        <option value="0">Vyberte odpisovou skupinu</option>
-                                        {foreach $groups as $group}
-                                            <option value="{$group->getId()}">{$group->getGroup()}{$group->getPrefix()} - {$group->getMethodText()} ({$group->getYears()|yearsText:$group->getMonths()})</option>
-                                        {/foreach}
+                                    <select n:name="group" class="form-select" id="categoryGroup">
                                     </select>
                                     <small class="form-error" n:ifcontent>{inputError group}</small>
                                 </div>

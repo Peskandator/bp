@@ -229,14 +229,19 @@ $(document).ready(function(){
         $('#assetGroupTax3').val(rateIncreasedPrice);
     }
 
-    $('#assetCategorySelect').change(function(){
-        let groupId = $('#assetCategorySelect').find(':selected').attr('data-group-id');
+    const categorySelect = $('#assetCategorySelect')
+    const categoriesGroupsJson = categorySelect.attr('data-categories-groups-json');
+    const categoriesGroupsObj = jQuery.parseJSON(categoriesGroupsJson);
+
+    categorySelect.change(function(){
+        let categoryId = categorySelect.find(':selected').val();
+        let groupId = categoriesGroupsObj[categoryId];
 
         if (groupId && groupId !== 0 && groupId !== '') {
             // TODO : CHANGE ONLY WHEN EDITING WITH ALERT YES!
             // var value = $('#assetGroupTaxSelect').find(":selected").val();
             // if (value === 0 || value === '0') {
-                assetGroupTaxSelect.val(groupId);
+            assetGroupTaxSelect.val(groupId);
             changeDepreciationGroup();
             // }
         }
@@ -375,12 +380,19 @@ $(document).ready(function(){
         }
     });
 
+
+    let placeSelect = $('#assetPlaceSelect');
     let locationSelect = $('#assetLocationSelect');
-    locationSelect.change(function(){
-        let locationId = parseInt(locationSelect.find(':selected').attr('data-location-id'));
+    locationSelect.change(changeLocationSelect);
+    const placesLocationsJson = locationSelect.attr('data-places-locations-json');
+    const placesLocationsObj = jQuery.parseJSON(placesLocationsJson);
+
+    function changeLocationSelect() {
+        let locationId = parseInt(locationSelect.find(':selected').val());
         if (locationId && locationId !== 0) {
-            $('.place-option').each(function() {
-                let locationIdPlace = parseInt($(this).attr('data-location-id'));
+            $(placeSelect).find("option").each(function() {
+                let placeId = parseInt($(this).val());
+                let locationIdPlace = placesLocationsObj[placeId];
                 if (locationIdPlace === 0 || locationIdPlace === locationId) {
                     $(this).show();
                 } else {
@@ -388,11 +400,12 @@ $(document).ready(function(){
                 }
             })
         } else {
-            $('.place-option').show();
+            $(placeSelect).find("option").each(function() {
+                $(this).show();
+            });
         }
-    });
+    }
 
-    let placeSelect = $('#assetPlaceSelect');
     placeSelect.change(function(){
         let locationId =  parseInt(placeSelect.find(':selected').attr('data-location-id'));
         if (locationId && locationId !== 0) {

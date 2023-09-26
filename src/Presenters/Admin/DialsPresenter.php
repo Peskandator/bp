@@ -595,11 +595,9 @@ final class DialsPresenter extends BaseAdminPresenter
             ->setDefaultValue(true)
         ;
 
-        $groups = $this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray();
-        $groupIds = $this->getDepreciationGroupsForSelect($groups);
-        $groupIds[] = 0;
+        $groupsSelect = $this->getDepreciationGroupsForSelect();
         $form
-            ->addSelect('group', 'Odpisová skupina', $groupIds)
+            ->addSelect('group', 'Odpisová skupina', $groupsSelect)
         ;
         $form
             ->addText('account_asset', 'Název')
@@ -754,17 +752,20 @@ final class DialsPresenter extends BaseAdminPresenter
         return $form;
     }
 
-    protected function getDepreciationGroupsForSelect(array $groups): array
+    protected function getDepreciationGroupsForSelect(): array
     {
-        $groupIds = [];
+        $groups = $this->currentEntity->getDepreciationGroupsWithoutAccounting();
+
+        $groupsArr = [];
+        $groupsArr[0] = 'Vyberte odpisovou skupinu';
         /**
          * @var DepreciationGroup $group
          */
         foreach ($groups as $group) {
-            $groupIds[] = $group->getId();
+            $groupsArr[$group->getId()] = $group->getFullName();
         }
 
-        return $groupIds;
+        return $groupsArr;
     }
 
     protected function createComponentAddDepreciationGroupForm(): Form

@@ -54,11 +54,12 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetCategorySelect">Kategorie</label>
-                                        <select name="category" class="form-select" id="assetCategorySelect">
-                                            <option value="0">Vyberte...</option>
-                                            {foreach $categories as $category}
-                                                <option value="{$category->getId()}" data-group-id="{if $category->getDepreciationGroup()}{$category->getDepreciationGroup()->getId()}{/if}">{$category->getCode()} - {$category->getName()} - {$category->getAccountAsset()}</option>
-                                            {/foreach}
+                                        <select
+                                            n:name="category"
+                                            class="form-select"
+                                            id="assetCategorySelect"
+                                            data-categories-groups-json="{$categoriesGroupsJson}"
+                                        >
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError category}</small>
                                     </div>
@@ -82,11 +83,12 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="assetLocationSelect">Středisko <small>(nepovinné)</small></label>
-                                        <select name="location" class="form-select" id="assetLocationSelect">
-                                            <option value="0">Vyberte ...</option>
-                                            {foreach $locations as $location}
-                                                <option value="{$location->getId()}" id="locationOption{$location->getId()}" data-location-id="{$location->getId()}">{$location->getCode()} - {$location->getName()}</option>
-                                            {/foreach}
+                                        <select
+                                            n:name="location"
+                                            class="form-select"
+                                            id="assetLocationSelect"
+                                            data-places-locations-json="{$placesLocationsJson}"
+                                        >
                                         </select>
                                         <small class="form-error" n:ifcontent>{inputError location}</small>
                                     </div>

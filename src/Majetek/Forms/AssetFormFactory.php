@@ -472,15 +472,6 @@ class AssetFormFactory
         return $form;
     }
 
-    protected function getEntityId($entity): ?int
-    {
-        if ($entity !== null) {
-            return $entity->getId();
-        }
-
-        return null;
-    }
-
     protected function getDefaultDateValue(?\DateTimeInterface $date): string
     {
         return $date === null ? '' : $date->format('Y-m-d');
@@ -500,10 +491,10 @@ class AssetFormFactory
     protected function getCollectionForSelect(Collection $collection): array
     {
         $items = [];
-        foreach ($collection as $item) {
-            $items[$item->getId()] = $this->createSelectOptionFromItem($item);
-        }
         $items[0] = 'Vyberte ...';
+        foreach ($collection as $item) {
+                $items[$item->getId()] = $this->createSelectOptionFromItem($item);
+        }
 
         return $items;
     }

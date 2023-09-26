@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Entity\Asset;
 use App\Entity\AssetType;
+use App\Entity\Category;
+use App\Entity\Place;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
@@ -48,6 +50,45 @@ final class AssetsPresenter extends BaseAdminPresenter
         $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
         $this->template->assetTypes = $assetTypes;
         $this->template->nextInventoryNumbers = $this->getNextNumberForAssetTypes($assetTypes);
+
+        $this->template->categoriesGroupsJson = $this->createCategoriesGroupsJson();
+        $this->template->placesLocationsJson = $this->createPlacesLocationsJson();
+    }
+
+    protected function createCategoriesGroupsJson(): string
+    {
+        $jsonArr = [];
+        $categories = $this->currentEntity->getCategories();
+
+        /**
+         * @var Category $category
+         */
+        foreach ($categories as $category) {
+            $group =  $category->getDepreciationGroup();
+            if ($group) {
+                $jsonArr[(string)$category->getId()] = $group->getId();
+                continue;
+            }
+            $jsonArr[$category->getId()] = '';
+        }
+
+        return json_encode($jsonArr);
+    }
+
+    protected function createPlacesLocationsJson(): string
+    {
+        $jsonArr = [];
+        $places = $this->currentEntity->getPlaces();
+
+        /**
+         * @var Place $place
+         */
+        foreach ($places as $place) {
+            $locationId = $place->getLocation()->getId();
+            $jsonArr[(string)$place->getId()] = $locationId;
+        }
+
+        return json_encode($jsonArr);
     }
 
     protected function createComponentCreateAssetForm(): Form
