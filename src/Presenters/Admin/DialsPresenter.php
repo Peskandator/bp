@@ -192,6 +192,8 @@ final class DialsPresenter extends BaseAdminPresenter
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
                 return;
             }
+
+
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -225,12 +227,19 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->addSubmit('send', 'Přidat');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) {
+            if ($values->location === 0) {
+                $form['location']->addError('Vyberte prosím středisko');
+                $this->flashMessage('Vyberte prosím středisko',FlashMessageType::ERROR);
+                return;
+            }
+
             $validationMsg = $this->dialsCodeValidator->isPlaceValid($this->currentEntity, $values->code);
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
                 return;
             }
+
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -569,6 +578,7 @@ final class DialsPresenter extends BaseAdminPresenter
     protected function getLocationsForSelect(array $locations): array
     {
         $locationIds = [];
+        $locationIds[0] = 'Vyberte středisko';
         /**
          * @var Location $location
          */
@@ -621,6 +631,7 @@ final class DialsPresenter extends BaseAdminPresenter
             if ($values->is_depreciable === true) {
                 if ($values->group === 0) {
                     $form['group']->addError('Vyberte prosím odpisovou skupinu');
+                    $this->flashMessage('Vyberte prosím odpisovou skupinu',FlashMessageType::ERROR);
                     return;
                 }
                 $group = $this->depreciationGroupRepository->find($values->group);
@@ -771,9 +782,7 @@ final class DialsPresenter extends BaseAdminPresenter
     protected function createComponentAddDepreciationGroupForm(): Form
     {
         $form = new Form;
-
-        $methodNames = DepreciationMethod::getNames();
-        $methodNames[0] = 'Vyberte ...';
+        $methodNames = DepreciationMethod::getNamesForSelect();
         $form
             ->addSelect('method', 'Způsob odpis', $methodNames)
             ->setRequired(true)
@@ -876,7 +885,7 @@ final class DialsPresenter extends BaseAdminPresenter
 
     protected function getCoeffPercentageForSelect(): array
     {
-        return [0 => 'P', 1 => 'K'];
+        return [0 => 'Procento', 1 => 'Koeficient'];
     }
 
     protected function createComponentDeleteDepreciationGroupForm(): Form

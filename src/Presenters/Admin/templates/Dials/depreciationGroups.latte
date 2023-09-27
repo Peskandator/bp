@@ -185,12 +185,7 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="groupMethod">Způsob odpisu</label>
-                                    <select name="method" class="form-select" id="groupMethod">
-                                        <option value="0">Vyberte ...</option>
-                                        {foreach $methods as $method}
-                                            <option value="{$method}">{$methodNames[$method]}</option>
-                                        {/foreach}
-                                    </select>
+                                    <select n:name="method" class="form-select" id="groupMethod"></select>
                                     <small class="form-error" n:ifcontent>{inputError method}</small>
                                 </div>
                             </div>
@@ -227,10 +222,7 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="groupCoeff">Koeficient/procento</label>
-                                    <select name="is_coefficient" class="form-select" id="groupCoeff">
-                                        <option value="0">Procento</option>
-                                        <option value="1">Koeficient</option>
-                                    </select>
+                                    <select n:name="is_coefficient" class="form-select" id="groupCoeff"></select>
                                     <small class="form-error" n:ifcontent>{inputError is_coefficient}</small>
                                 </div>
                             </div>

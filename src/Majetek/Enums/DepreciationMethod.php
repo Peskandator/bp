@@ -12,9 +12,9 @@ final class DepreciationMethod
     public const ACCOUNTING = 4;
     public const NAMES =
         [
-            1 => 'Rovnoměrné',
-            2 => 'Zrychlené',
-            3 => 'Mimořádné',
+            1 => 'Rovnoměrný',
+            2 => 'Zrychlený',
+            3 => 'Mimořádný',
             4 => 'Účetní'
         ]
     ;
@@ -40,6 +40,20 @@ final class DepreciationMethod
     public static function getNames(): array
     {
         return self::NAMES;
+    }
+
+    public static function getNamesForSelect(): array
+    {
+        $names = self::NAMES;
+        $selectArr = [];
+        $selectArr[0] = 'Vyberte...';
+
+        $selectArr[1] = $names[1];
+        $selectArr[2] = $names[2];
+        $selectArr[3] = $names[3];
+        $selectArr[4] = $names[4];
+
+        return $selectArr;
     }
 
     private function __construct()

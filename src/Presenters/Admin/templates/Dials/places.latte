@@ -128,11 +128,7 @@
                             <div class="col-5">
                                 <div class="form-group">
                                     <label for="locationSelect">Středisko</label>
-                                    <select name="location" id="locationSelect" class="form-select">
-                                        <option selected>Vyberte středisko</option>
-                                        {foreach $locations as $location}
-                                            <option value="{$location->getId()}">{$location->getCode()} - {$location->getName()}</option>
-                                        {/foreach}
+                                    <select n:name="location" id="locationSelect" class="form-select">
                                     </select>
                                     <small class="form-error" n:ifcontent>{inputError location}</small>
                                 </div>

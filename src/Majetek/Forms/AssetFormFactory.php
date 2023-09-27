@@ -499,10 +499,10 @@ class AssetFormFactory
     protected function getCollectionForSelectArray(array $array): array
     {
         $items = [];
+        $items[0] = 'Vyberte ...';
         foreach ($array as $item) {
             $items[$item->getId()] = $item->getCode() . ' ' . $item->getName();
         }
-        $items[0] = 'Vyberte ...';
 
         return $items;
     }
