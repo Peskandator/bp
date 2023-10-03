@@ -859,6 +859,16 @@ final class DialsPresenter extends BaseAdminPresenter
                 $form->addError('Může být vyplněno pouze jedno z polí "Počet let" a "Počet měsíců".');
                 $this->flashMessage('Může být vyplněno pouze jedno z polí "Počet let" a "Počet měsíců".',FlashMessageType::ERROR);
             }
+
+            $isCoefficient = $values->is_coefficient === 1;
+            if ($values->method === 1 && $isCoefficient) {
+                $form['is_coefficient']->addError('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"');
+                $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
+            }
+            if ($values->method === 2 && !$isCoefficient) {
+                $form['is_coefficient']->addError('U zrychleného způsobu odpisování musí být zvolena možnost "Koeficient"');
+                $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Koeficient"',FlashMessageType::ERROR);
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {

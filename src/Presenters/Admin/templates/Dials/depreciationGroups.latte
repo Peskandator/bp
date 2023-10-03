@@ -25,7 +25,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card js-dials-groups-page">
                 <div class="card-header">
                     <h5>Seznam odpisových skupin</h5>
                 </div>
@@ -90,7 +90,7 @@
                                     <td>
                                         <span class="group-method-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getMethodText()}</span>
                                         <div class="form-group">
-                                            <select class="group-method-{$groupId} form-select js-edit-input js-input-{$groupId}" style="display: none">
+                                            <select id="edit-group-method-select-{$groupId}" class="group-method-{$groupId} form-select js-edit-input js-input-{$groupId}" style="display: none" data-group-id="{$groupId}">
                                                 <option value="{$group->getMethod()}">{$group->getMethodText()}</option>
                                                 {foreach $methods as $method}
                                                     {if $method !== $group->getMethod()}
@@ -127,7 +127,7 @@
                                     <td>
                                         <span class="group-coeff-text-{$groupId} js-edit-text js-text-{$groupId}">{if $isCoefficient}K{else}P{/if}</span>
                                         <div class="form-group">
-                                            <select class="group-coeff-{$groupId} form-select js-edit-input js-input-{$groupId}" style="display: none">
+                                            <select class="group-coeff-{$groupId} group-coeff-select form-select js-edit-input js-input-{$groupId}" style="display: none">
                                                 {if $isCoefficient}
                                                     <option value="1">K</option>
                                                     <option value="0">P</option>
@@ -184,8 +184,8 @@
                         <div class="row px-2">
                             <div class="col-3">
                                 <div class="form-group">
-                                    <label for="groupMethod">Způsob odpisu</label>
-                                    <select n:name="method" class="form-select" id="groupMethod"></select>
+                                    <label for="groupMethodSelect">Způsob odpisu</label>
+                                    <select n:name="method" class="form-select" id="groupMethodSelect"></select>
                                     <small class="form-error" n:ifcontent>{inputError method}</small>
                                 </div>
                             </div>
@@ -221,8 +221,8 @@
                         <div class="row mb-4 px-2">
                             <div class="col-3">
                                 <div class="form-group">
-                                    <label for="groupCoeff">Koeficient/procento</label>
-                                    <select n:name="is_coefficient" class="form-select" id="groupCoeff"></select>
+                                    <label for="groupCoeffSelect">Koeficient/procento</label>
+                                    <select n:name="is_coefficient" class="form-select" id="groupCoeffSelect"></select>
                                     <small class="form-error" n:ifcontent>{inputError is_coefficient}</small>
                                 </div>
                             </div>

@@ -276,7 +276,7 @@ class AccountingEntity
          * @var Asset $asset
          */
         foreach ($assets as $asset) {
-            $assetDepreciations = $asset->getTaxDepreciations();
+            $assetDepreciations = $asset->getTaxDepreciations()->toArray();
             $depreciations = array_merge($depreciations, $assetDepreciations);
         }
 
@@ -291,7 +291,7 @@ class AccountingEntity
          * @var Asset $asset
          */
         foreach ($assets as $asset) {
-            $assetDepreciations = $asset->getAccountingDepreciations();
+            $assetDepreciations = $asset->getAccountingDepreciations()->toArray();;
             $depreciations = array_merge($depreciations, $assetDepreciations);
         }
 

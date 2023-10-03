@@ -293,8 +293,6 @@ class AssetFormFactory
                     $depreciatedAmountTax = 0;
                 }
 
-
-
                 $entryPriceTax = $values->entry_price_tax;
                 $increasedPriceTax = $values->increased_price_tax;
                 $depreciatedAmountValidationTax = $entryPriceTax > $depreciatedAmountTax;

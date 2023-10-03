@@ -127,7 +127,7 @@ class AssetFormJsonGenerator
     public function getGroupsInfoJson(AccountingEntity $entity): string
     {
         $info = [];
-        $groups = $entity->getDepreciationGroups();
+        $groups = $entity->getDepreciationGroupsWithoutAccounting();
         /**
          * @var DepreciationGroup $group
          */
