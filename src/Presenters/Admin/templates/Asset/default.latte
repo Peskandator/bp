@@ -1,12 +1,12 @@
 {layout $adminlayoutPath}
 
 {block content}
-    <h1>Editace majetku</h1>
+    <h1>Editace majetku inv. č. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
 
     {include assetTabs from 'assetTabs.latte'}
 
     {form editAssetForm}
-        <div class="asset-form js-edit-asset-page">
+        <div class="asset-form js-edit-asset-page js-asset-form">
             <div class="form-errors mt-3" n:ifcontent>
                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
             </div>

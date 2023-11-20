@@ -168,7 +168,7 @@ $(document).ready(function(){
 
     // AssetForm page
 
-    if ($(`.js-edit-asset-page`).length > 0) {
+    if ($(`.js-asset-form`).length > 0) {
 
         $(`.js-only-tax-checkbox`).each(function () {
             checkOnlyTaxCheckbox($(this));
@@ -349,9 +349,13 @@ $(document).ready(function(){
         typeSelect.change(function(){
             changeAssetTypeSelect();
         });
-
+        changeAssetTypeSelect();
         function changeAssetTypeSelect() {
             let assetTypeId = typeSelect.find(':selected').val();
+
+            if (assetTypeId === 0) {
+                return;
+            }
 
             let nextInventoryNumber = parseInt(nextInventoryNumbers[assetTypeId]);
             if (nextInventoryNumber) {
@@ -441,9 +445,11 @@ $(document).ready(function(){
             }
         });
 
-        changeAssetTypeSelect();
-        changeDepreciationGroup();
-        changeAcquisition();
+        if ($(`.js-edit-asset-page`).length > 0) {
+            changeAssetTypeSelect();
+            changeDepreciationGroup();
+            changeAcquisition();
+        }
     }
 
     // -------------- Konec majetku
@@ -466,13 +472,15 @@ $(document).ready(function(){
         }
     }
 
+    let editGroupMethodSelects = $('[id^="edit-group-method-select-"]');
+
     if ($(`.js-dials-groups-page`).length > 0) {
-        $('[id^="edit-group-method-select-"]').each(
+        editGroupMethodSelects.each(
             changeEditGroupMethodSelect
         )
     }
 
-    $('[id^="edit-group-method-select-"]').change(changeEditGroupMethodSelect);
+    editGroupMethodSelects.change(changeEditGroupMethodSelect);
     function changeEditGroupMethodSelect() {
         let groupSelect = $(this);
         let selected = parseInt(groupSelect.find(':selected').val());
@@ -491,3 +499,4 @@ $(document).ready(function(){
         }
     }
 });
+

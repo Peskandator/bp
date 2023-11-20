@@ -177,18 +177,13 @@ class AssetFormFactory
         $depreciationGroupsAccountingSelect = $this->getDepreciationGroupForSelect($depreciationGroupsAccounting);
         $form
             ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsAccountingSelect)
-            ->addConditionOn($isOnlyTax, $form::EQUAL, false)
-            ->addConditionOn($typeSelect, $form::IS_IN, $accountingAllowedTypes)
-            ->setRequired(true)
         ;
         $form
             ->addText('entry_price_accounting', 'Účetní pořizovací cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->addConditionOn($isOnlyTax, $form::EQUAL, false)
-            ->addConditionOn($typeSelect, $form::IS_IN, $accountingAllowedTypes)
-            ->setRequired(true)
+            ->setNullable()
         ;
         $form
             ->addText('increased_price_accounting', 'Zvýšená účetní pořizovací cena')
@@ -209,9 +204,7 @@ class AssetFormFactory
         $form
             ->addInteger('depreciation_year_accounting', 'Rok odpisu')
             ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
-            ->addConditionOn($isOnlyTax, $form::EQUAL, false)
-            ->addConditionOn($typeSelect, $form::IS_IN, $accountingAllowedTypes)
-            ->setRequired(true)
+            ->setNullable()
         ;
 
         // Konec boxu
@@ -242,7 +235,7 @@ class AssetFormFactory
 
         $form->addSubmit('send', $submitText);
 
-        $form->onValidate[] = function (Form $form, \stdClass $values) {
+        $form->onValidate[] = function (Form $form, \stdClass $values) use ($accountingAllowedTypes) {
             if ($values->type === 0) {
                 $form['type']->addError('Toto pole je povinné');
                 $form->addError('Typ majetku je nutné vyplnit.');
@@ -251,6 +244,21 @@ class AssetFormFactory
             if ($values->category === 0) {
                 $form['category']->addError('Toto pole je povinné');
                 $form->addError('Kategorii je nutné vyplnit.');
+            }
+
+            if (!$values->only_tax && in_array($values->type, $accountingAllowedTypes)) {
+                if ($values->group_accounting === 0) {
+                    $form['group_accounting']->addError('Toto pole je povinné');
+                    $form->addError('Odpisovou skupinu u účetních odpisů je nutné vyplnit');
+                }
+                if (!$values->entry_price_accounting) {
+                    $form['entry_price_accounting']->addError('Toto pole je povinné');
+                    $form->addError('Vstupní cenu u účetních odpisů je nutné vyplnit');
+                }
+                if (!$values->depreciation_year_accounting) {
+                    $form['depreciation_year_accounting']->addError('Toto pole je povinné');
+                    $form->addError('Rok odpisu účetních odpisů je nutné vyplnit');
+                }
             }
         };
 
@@ -272,7 +280,7 @@ class AssetFormFactory
 
             if (!$this->isInventoryNumberAvailable($currentEntity, $values->inventory_number) && !$editing){
                 $form['inventory_number']->addError('Majetek s tímto inventárním číslem již existuje');
-                $form->addError('Majetek s tímto inventárním číslem již existuje');
+                $form->addError('Majetek se zadaným inventárním číslem již existuje');
                 return;
             }
             if (!$type || $type->getEntity()->getId() !== $currentEntity->getId()) {
