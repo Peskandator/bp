@@ -21,15 +21,15 @@ class DepreciationGroup
      */
     private int $id;
     /**
-     * @ORM\Column(name="group_number", type="integer")
+     * @ORM\Column(name="group_number", type="integer", nullable=true)
      */
-    private int $group;
+    private ?int $group;
     /**
      * @ORM\Column(name="prefix", type="string")
      */
     private ?string $prefix;
     /**
-     * @ORM\Column(name="depreciation_method", type="integer")
+     * @ORM\Column(name="depreciation_method", type="integer", nullable=false)
      */
     private int $method;
     /**
@@ -45,17 +45,17 @@ class DepreciationGroup
      */
     private bool $isCoefficient;
     /**
-     * @ORM\Column(name="rate_first_year", type="float")
+     * @ORM\Column(name="rate_first_year", type="float", nullable=true)
      */
-    private float $rateFirstYear;
+    private ?float $rateFirstYear;
     /**
-     * @ORM\Column(name="rate", type="float")
+     * @ORM\Column(name="rate", type="float", nullable=true)
      */
-    private float $rate;
+    private ?float $rate;
     /**
-     * @ORM\Column(name="rate_increased_price", type="float")
+     * @ORM\Column(name="rate_increased_price", type="float", nullable=true)
      */
-    private float $rateIncreasedPrice;
+    private ?float $rateIncreasedPrice;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="depreciationGroups")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
@@ -74,14 +74,14 @@ class DepreciationGroup
     public function __construct(
         AccountingEntity $entity,
         int $method,
-        int $group,
+        ?int $group,
         ?string $prefix,
         ?int $years,
         ?int $months,
         bool $isCoefficient,
-        float $rateFirstYear,
-        float $rate,
-        float $rateIncreasedPrice,
+        ?float $rateFirstYear,
+        ?float $rate,
+        ?float $rateIncreasedPrice,
     ){
         $this->entity = $entity;
         $this->method = $method;
@@ -121,7 +121,7 @@ class DepreciationGroup
         return $this->id;
     }
 
-    public function getGroup(): int
+    public function getGroup(): ?int
     {
         return $this->group;
     }
@@ -166,17 +166,17 @@ class DepreciationGroup
         return $this->isCoefficient;
     }
 
-    public function getRateFirstYear(): float
+    public function getRateFirstYear(): ?float
     {
         return $this->rateFirstYear;
     }
 
-    public function getRate(): float
+    public function getRate(): ?float
     {
         return $this->rate;
     }
 
-    public function getRateIncreasedPrice(): float
+    public function getRateIncreasedPrice(): ?float
     {
         return $this->rateIncreasedPrice;
     }

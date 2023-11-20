@@ -26,9 +26,9 @@ class DepreciationAccounting
      */
     private ?int $depreciationYear;
     /**
-     * @ORM\Column(name="depreciation_method", type="integer", nullable=true)
+     * @ORM\Column(name="depreciation_method", type="integer", nullable=false)
      */
-    private ?int $method;
+    private int $method;
     /**
      * @ORM\Column(name="executable", type="boolean")
      */
@@ -46,9 +46,9 @@ class DepreciationAccounting
      */
     private bool $isCoefficient;
     /**
-     * @ORM\Column(name="rate", type="float", nullable=false)
+     * @ORM\Column(name="rate", type="float", nullable=true)
      */
-    private float $rate;
+    private ?float $rate;
     /**
      * @ORM\Column(name="entry_price", type="float", nullable=false)
      */
@@ -101,7 +101,7 @@ class DepreciationAccounting
         float $depreciatedAmount,
         float $residualPrice,
         bool $executable,
-        float $rate,
+        ?float $rate,
     ): void
     {
         $this->asset = $asset;
@@ -214,7 +214,7 @@ class DepreciationAccounting
         return $this->executed;
     }
 
-    public function getMethod(): ?int
+    public function getMethod(): int
     {
         return $this->method;
     }

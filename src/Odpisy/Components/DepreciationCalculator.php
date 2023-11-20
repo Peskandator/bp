@@ -117,6 +117,10 @@ class DepreciationCalculator
         $depreciatedAmount = $asset->getDepreciatedAmountAccounting();
         $residualPrice = null;
 
+        if (!$totalDepreciationYears) {
+            return;
+        }
+
         while (true) {
             if ($disposalYear && $year > $disposalYear) {
                 break;
@@ -187,8 +191,12 @@ class DepreciationCalculator
         return $residualPriceBase - $depreciatedAmount;
     }
 
-    protected function getDepreciationAmount(int $method, int $depreciationYear, float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice): float
+    protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice): float
     {
+        if (!$rate) {
+            return 0;
+        }
+
         $isMethodAccelerated = ($method === DepreciationMethod::ACCELERATED);
 
         if ($depreciationYear === 1) {
@@ -217,7 +225,7 @@ class DepreciationCalculator
         return $entryPrice * $percentage / 100;
     }
 
-    protected function getDepreciationRate(DepreciationGroup $group, int $depreciationYear, int $year, ?\DateTimeInterface $increaseDate): float
+    protected function getDepreciationRate(DepreciationGroup $group, int $depreciationYear, int $year, ?\DateTimeInterface $increaseDate): ?float
     {
         $rate = $group->getRate();
         if ($this->isIncreased($increaseDate, $year)) {

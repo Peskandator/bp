@@ -465,10 +465,11 @@ $(document).ready(function(){
 
     let coefficientSelect = $('#groupCoeffSelect');
     let groupMethodSelect = $('#groupMethodSelect');
+    let ownMethod = coefficientSelect.find(`option[value="2"]`);
     groupMethodSelect.change(changeGroupMethodSelect);
     function changeGroupMethodSelect() {
         let selected = parseInt(groupMethodSelect.find(':selected').val());
-
+        toggleOwnWayOption(selected);
         if (selected === 1) {
             coefficientSelect.prop("disabled", true);
             coefficientSelect.val(0);
@@ -481,8 +482,16 @@ $(document).ready(function(){
         }
     }
 
-    let editGroupMethodSelects = $('[id^="edit-group-method-select-"]');
+    toggleOwnWayOption(0);
+    function toggleOwnWayOption(selected) {
+        if (selected === 3 || selected === 4) {
+            ownMethod.prop("disabled", false);
+        } else {
+            ownMethod.prop("disabled", true);
+        }
+    }
 
+    let editGroupMethodSelects = $('[id^="edit-group-method-select-"]');
     if ($(`.js-dials-groups-page`).length > 0) {
         editGroupMethodSelects.each(
             changeEditGroupMethodSelect
