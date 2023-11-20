@@ -202,9 +202,7 @@ $(document).ready(function(){
             }
         }
 
-
         let assetGroupTaxSelect = $('#assetGroupTaxSelect');
-
         const groupInfoJson = assetGroupTaxSelect.attr('data-groups-info-json');
         const groupInfoObj = jQuery.parseJSON(groupInfoJson);
 
@@ -215,12 +213,21 @@ $(document).ready(function(){
         function changeDepreciationGroup(){
             let groupId = assetGroupTaxSelect.find(':selected').val();
 
-            let rateFirstYear = groupInfoObj[groupId]['rate-first'];
-            let rate = groupInfoObj[groupId]['rate'];
-            let rateIncreasedPrice = groupInfoObj[groupId]['rate-increased'];
-            let years = groupInfoObj[groupId]['years'];
-            let months = groupInfoObj[groupId]['months'];
-            let isCoeff = groupInfoObj[groupId]['coeff'];assetGroupTaxSelect
+            let rateFirstYear = "";
+            let rate = "";
+            let rateIncreasedPrice = "";
+            let years = "";
+            let months = "";
+            let isCoeff = "";
+
+            if (groupId && groupId !== 0 && groupInfoObj[groupId]) {
+                rateFirstYear = groupInfoObj[groupId]['rate-first'];
+                rate = groupInfoObj[groupId]['rate'];
+                rateIncreasedPrice = groupInfoObj[groupId]['rate-increased'];
+                years = groupInfoObj[groupId]['years'];
+                months = groupInfoObj[groupId]['months'];
+                isCoeff = groupInfoObj[groupId]['coeff'];
+            }
 
             if (isCoeff === '1') {
                 $('.assetGroupTaxPerc').hide();
@@ -230,7 +237,7 @@ $(document).ready(function(){
                 $('.assetGroupTaxKoef').hide();
             }
 
-            if (months && months !== '' && months !== 0) {
+            if (months && months !== '' && months !== '0') {
                 $('#assetGroupTaxMonthsText').show()
                 $('#assetGroupTaxYearsText').hide()
                 $('#assetGroupTaxYearsMonths').val(months)
@@ -253,14 +260,16 @@ $(document).ready(function(){
             let categoryId = categorySelect.find(':selected').val();
             let groupId = categoriesGroupsObj[categoryId];
 
-            if (groupId && groupId !== 0 && groupId !== '') {
-                // TODO : CHANGE ONLY WHEN EDITING WITH ALERT YES!
+            if (groupId === '') {
+                groupId = 0;
+            }
+
+            // TODO : CHANGE ONLY WHEN EDITING WITH ALERT YES!
                 // var value = $('#assetGroupTaxSelect').find(":selected").val();
                 // if (value === 0 || value === '0') {
                 assetGroupTaxSelect.val(groupId);
                 changeDepreciationGroup();
                 // }
-            }
         });
 
         let entryPriceTaxInput = $('#assetEntryPriceTax');

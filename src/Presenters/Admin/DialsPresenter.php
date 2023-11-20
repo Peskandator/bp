@@ -791,7 +791,7 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addInteger('group_number', 'Odpis. skupina')
             ->addRule($form::MIN, 'Číslo odpisové skupiny musí být nejméně 1', 1)
             ->addRule($form::MAX, 'Číslo odpisové skupiny může být nejvýše 6', 6)
-            ->setRequired(true)
+            ->setNullable()
         ;
         $form
             ->addText('prefix')
@@ -817,21 +817,21 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
             ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
-            ->setRequired(true)
+            ->setNullable()
         ;
         $form
             ->addText('rate', 'Sazba další roky')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
             ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
-            ->setRequired(true)
+            ->setNullable()
         ;
         $form
             ->addText('rate_increased_price', 'Sazba zvýš. VC')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->addRule($form::MIN, 'Sazba musí být nejméně 0', 0)
             ->addRule($form::MAX, 'Sazba může být nejvýše 100', 100)
-            ->setRequired(true)
+            ->setNullable()
         ;
         $form->addSubmit('send', 'Přidat');
 
@@ -849,10 +849,22 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
 
-            if ($values->years === null && $values->months === null) {
-                $form->getComponent('years')->addError('Musí být zadán buď počet let nebo měsíců');
-                $form->getComponent('months')->addError('Musí být zadán buď počet let nebo měsíců');
-                $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
+            if ($values->method !== DepreciationMethod::ACCOUNTING) {
+                $this->checkDepreciationTime($form, $values->years, $values->months);
+
+                if (!$values->group_number) {
+                    $form['group_number']->addError('Toto pole je povinné.');
+                }
+                if ($values->rate_first_year === null) {
+                    $form['rate_first_year']->addError('Toto pole je povinné.');
+                }
+                if ($values->rate === null) {
+                    $form['rate']->addError('Toto pole je povinné.');
+                }
+                if ($values->rate_increased_price === null) {
+                    $form['rate_increased_price']->addError('Toto pole je povinné.');
+                }
+
             }
 
             if ($values->years !== null && $values->months !== null) {
@@ -861,11 +873,11 @@ final class DialsPresenter extends BaseAdminPresenter
             }
 
             $isCoefficient = $values->is_coefficient === 1;
-            if ($values->method === 1 && $isCoefficient) {
+            if ($values->method === DepreciationMethod::UNIFORM && $isCoefficient) {
                 $form['is_coefficient']->addError('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"');
                 $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
             }
-            if ($values->method === 2 && !$isCoefficient) {
+            if ($values->method === DepreciationMethod::ACCELERATED && !$isCoefficient) {
                 $form['is_coefficient']->addError('U zrychleného způsobu odpisování musí být zvolena možnost "Koeficient"');
                 $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Koeficient"',FlashMessageType::ERROR);
             }
@@ -893,9 +905,18 @@ final class DialsPresenter extends BaseAdminPresenter
         return $form;
     }
 
+    protected function checkDepreciationTime(Form $form, $years, $months): void
+    {
+        if ($years === null && $months === null) {
+            $form->getComponent('years')->addError('Musí být zadán buď počet let nebo měsíců');
+            $form->getComponent('months')->addError('Musí být zadán buď počet let nebo měsíců');
+            $this->flashMessage('Musí být zadán buď počet let nebo měsíců',FlashMessageType::ERROR);
+        }
+    }
+
     protected function getCoeffPercentageForSelect(): array
     {
-        return [0 => 'Procento', 1 => 'Koeficient'];
+        return [0 => 'Procento', 1 => 'Koeficient', '2' => 'Vlastní způsob'];
     }
 
     protected function createComponentDeleteDepreciationGroupForm(): Form
