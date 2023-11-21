@@ -44,6 +44,7 @@ class DepreciationCalculator
         }
 
         $group = $asset->getDepreciationGroupTax();
+        $isCoefficient = $group->isCoefficient();
         $depreciationYear = $asset->getDepreciationYearTax();
         $totalDepreciationYears = $group->getYears();
         $entryPrice = $asset->getEntryPriceTax();
@@ -66,7 +67,7 @@ class DepreciationCalculator
 
             $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
             $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateTax());
-            $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice);
+            $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient);
             $depreciatedAmount += $depreciationAmount;
             $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
 
@@ -110,6 +111,7 @@ class DepreciationCalculator
         }
 
         $group = $asset->getDepreciationGroupAccounting();
+        $isCoefficient = $group->isCoefficient();
         $depreciationYear = $asset->getDepreciationYearAccounting();
         $totalDepreciationYears = $group->getYears();
         $entryPrice = $asset->getEntryPriceAccounting();
@@ -136,12 +138,11 @@ class DepreciationCalculator
 
             $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
             $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateAccounting());
-            $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice);
+            $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient);
             $depreciatedAmount += $depreciationAmount;
             $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
 
-            $depreciation = new DepreciationAccounting(
-            );
+            $depreciation = new DepreciationAccounting();
             $depreciation->update
             (
                 $asset,
@@ -191,13 +192,13 @@ class DepreciationCalculator
         return $residualPriceBase - $depreciatedAmount;
     }
 
-    protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice): float
+    protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice, bool $isCoefficient): float
     {
         if (!$rate) {
             return 0;
         }
 
-        $isMethodAccelerated = ($method === DepreciationMethod::ACCELERATED);
+        $isMethodAccelerated = ($method === DepreciationMethod::ACCELERATED || $isCoefficient);
 
         if ($depreciationYear === 1) {
             if ($isMethodAccelerated) {

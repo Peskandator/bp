@@ -194,23 +194,6 @@ class AccountingEntity
         return new ArrayCollection($groupsWithoutAccounting);
     }
 
-    public function getAccountingDepreciationGroups(): Collection
-    {
-        $groups = $this->depreciationGroups;
-        $accountingGroups = [];
-        /**
-         * @var DepreciationGroup $group
-         */
-        foreach ($groups as $group) {
-            if ($group->getMethod() === DepreciationMethod::ACCOUNTING) {
-                $accountingGroups[] = $group;
-            }
-        }
-
-        return new ArrayCollection($accountingGroups);
-    }
-
-
     public function getAssetTypes(): Collection
     {
         return $this->assetTypes;

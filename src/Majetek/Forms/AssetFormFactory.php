@@ -48,7 +48,7 @@ class AssetFormFactory
         PlaceRepository $placeRepository,
         EnumerableSorter $enumerableSorter,
         EditAssetAction $editAssetAction,
-        DisposalRepository $disposalRepository
+        DisposalRepository $disposalRepository,
     )
     {
         $this->acquisitionsProvider = $acquisitionsProvider;
@@ -121,11 +121,9 @@ class AssetFormFactory
             ->addRule($form::MIN, 'Počet kusů musí být minimálně 1', 1)
             ->setDefaultValue(1)
         ;
-
-        $isOnlyTax =
-            $form
-                ->addCheckbox('only_tax')
-                ->setDefaultValue(true)
+        $form
+            ->addCheckbox('only_tax')
+            ->setDefaultValue(true)
         ;
 
         $assetTypesIds = $this->getAssetTypeIdsForCodes($currentEntity);
@@ -133,7 +131,7 @@ class AssetFormFactory
         $taxAllowedType = $assetTypesIds[AssetTypesCodes::DEPRECIABLE];
 
         // Daňový box
-        $depreciationGroupsTax = $currentEntity->getDepreciationGroupsWithoutAccounting();
+        $depreciationGroupsTax =  $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
         $form
             ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsTaxSelect)
@@ -173,7 +171,7 @@ class AssetFormFactory
         ;
 
         // Účetní box
-        $depreciationGroupsAccounting = $currentEntity->getAccountingDepreciationGroups();
+        $depreciationGroupsAccounting = $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroups()->toArray());
         $depreciationGroupsAccountingSelect = $this->getDepreciationGroupForSelect($depreciationGroupsAccounting);
         $form
             ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsAccountingSelect)
@@ -553,7 +551,7 @@ class AssetFormFactory
         return $idsForCodes;
     }
 
-    protected function getDepreciationGroupForSelect(Collection $collection): array
+    protected function getDepreciationGroupForSelect(array $collection): array
     {
         $items = [];
         $items[0] = 'Vyberte ...';

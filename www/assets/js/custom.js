@@ -470,7 +470,7 @@ $(document).ready(function(){
     function changeGroupMethodSelect() {
         let selected = parseInt(groupMethodSelect.find(':selected').val());
         toggleOwnWayOption(selected);
-        if (selected === 1) {
+        if (selected === 1 || selected === 3) {
             coefficientSelect.prop("disabled", true);
             coefficientSelect.val(0);
         }
@@ -484,7 +484,7 @@ $(document).ready(function(){
 
     toggleOwnWayOption(0);
     function toggleOwnWayOption(selected) {
-        if (selected === 3 || selected === 4) {
+        if (selected === 4) {
             ownMethod.prop("disabled", false);
         } else {
             ownMethod.prop("disabled", true);

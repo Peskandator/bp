@@ -851,7 +851,6 @@ final class DialsPresenter extends BaseAdminPresenter
             }
 
             $this->checkDepreciationGroupValidity($form, $values);
-
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -870,7 +869,6 @@ final class DialsPresenter extends BaseAdminPresenter
             );
             $this->addDepreciationGroupAction->__invoke($this->currentEntity, $request);
             $this->flashMessage('Odpisová skupina byla přidána.', FlashMessageType::SUCCESS);
-            bdump($values);
             $this->redirect('this');
         };
 
@@ -1171,6 +1169,10 @@ final class DialsPresenter extends BaseAdminPresenter
         if ($values->method === DepreciationMethod::UNIFORM && $isCoefficient) {
             $form['is_coefficient']->addError('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"');
             $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
+        }
+        if ($values->method === DepreciationMethod::EXTRAORDINARY && $isCoefficient) {
+            $form['is_coefficient']->addError('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"');
+            $this->flashMessage('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
         }
         if ($values->method === DepreciationMethod::ACCELERATED && !$isCoefficient) {
             $form['is_coefficient']->addError('U zrychleného způsobu odpisování musí být zvolena možnost "Koeficient"');

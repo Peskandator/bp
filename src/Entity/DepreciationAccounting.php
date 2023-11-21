@@ -38,6 +38,10 @@ class DepreciationAccounting
      */
     private bool $executed;
     /**
+     * @ORM\Column(name="accounted", type="boolean", nullable=false)
+     */
+    private bool $accounted;
+    /**
      * @ORM\Column(name="percentage", type="float", nullable=false)
      */
     private float $percentage;
@@ -112,6 +116,7 @@ class DepreciationAccounting
         $this->depreciatedAmount = $depreciatedAmount;
         $this->residualPrice = $residualPrice;
         $this->executed = false;
+        $this->accounted = false;
         $this->entryPrice = $asset->getEntryPriceAccounting();
         $this->increasedEntryPrice = $asset->getIncreasedEntryPriceAccounting();
         $this->depreciationYear = $depreciationYear;
@@ -133,6 +138,7 @@ class DepreciationAccounting
         $this->depreciatedAmount = $depreciationTax->getDepreciatedAmount();
         $this->residualPrice = $depreciationTax->getResidualPrice();
         $this->executed = $depreciationTax->isExecuted();
+        $this->accounted = $depreciationTax->isAccounted();
         $this->entryPrice = $depreciationTax->getEntryPrice();
         $this->increasedEntryPrice = $depreciationTax->getIncreasedEntryPrice();
         $this->depreciationYear = $depreciationTax->getDepreciationYear();
@@ -212,6 +218,11 @@ class DepreciationAccounting
     public function isExecuted(): bool
     {
         return $this->executed;
+    }
+
+    public function isAccounted(): bool
+    {
+        return $this->accounted;
     }
 
     public function getMethod(): int
