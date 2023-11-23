@@ -55,13 +55,20 @@ class AssetFormJsonGenerator
         return json_encode($jsonArr);
     }
 
-    public function getNextNumberForAssetTypesJson(AccountingEntity $entity, array $assetTypes): string
+    public function getNextNumberForAssetTypesJson(AccountingEntity $entity, array $assetTypes, ?Asset $asset): string
     {
+        $currentAssetType = $asset?->getAssetType();
+
         $nextNumbers = [];
         /**
          * @var AssetType $assetType
          */
         foreach ($assetTypes as $assetType) {
+            if ($currentAssetType && $assetType->getId() === $currentAssetType->getId()) {
+                $nextNumbers[(string)$assetType->getId()] = $asset->getInventoryNumber();
+                continue;
+            }
+
             $series = $assetType->getSeries();
             $step = $assetType->getStep();
             $numberFound = false;

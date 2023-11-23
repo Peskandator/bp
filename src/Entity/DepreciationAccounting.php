@@ -244,7 +244,7 @@ class DepreciationAccounting
         return $this->isCoefficient;
     }
 
-    public function getRate(): float
+    public function getRate(): ?float
     {
         return $this->rate;
     }

@@ -50,13 +50,10 @@ class DepreciationCalculator
         $entryPrice = $asset->getEntryPriceTax();
         $correctEntryPrice = $asset->getCorrectEntryPriceTax();
         $depreciatedAmount = $asset->getDepreciatedAmountTax();
-        $residualPrice = null;
+        $residualPrice = $entryPrice - $depreciatedAmount;
 
         while (true) {
-            if ($disposalYear && $year > $disposalYear) {
-                break;
-            }
-            if ($depreciationYear > ($totalDepreciationYears + 1) && $residualPrice !== 0) {
+            if (!$this->checkGenerationForYear($totalDepreciationYears, $depreciationYear, $year, $disposalYear, $residualPrice)) {
                 break;
             }
             if ($depreciationYear === 0) {
@@ -119,15 +116,8 @@ class DepreciationCalculator
         $depreciatedAmount = $asset->getDepreciatedAmountAccounting();
         $residualPrice = null;
 
-        if (!$totalDepreciationYears) {
-            return;
-        }
-
         while (true) {
-            if ($disposalYear && $year > $disposalYear) {
-                break;
-            }
-            if ($depreciationYear > ($totalDepreciationYears + 1) && ($residualPrice !== 0 && $asset->getIncreasedEntryPriceAccounting())) {
+            if (!$this->checkGenerationForYear($totalDepreciationYears, $depreciationYear, $year, $disposalYear, $residualPrice)) {
                 break;
             }
             if ($depreciationYear === 0) {
@@ -194,7 +184,7 @@ class DepreciationCalculator
 
     protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice, bool $isCoefficient): float
     {
-        if (!$rate) {
+        if ($rate === null || $rate === (float)0) {
             return 0;
         }
 
@@ -264,5 +254,22 @@ class DepreciationCalculator
         }
 
         return false;
+    }
+
+    protected function checkGenerationForYear(?int $totalDepreciationYears, int $depreciationYear, int $year, ?int $disposalYear, ?float $residualPrice): bool
+    {
+        if (!$totalDepreciationYears) {
+            return false;
+        }
+        if ($disposalYear && $year > $disposalYear) {
+            return false;
+        }
+        if ($residualPrice === 0 || $depreciationYear > 100) {
+            return false;
+        }
+        if ($depreciationYear > ($totalDepreciationYears)) {
+            return false;
+        }
+        return true;
     }
 }

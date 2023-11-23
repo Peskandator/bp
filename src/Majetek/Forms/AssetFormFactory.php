@@ -276,6 +276,13 @@ class AssetFormFactory
             $values->disposal_date = $this->changeToDateFormat($values->disposal_date);
             $today = new \DateTimeImmutable('today');
 
+            if ($values->depreciated_amount_accounting === null) {
+                $values->depreciated_amount_accounting = 0;
+            }
+            if ($values->depreciated_amount_tax === null) {
+                $values->depreciated_amount_tax = 0;
+            }
+
             if (!$this->isInventoryNumberAvailable($currentEntity, $values->inventory_number) && !$editing){
                 $form['inventory_number']->addError('Majetek s tímto inventárním číslem již existuje');
                 $form->addError('Majetek se zadaným inventárním číslem již existuje');
@@ -286,7 +293,6 @@ class AssetFormFactory
                 return;
             }
             $typeCode = $type->getCode();
-
             //tax box validation
             if ($typeCode === 1) {
                 if ($groupTax === null || $groupTax->getEntity()->getId() !== $currentEntity->getId() || $groupTax->getMethod() === DepreciationMethod::ACCOUNTING) {
@@ -294,16 +300,11 @@ class AssetFormFactory
                     $form->addError('Prosím vyberte daňovou odpisovou skupinu');
                 }
 
-                $depreciatedAmountTax = $values->depreciated_amount_tax;
-                if (!$depreciatedAmountTax) {
-                    $depreciatedAmountTax = 0;
-                }
-
                 $entryPriceTax = $values->entry_price_tax;
                 $increasedPriceTax = $values->increased_price_tax;
-                $depreciatedAmountValidationTax = $entryPriceTax > $depreciatedAmountTax;
+                $depreciatedAmountValidationTax = $entryPriceTax > $values->depreciated_amount_tax;
                 if (!$depreciatedAmountValidationTax && $increasedPriceTax) {
-                    $depreciatedAmountValidationTax = $increasedPriceTax > $depreciatedAmountTax;
+                    $depreciatedAmountValidationTax = $increasedPriceTax > $values->depreciated_amount_tax;
                 }
                 if (!$depreciatedAmountValidationTax) {
                     $form['depreciated_amount_tax']->addError('Oprávky musí být nižší než vstupní cena.');
@@ -339,16 +340,11 @@ class AssetFormFactory
                     $form->addError('Prosím vyberte účetní odp. skupinu');
                 }
 
-                $depreciatedAmountAccounting = $values->depreciated_amount_accounting;
-                if (!$depreciatedAmountAccounting) {
-                    $depreciatedAmountAccounting = 0;
-                }
-
                 $entryPriceAccounting = $values->entry_price_accounting;
                 $increasedPriceAccounting = $values->increased_price_accounting;
-                $depreciatedAmountValidationAccounting = $entryPriceAccounting > $depreciatedAmountAccounting;
+                $depreciatedAmountValidationAccounting = $entryPriceAccounting > $values->depreciated_amount_accounting;
                 if (!$depreciatedAmountValidationAccounting && $increasedPriceAccounting) {
-                    $depreciatedAmountValidationAccounting = $increasedPriceAccounting > $depreciatedAmountAccounting;
+                    $depreciatedAmountValidationAccounting = $increasedPriceAccounting > $values->depreciated_amount_accounting;
                 }
                 if (!$depreciatedAmountValidationAccounting) {
                     $form['depreciated_amount_accounting']->addError('Oprávky musí být nižší než vstupní cena.');
@@ -385,10 +381,6 @@ class AssetFormFactory
                 if ($values->entry_date > $values->disposal_date) {
                     $form['disposal_date']->addError('Datum nemůže být před datumem zařazení');
                     $form->addError('Datum vyřazení nemůže být před datumem zařazení');
-                }
-                if ($values->disposal_date > $today) {
-                    $form['disposal_date']->addError('Datum nemůže být v budoucnosti.');
-                    $form->addError('Datum zařazení nemůže být v budoucnosti.');
                 }
             }
 
@@ -470,8 +462,7 @@ class AssetFormFactory
             'variable_symbol' => $asset->getVariableSymbol(),
             'entry_date' => $this->getDefaultDateValue($asset->getEntryDate()),
             'disposal_date' => $this->getDefaultDateValue($asset->getDisposalDate()),
-            'note' => $asset->getNote(),// odsud nově
-
+            'note' => $asset->getNote(),
         ]);
 
         $locationId = $asset->getLocation() ? $asset->getLocation()->getId() : null;

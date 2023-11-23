@@ -932,7 +932,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $form
             ->addInteger('method', 'Způsob odpisu')
             ->addRule($form::MIN, 'Vyberte prosím platný způsob odpisu', 1)
-            ->addRule($form::MAX, 'Vyberte prosím platný způsob odpisu', 3)
+            ->addRule($form::MAX, 'Vyberte prosím platný způsob odpisu', 4)
             ->setRequired(true)
         ;
         $form

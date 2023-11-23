@@ -34,7 +34,7 @@ final class AssetPresenter extends BaseAdminPresenter
         $this->template->categoriesGroupsJson = $this->jsonGenerator->createCategoriesGroupsJson($this->currentEntity);
         $this->template->placesLocationsJson = $this->jsonGenerator->createPlacesLocationsJson($this->currentEntity);
         $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
-        $this->template->nextInventoryNumbers = $this->jsonGenerator->getNextNumberForAssetTypesJson($this->currentEntity, $assetTypes);
+        $this->template->nextInventoryNumbers = $this->jsonGenerator->getNextNumberForAssetTypesJson($this->currentEntity, $assetTypes, $asset);
         $this->template->assetTypeCodes = $this->jsonGenerator->getAssetTypeCodesJson($this->currentEntity, $assetTypes);
         $this->template->acquisitionCodes = $this->jsonGenerator->getAcquisitionCodesJson($this->currentEntity);
         $this->template->groupsInfoJson = $this->jsonGenerator->getGroupsInfoJson($this->currentEntity);
