@@ -207,7 +207,7 @@ class DepreciationCalculator
             }
         }
 
-        return round($depreciationAmount);
+        return round($depreciationAmount, 2);
     }
 
     protected function calculateDepreciationAmountUniform($entryPrice, $percentage): float

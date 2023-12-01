@@ -1,5 +1,11 @@
 services:
     - App\Odpisy\Components\DepreciationCalculator
+    - App\Odpisy\Components\EditDepreciationCalculator
+
+    - App\Odpisy\Forms\EditDepreciationFormFactory
+
+    - App\Odpisy\Action\EditTaxDepreciationAction
+    - App\Odpisy\Action\EditAccountingDepreciationAction
 
     - App\Odpisy\ORM\DepreciationTaxRepository
     - App\Odpisy\ORM\DepreciationAccountingRepository

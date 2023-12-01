@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\Table(name="depreciation_accounting")
  */
-class DepreciationAccounting
+class DepreciationAccounting implements Depreciation
 {
     /**
      * @ORM\Id()
@@ -252,5 +252,10 @@ class DepreciationAccounting
     public function getDisposalDate(): ?\DateTimeInterface
     {
         return $this->disposalDate;
+    }
+
+    public function isAccountingDepreciation(): bool
+    {
+        return true;
     }
 }

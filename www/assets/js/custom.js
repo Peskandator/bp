@@ -1,4 +1,10 @@
+
+//Imports
+import depreciations from './depreciations.js';
+
 $(document).ready(function(){
+    depreciations();
+
     setTimeout(flashMessage, 4200);
     function flashMessage() {
         $(".flash-message-alert").alert('close');
@@ -93,8 +99,8 @@ $(document).ready(function(){
         let accAsset = $(`.category-acc-asset-` + categoryId).val();
         let accDepreciation = $(`.category-acc-depreciation-` + categoryId).val();
         let accRepairs = $(`.category-acc-repairs-` + categoryId).val();
+        let isDepreciable = $(`.category-depreciable-` + categoryId).is(':checked');
 
-        let isDepreciable = $(`.category-depreciable-` + categoryId)[0].checked;
         $(`.form-category-id`).val(categoryId);
         $(`.form-category-code`).val(code);
         $(`.form-category-name`).val(categoryName);

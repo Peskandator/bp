@@ -2,170 +2,254 @@
 
 {block content}
 
-<h1>Odpisy majetku inv. č. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
+<div class="js-page-depreciations">
+    <h1>Odpisy majetku inv. č. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
 
-{include assetTabs from 'assetTabs.latte'}
+    {include assetTabs from 'assetTabs.latte'}
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Daňové odpisy</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive px-3 card-body">
-                    {var $taxGroup = $asset->getDepreciationGroupTax()}
-                    <div class="d-flex">
-                        <div style="font-size: 18px">Odpisová skupina a způsob: </div>
-                        <div style="font-size: 18px; font-weight: bold; margin-left: 13px">{if $taxGroup !== null}{$taxGroup->getFullName()}{/if}</div>
+    <form n:name="editDepreciationForm" class="edit-depreciation-form">
+        <div class="form-errors d-block" n:ifcontent>
+            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+        </div>
+        <div class="d-none">
+            <input n:name="id" class="form-depreciation-id">
+            <input n:name="amount" class="form-depreciation-amount">
+            <input n:name="percentage" class="form-depreciation-percentage">
+            <input n:name="executable" type="checkbox" class="form-depreciation-executable" checked>
+            <input n:name="is_accounting" type="checkbox" class="form-depreciation-isAccounting">
+        </div>
+        <div class="form-errors d-block" n:ifcontent>
+            <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
+            <div n:foreach="$form['amount']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpis -</b> {$error}</div>
+            <div n:foreach="$form['percentage']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Procento -</b> {$error}</div>
+            <div n:foreach="$form['executable']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Provést -</b> {$error}</div>
+            <div n:foreach="$form['is_accounting']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Daňové/účetní -</b> {$error}</div>
+        </div>
+    </form>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Daňové odpisy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive px-3 card-body">
+                        {var $taxGroup = $asset->getDepreciationGroupTax()}
+                        <div class="d-flex">
+                            <div style="font-size: 18px">Odpisová skupina a způsob: </div>
+                            <div style="font-size: 18px; font-weight: bold; margin-left: 13px">{if $taxGroup !== null}{$taxGroup->getFullName()}{/if}</div>
+                        </div>
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Rok</th>
+                                    <th>Rok odp.</th>
+                                    <th>VC</th>
+                                    <th>Zvýš.VC</th>
+                                    <th>Sazba</th>
+                                    <th>%</th>
+                                    <th>Odpis</th>
+                                    <th>Oprávky</th>
+                                    <th>ZC</th>
+                                    <th>Provést</th>
+                                    <th>Provedeno</th>
+                                    <th>Zaúčt.</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $taxDepreciations as $depreciation}
+                                {var $depreciationId = $depreciation->getId()}
+                                <tr>
+                                    <td>
+                                        {$depreciation->getYear()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getDepreciationYear()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getEntryPrice()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getIncreasedEntryPrice()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getRate()}
+                                    </td>
+                                    <td>
+                                        <span class="depreciationTax-percentage-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getPercentage()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="depreciationTax-percentage-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getPercentage()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="depreciationTax-amount-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getDepreciationAmount()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="depreciationTax-amount-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getDepreciationAmount()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {$depreciation->getDepreciatedAmount()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getResidualPrice()}
+                                    </td>
+                                    <td>
+                                        <div class="form-check depreciationTax-executable-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">
+                                            <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
+                                        </div>
+                                        <div class="form-check">
+                                            <input style="display: none;"
+                                                   class="form-check-input js-edit-executable-checkbox
+                                                        depreciationTax-executable-{$depreciationId} js-edit-input js-input-{$depreciationId}"
+                                                   type="checkbox" {if $depreciation->isExecutable()}checked{/if}
+                                                   data-depreciation-id="{$depreciationId}"
+                                            >
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
+                                    </td>
+                                    <td>
+                                        <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="edit-depreciationTax-button btn-primary btn btn-sm js-edit-input" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$depreciationId}"></i>
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
+                                               title="Odstranit"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#deleteDepreciationModal"
+    {*                                           data-record-name="{$group->getGroup()} - {$group->getMethodText()}"*}
+    {*                                           data-record-id={$group->getId()}*}
+                                            ></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-bordered mt-3">
-                        <thead>
-                            <tr>
-                                <th>Rok</th>
-                                <th>Rok odpisu</th>
-                                <th>VC</th>
-                                <th>Zvýš.VC</th>
-                                <th>Sazba</th>
-                                <th>%</th>
-                                <th>Odpis</th>
-                                <th>Oprávky</th>
-                                <th>ZC</th>
-                                <th>Provést</th>
-                                <th>Provedeno</th>
-                                <th>Zaúčtováno</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {foreach $taxDepreciations as $depreciation}
-                            <tr>
-                                <td>
-                                    {$depreciation->getYear()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciationYear()}
-                                </td>
-                                <td>
-                                    {$depreciation->getEntryPrice()}
-                                </td>
-                                <td>
-                                    {$depreciation->getIncreasedEntryPrice()}
-                                </td>
-                                <td>
-                                    {$depreciation->getRate()}
-                                </td>
-                                <td>
-                                    {$depreciation->getPercentage()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciationAmount()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciatedAmount()}
-                                </td>
-                                <td>
-                                    {$depreciation->getResidualPrice()}
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
-                                </td>
-                            </tr>
-                        {/foreach}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Účetní odpisy</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive px-3 card-body">
-                    {var $accountingGroup = $asset->getDepreciationGroupAccounting()}
-                    <div class="d-flex">
-                        <div style="font-size: 18px">Odpisová skupina a způsob: </div>
-                        <div style="font-size: 18px; font-weight: bold; margin-left: 13px">
-                            {if $asset->isOnlyTax()}
-                                {if $taxGroup !== null}
-                                    {$taxGroup->getFullName()}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Účetní odpisy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive px-3 card-body">
+                        {var $accountingGroup = $asset->getDepreciationGroupAccounting()}
+                        <div class="d-flex">
+                            <div style="font-size: 18px">Odpisová skupina a způsob: </div>
+                            <div style="font-size: 18px; font-weight: bold; margin-left: 13px">
+                                {if $asset->isOnlyTax()}
+                                    {if $taxGroup !== null}
+                                        {$taxGroup->getFullName()}
+                                    {/if}
+                                {elseif $accountingGroup !== null}
+                                    {$accountingGroup->getFullName()}
                                 {/if}
-                            {elseif $accountingGroup !== null}
-                                {$accountingGroup->getFullName()}
-                            {/if}
+                            </div>
                         </div>
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Rok</th>
+                                    <th>Rok odp.</th>
+                                    <th>VC</th>
+                                    <th>Zvýš.VC</th>
+                                    <th>Sazba</th>
+                                    <th>%</th>
+                                    <th>Odpis</th>
+                                    <th>Oprávky</th>
+                                    <th>ZC</th>
+                                    <th>Provést</th>
+                                    <th>Provedeno</th>
+                                    <th>Zaúčt.</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $accountingDepreciations as $depreciation}
+                                {var $depreciationId = $depreciation->getId()}
+                                <tr>
+                                    <td>
+                                        {$depreciation->getYear()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getDepreciationYear()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getEntryPrice()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getIncreasedEntryPrice()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getRate()}
+                                    </td>
+                                    <td>
+                                        <span class="depreciationAccounting-percentage-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getPercentage()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="depreciationAccounting-percentage-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getPercentage()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="depreciationAccounting-amount-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getDepreciationAmount()}</span>
+                                        <div class="form-group">
+                                            <input type="number" class="depreciationAccounting-amount-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getDepreciationAmount()}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {$depreciation->getDepreciatedAmount()}
+                                    </td>
+                                    <td>
+                                        {$depreciation->getResidualPrice()}
+                                    </td>
+                                    <td>
+                                        <div class="form-check depreciationAccounting-executable-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">
+                                            <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
+                                        </div>
+                                        <div class="form-check">
+                                            <input style="display: none;"
+                                                   class="form-check-input js-edit-executable-checkbox
+                                                        depreciationAccounting-executable-{$depreciationId} js-edit-input js-input-{$depreciationId}"
+                                                   type="checkbox" {if $depreciation->isExecutable()}checked{/if}
+                                                   data-depreciation-id="{$depreciationId}"
+                                            >
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
+                                    </td>
+                                    <td>
+                                        <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="edit-depreciationAccounting-button btn-primary btn btn-sm js-edit-input" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$depreciationId}"></i>
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
+                                               title="Odstranit"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#deleteDepreciationModal"
+{*                                           data-record-name="{$group->getGroup()} - {$group->getMethodText()}"*}
+{*                                           data-record-id={$group->getId()}*}
+                                            ></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-bordered mt-3">
-                        <thead>
-                            <tr>
-                                <th>Rok</th>
-                                <th>Rok odpisu</th>
-                                <th>VC</th>
-                                <th>Zvýš.VC</th>
-                                <th>Sazba</th>
-                                <th>%</th>
-                                <th>Odpis</th>
-                                <th>Oprávky</th>
-                                <th>ZC</th>
-                                <th>Provést</th>
-                                <th>Provedeno</th>
-                                <th>Zaúčtováno</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {foreach $accountingDepreciations as $depreciation}
-                            <tr>
-                                <td>
-                                    {$depreciation->getYear()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciationYear()}
-                                </td>
-                                <td>
-                                    {$depreciation->getEntryPrice()}
-                                </td>
-                                <td>
-                                    {$depreciation->getIncreasedEntryPrice()}
-                                </td>
-                                <td>
-                                    {$depreciation->getRate()}
-                                </td>
-                                <td>
-                                    {$depreciation->getPercentage()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciationAmount()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciatedAmount()}
-                                </td>
-                                <td>
-                                    {$depreciation->getResidualPrice()}
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
-                                </td>
-                            </tr>
-                        {/foreach}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

@@ -443,4 +443,31 @@ class Asset
         $depreciations = $this->getAccountingDepreciations();
         $depreciations->add($depreciation);
     }
+
+    public function getTaxDepreciationForDepreciationYear(int $depreciationYear): ?DepreciationTax
+    {
+        $taxDepreciations = $this->getTaxDepreciations();
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($taxDepreciations as $depreciation) {
+            if ($depreciation->getDepreciationYear() === $depreciationYear && $depreciation->isExecutable()) {
+                return $depreciation;
+            }
+        }
+        return null;
+    }
+    public function getAccountingDepreciationForDepreciationYear(int $depreciationYear): ?DepreciationAccounting
+    {
+        $accountingDepreciations = $this->getAccountingDepreciations();
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($accountingDepreciations as $depreciation) {
+            if ($depreciation->getDepreciationYear() === $depreciationYear && $depreciation->isExecutable()) {
+                return $depreciation;
+            }
+        }
+        return null;
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Odpisy\Forms\EditDepreciationFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\EnumerableSorter;
 use Nette\Application\UI\Form;
@@ -14,17 +15,20 @@ final class AssetPresenter extends BaseAdminPresenter
     private AssetFormFactory $assetFormFactory;
     private EnumerableSorter $enumerableSorter;
     private AssetFormJsonGenerator $jsonGenerator;
+    private EditDepreciationFormFactory $editDepreciationFormFactory;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
         EnumerableSorter $enumerableSorter,
-        AssetFormJsonGenerator $jsonGenerator
+        AssetFormJsonGenerator $jsonGenerator,
+        EditDepreciationFormFactory $editDepreciationFormFactory,
     )
     {
         parent::__construct();
         $this->assetFormFactory = $assetFormFactory;
         $this->enumerableSorter = $enumerableSorter;
         $this->jsonGenerator = $jsonGenerator;
+        $this->editDepreciationFormFactory = $editDepreciationFormFactory;
     }
 
     public function actionDefault(int $assetId): void
@@ -64,6 +68,12 @@ final class AssetPresenter extends BaseAdminPresenter
         $asset = $this->template->asset;
         $form = $this->assetFormFactory->create($this->currentEntity, true, $asset);
         $this->assetFormFactory->fillInForm($form, $asset);
+        return $form;
+    }
+
+    protected function createComponentEditDepreciationForm(): Form
+    {
+        $form = $this->editDepreciationFormFactory->create($this->currentEntity);
         return $form;
     }
 }
