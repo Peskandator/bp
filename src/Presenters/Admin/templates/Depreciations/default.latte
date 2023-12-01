@@ -4,6 +4,19 @@
 
 <h1>Odpisy</h1>
 
+<div class="row mb-3">
+    <div class="col-12">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link {if !$viewAccounting}active{/if}" n:href=":Admin:Depreciations:default, $selectedYear">Daňové</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {if $viewAccounting}active{/if}" n:href=":Admin:Depreciations:default, $selectedYear, accounting">Účetní</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-3 col-sm-6 col-12">
         <div class="main-card mb-3 card">
@@ -31,34 +44,116 @@
 
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Daňové odpisy</h5>
+        {if $viewAccounting === false}
+            <div class="card">
+                <div class="card-header">
+                    <h5>Daňové odpisy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="px-3 card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mt-3">
+                                <thead>
+                                    <tr>
+                                        <th>Majetek</th>
+                                        <th>Typ</th>
+                                        <th>Odp.sk.,způsob</th>
+                                        <th>Rok odpisu</th>
+                                        <th>VC</th>
+                                        <th>Zvýš.VC</th>
+                                        <th>Sazba</th>
+                                        <th>%</th>
+                                        <th>Odpis</th>
+                                        <th>Oprávky</th>
+                                        <th>ZC</th>
+                                        <th>Provést</th>
+                                        <th>Provedeno</th>
+                                        <th>Zaúčt.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {foreach $taxDepreciations as $depreciation}
+                                    {var $asset = $depreciation->getAsset()}
+                                    <tr>
+                                        <td>
+                                            <a n:href=":Admin:Asset:depreciations, $asset->getId()">{$asset->getName()}</a>
+                                        </td>
+                                        <td>
+                                            {$asset->getAssetType()->getName()}
+                                        </td>
+                                        <td>
+                                            {var $taxGroup = $asset->getDepreciationGroupTax()}
+                                            {if $taxGroup !== null}{$taxGroup->getFullName()}{/if}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getDepreciationYear()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getEntryPrice()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getIncreasedEntryPrice()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getRate()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getPercentage()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getDepreciationAmount()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getDepreciatedAmount()}
+                                        </td>
+                                        <td>
+                                            {$depreciation->getResidualPrice()}
+                                        </td>
+                                        <td>
+                                            <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
+                                        </td>
+                                        <td>
+                                            <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
+                                        </td>
+                                        <td>
+                                            <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="px-3 card-body">
-                    <div class="table-responsive">
+        {else}
+            <div class="card">
+                <div class="card-header">
+                    <h5>Účetní odpisy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive px-3 card-body">
                         <table class="table table-bordered mt-3">
                             <thead>
-                                <tr>
-                                    <th>Majetek</th>
-                                    <th>Typ</th>
-                                    <th>Odp.sk.,způsob</th>
-                                    <th>Rok odpisu</th>
-                                    <th>VC</th>
-                                    <th>Zvýš.VC</th>
-                                    <th>Sazba</th>
-                                    <th>%</th>
-                                    <th>Odpis</th>
-                                    <th>Oprávky</th>
-                                    <th>ZC</th>
-                                    <th>Provést</th>
-                                    <th>Provedeno</th>
-                                    <th>Zaúčt.</th>
-                                </tr>
+                            <tr>
+                                <th>Majetek</th>
+                                <th>Typ</th>
+                                <th>Odp.sk.,způsob</th>
+                                <th>Rok odpisu</th>
+                                <th>VC</th>
+                                <th>Zvýš.VC</th>
+                                <th>Sazba</th>
+                                <th>%</th>
+                                <th>Odpis</th>
+                                <th>Oprávky</th>
+                                <th>ZC</th>
+                                <th>Provést</th>
+                                <th>Provedeno</th>
+                                <th>Zaúčt.</th>
+                            </tr>
                             </thead>
                             <tbody>
-                            {foreach $taxDepreciations as $depreciation}
+                            {foreach $accountingDepreciations as $depreciation}
                                 {var $asset = $depreciation->getAsset()}
                                 <tr>
                                     <td>
@@ -68,8 +163,15 @@
                                         {$asset->getAssetType()->getName()}
                                     </td>
                                     <td>
-                                        {var $taxGroup = $asset->getDepreciationGroupTax()}
-                                        {if $taxGroup !== null}{$taxGroup->getFullName()}{/if}
+                                        {var $accountingGroup = $asset->getDepreciationGroupAccounting()}
+                                        {if $asset->isOnlyTax()}
+                                            {var $taxGroup = $asset->getDepreciationGroupTax()}
+                                            {if $taxGroup !== null}
+                                                {$taxGroup->getFullName()}
+                                            {/if}
+                                        {elseif $accountingGroup !== null}
+                                            {$accountingGroup->getFullName()}
+                                        {/if}
                                     </td>
                                     <td>
                                         {$depreciation->getDepreciationYear()}
@@ -111,96 +213,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+        {/if}
     </div>
 </div>
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Účetní odpisy</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive px-3 card-body">
-                    <table class="table table-bordered mt-3">
-                        <thead>
-                        <tr>
-                            <th>Majetek</th>
-                            <th>Typ</th>
-                            <th>Odp.sk.,způsob</th>
-                            <th>Rok odpisu</th>
-                            <th>VC</th>
-                            <th>Zvýš.VC</th>
-                            <th>Sazba</th>
-                            <th>%</th>
-                            <th>Odpis</th>
-                            <th>Oprávky</th>
-                            <th>ZC</th>
-                            <th>Provést</th>
-                            <th>Provedeno</th>
-                            <th>Zaúčt.</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {foreach $accountingDepreciations as $depreciation}
-                            {var $asset = $depreciation->getAsset()}
-                            <tr>
-                                <td>
-                                    <a n:href=":Admin:Asset:depreciations, $asset->getId()">{$asset->getName()}</a>
-                                </td>
-                                <td>
-                                    {$asset->getAssetType()->getName()}
-                                </td>
-                                <td>
-                                    {var $accountingGroup = $asset->getDepreciationGroupAccounting()}
-                                    {if $asset->isOnlyTax()}
-                                        {if $taxGroup !== null}
-                                            {$taxGroup->getFullName()}
-                                        {/if}
-                                    {elseif $accountingGroup !== null}
-                                        {$accountingGroup->getFullName()}
-                                    {/if}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciationYear()}
-                                </td>
-                                <td>
-                                    {$depreciation->getEntryPrice()}
-                                </td>
-                                <td>
-                                    {$depreciation->getIncreasedEntryPrice()}
-                                </td>
-                                <td>
-                                    {$depreciation->getRate()}
-                                </td>
-                                <td>
-                                    {$depreciation->getPercentage()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciationAmount()}
-                                </td>
-                                <td>
-                                    {$depreciation->getDepreciatedAmount()}
-                                </td>
-                                <td>
-                                    {$depreciation->getResidualPrice()}
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
-                                </td>
-                            </tr>
-                        {/foreach}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 {/block}

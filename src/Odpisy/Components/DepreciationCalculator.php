@@ -15,7 +15,6 @@ class DepreciationCalculator
 {
     private EntityManagerInterface $entityManager;
 
-
     public function __construct(
         EntityManagerInterface $entityManager,
     ) {
@@ -208,7 +207,7 @@ class DepreciationCalculator
             }
         }
 
-        return $depreciationAmount;
+        return round($depreciationAmount);
     }
 
     protected function calculateDepreciationAmountUniform($entryPrice, $percentage): float
@@ -258,16 +257,13 @@ class DepreciationCalculator
 
     protected function checkGenerationForYear(?int $totalDepreciationYears, int $depreciationYear, int $year, ?int $disposalYear, ?float $residualPrice): bool
     {
-        if (!$totalDepreciationYears) {
-            return false;
-        }
         if ($disposalYear && $year > $disposalYear) {
             return false;
         }
-        if ($residualPrice === 0 || $depreciationYear > 100) {
+        if ($residualPrice === 0 || $residualPrice === (float)0 || $depreciationYear > 101) {
             return false;
         }
-        if ($depreciationYear > ($totalDepreciationYears)) {
+        if ($totalDepreciationYears && $depreciationYear > $totalDepreciationYears && ($residualPrice !== (float)0)) {
             return false;
         }
         return true;

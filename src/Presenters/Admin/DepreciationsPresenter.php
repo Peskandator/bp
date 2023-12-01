@@ -15,18 +15,23 @@ final class DepreciationsPresenter extends BaseAdminPresenter
         parent::__construct();
     }
 
-    public function actionDefault(?int $yearArg = null): void
+    public function actionDefault(?int $yearArg = null, string $type = "tax"): void
     {
         $year = $yearArg;
         if (!$year) {
             $today = new \DateTimeImmutable('today');
             $year = (int)$today->format('Y');
         }
+        $viewAccounting = false;
+        if ($type === "accounting") {
+            $viewAccounting = true;
+        }
 
         $this->template->taxDepreciations = $this->getTaxDepreciationsForYear($year);
         $this->template->accountingDepreciations = $this->getAccountingDepreciationsForYear($year);
         $this->template->availableYears = $this->getAvailableYears();
         $this->template->selectedYear = $year;
+        $this->template->viewAccounting = $viewAccounting;
     }
 
     protected function getTaxDepreciationsForYear(int $year): array

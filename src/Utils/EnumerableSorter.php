@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Entity\DepreciationGroup;
 use Doctrine\Common\Collections\Collection;
 
 class EnumerableSorter
@@ -43,17 +44,17 @@ class EnumerableSorter
 
     public function sortGroupsByMethodAndNumber(array $groups): array
     {
-        usort($groups, function ($first, $second) {
-            if ($first->getGroup() > $second->getGroup()) {
-                return 1;
-            }
-            if ($first->getGroup() < $second->getGroup()) {
-                return -1;
-            };
+        usort($groups, function (DepreciationGroup $first, DepreciationGroup $second) {
             if ($first->getMethod() > $second->getMethod()) {
                 return 1;
             }
             if ($first->getMethod() < $second->getMethod()) {
+                return -1;
+            };
+            if ($first->getGroup() > $second->getGroup()) {
+                return 1;
+            }
+            if ($first->getGroup() < $second->getGroup()) {
                 return -1;
             };
 

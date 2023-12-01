@@ -163,9 +163,9 @@ class AssetFormFactory
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
         ;
         $form
-            ->addInteger('depreciation_year_tax', 'Rok odpisu')
-            ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
-            ->addRule($form::MAX, 'Rok odpisu může být maximálně 100', 100)
+            ->addInteger('depreciation_year_tax', 'Pořadové číslo roku odpisu')
+            ->addRule($form::MIN, 'Pořadové číslo roku odpisu musí být minimálně 0', 0)
+            ->addRule($form::MAX, 'Pořadové číslo roku odpisu může být maximálně 100', 100)
             ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
             ->setRequired(true)
         ;
@@ -200,8 +200,8 @@ class AssetFormFactory
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
         ;
         $form
-            ->addInteger('depreciation_year_accounting', 'Rok odpisu')
-            ->addRule($form::MIN, 'Rok odpisu musí být minimálně 0', 0)
+            ->addInteger('depreciation_year_accounting', 'Pořadové číslo roku odpisu')
+            ->addRule($form::MIN, 'Pořadové číslo roku odpisu musí být minimálně 0', 0)
             ->setNullable()
         ;
 
@@ -255,7 +255,7 @@ class AssetFormFactory
                 }
                 if (!$values->depreciation_year_accounting) {
                     $form['depreciation_year_accounting']->addError('Toto pole je povinné');
-                    $form->addError('Rok odpisu účetních odpisů je nutné vyplnit');
+                    $form->addError('Pořadové číslo roku odpisu je nutné vyplnit');
                 }
             }
         };
