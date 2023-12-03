@@ -457,6 +457,7 @@ class Asset
         }
         return null;
     }
+
     public function getAccountingDepreciationForDepreciationYear(int $depreciationYear): ?DepreciationAccounting
     {
         $accountingDepreciations = $this->getAccountingDepreciations();
@@ -465,6 +466,34 @@ class Asset
          */
         foreach ($accountingDepreciations as $depreciation) {
             if ($depreciation->getDepreciationYear() === $depreciationYear && $depreciation->isExecutable()) {
+                return $depreciation;
+            }
+        }
+        return null;
+    }
+
+    public function getTaxDepreciationForYear(int $year): ?DepreciationTax
+    {
+        $taxDepreciations = $this->getTaxDepreciations();
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($taxDepreciations as $depreciation) {
+            if ($depreciation->getYear() === $year) {
+                return $depreciation;
+            }
+        }
+        return null;
+    }
+
+    public function getAccountingDepreciationForYear(int $year): ?DepreciationAccounting
+    {
+        $accountingDepreciations = $this->getAccountingDepreciations();
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($accountingDepreciations as $depreciation) {
+            if ($depreciation->getYear() === $year) {
                 return $depreciation;
             }
         }

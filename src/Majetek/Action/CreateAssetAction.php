@@ -5,20 +5,20 @@ namespace App\Majetek\Action;
 use App\Entity\AccountingEntity;
 use App\Entity\Asset;
 use App\Majetek\Requests\CreateAssetRequest;
-use App\Odpisy\Components\DepreciationCalculator;
+use App\Odpisy\Components\DepreciationPlanProvider;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CreateAssetAction
 {
     private EntityManagerInterface $entityManager;
-    private DepreciationCalculator $depreciationCalculator;
+    private DepreciationPlanProvider $depreciationPlanProvider;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        DepreciationCalculator $depreciationCalculator
+        DepreciationPlanProvider $depreciationPlanProvider,
     ) {
         $this->entityManager = $entityManager;
-        $this->depreciationCalculator = $depreciationCalculator;
+        $this->depreciationPlanProvider = $depreciationPlanProvider;
     }
 
     public function __invoke(AccountingEntity $entity, CreateAssetRequest $request): void
@@ -28,7 +28,7 @@ class CreateAssetAction
         $entity->getAssets()->add($asset);
         $this->entityManager->flush();
 
-        $this->depreciationCalculator->createDepreciationPlan($asset);
+        $this->depreciationPlanProvider->createDepreciationPlan($asset);
         $this->entityManager->flush();
     }
 }

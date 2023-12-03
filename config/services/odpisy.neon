@@ -1,5 +1,5 @@
 services:
-    - App\Odpisy\Components\DepreciationCalculator
+    - App\Odpisy\Components\DepreciationPlanProvider
     - App\Odpisy\Components\EditDepreciationCalculator
 
     - App\Odpisy\Forms\EditDepreciationFormFactory

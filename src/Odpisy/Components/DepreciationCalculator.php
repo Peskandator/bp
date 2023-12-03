@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class DepreciationCalculator
 {
-    private EntityManagerInterface $entityManager;
+    protected EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -21,137 +21,64 @@ class DepreciationCalculator
         $this->entityManager = $entityManager;
     }
 
-    public function createDepreciationPlan(Asset $asset): void
+    protected function createNewTaxDepreciation(Asset $asset, DepreciationGroup $group, int $year, int $depreciationYear, float $entryPrice, float $correctEntryPrice, float $depreciatedAmount, bool $isCoefficient): float
     {
-        if ($asset->hasTaxDepreciations()) {
-            $this->createDepreciationPlanTax($asset);
-        }
-        if ($asset->hasAccountingDepreciations()) {
-            $this->createDepreciationPlanAccounting($asset);
-        }
+        $percentage = 100;
+
+        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
+        $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateTax());
+        $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient, $percentage);
+        $depreciatedAmount += $depreciationAmount;
+        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
+
+        $depreciation = new DepreciationTax(
+            $asset,
+            $group,
+            $year,
+            $depreciationYear,
+            $depreciationAmount,
+            $percentage,
+            $depreciatedAmount,
+            $residualPrice,
+            true,
+            $rate
+        );
+
+        $this->entityManager->persist($depreciation);
+        $asset->addTaxDepreciation($depreciation);
+
+        return $depreciationAmount;
     }
 
-    public function createDepreciationPlanTax(Asset $asset): void
+    protected function createNewAccountingDepreciation(Asset $asset, DepreciationGroup $group, int $year, int $depreciationYear, float $entryPrice, float $correctEntryPrice, float $depreciatedAmount, bool $isCoefficient): float
     {
-        $today = new \DateTimeImmutable('today');
-        $year = (int)$today->format('Y');
+        $percentage = 100;
 
-        $disposalDate = $asset->getDisposalDate();
-        $disposalYear = null;
-        if ($disposalDate) {
-            $disposalYear = (int)$disposalDate->format('Y');
-        }
+        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
+        $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateAccounting());
+        $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient, $percentage);
+        $depreciatedAmount += $depreciationAmount;
+        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
 
-        $group = $asset->getDepreciationGroupTax();
-        $isCoefficient = $group->isCoefficient();
-        $depreciationYear = $asset->getDepreciationYearTax();
-        $totalDepreciationYears = $group->getYears();
-        $entryPrice = $asset->getEntryPriceTax();
-        $correctEntryPrice = $asset->getCorrectEntryPriceTax();
-        $depreciatedAmount = $asset->getDepreciatedAmountTax();
-        $residualPrice = $entryPrice - $depreciatedAmount;
+        $depreciation = new DepreciationAccounting();
+        $depreciation->update
+        (
+            $asset,
+            $group,
+            $year,
+            $depreciationYear,
+            $depreciationAmount,
+            $percentage,
+            $depreciatedAmount,
+            $residualPrice,
+            true,
+            $rate
+        );
 
-        while (true) {
-            if (!$this->checkGenerationForYear($totalDepreciationYears, $depreciationYear, $year, $disposalYear, $residualPrice)) {
-                break;
-            }
-            if ($depreciationYear === 0) {
-                $year++;
-                $depreciationYear++;
-                continue;
-            }
+        $this->entityManager->persist($depreciation);
+        $asset->addAccountingDepreciation($depreciation);
 
-            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
-            $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateTax());
-            $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient);
-            $depreciatedAmount += $depreciationAmount;
-            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
-
-            $depreciation = new DepreciationTax(
-                $asset,
-                $group,
-                $year,
-                $depreciationYear,
-                $depreciationAmount,
-                100,
-                $depreciatedAmount,
-                $residualPrice,
-                true,
-                $rate
-            );
-
-            $this->entityManager->persist($depreciation);
-            $asset->addTaxDepreciation($depreciation);
-            $group->addTaxDepreciation($depreciation);
-
-            $year++;
-            $depreciationYear++;
-        }
-        $this->entityManager->flush();
-    }
-
-    public function createDepreciationPlanAccounting(Asset $asset): void
-    {
-        if ($asset->isOnlyTax()) {
-            $this->copyTaxDepreciationsToAccounting($asset);
-            return;
-        }
-
-        $today = new \DateTimeImmutable('today');
-        $year = (int)$today->format('Y');
-
-        $disposalDate = $asset->getDisposalDate();
-        $disposalYear = null;
-        if ($disposalDate) {
-            $disposalYear = (int)$disposalDate->format('Y');
-        }
-
-        $group = $asset->getDepreciationGroupAccounting();
-        $isCoefficient = $group->isCoefficient();
-        $depreciationYear = $asset->getDepreciationYearAccounting();
-        $totalDepreciationYears = $group->getYears();
-        $entryPrice = $asset->getEntryPriceAccounting();
-        $correctEntryPrice = $asset->getCorrectEntryPriceAccounting();
-        $depreciatedAmount = $asset->getDepreciatedAmountAccounting();
-        $residualPrice = null;
-
-        while (true) {
-            if (!$this->checkGenerationForYear($totalDepreciationYears, $depreciationYear, $year, $disposalYear, $residualPrice)) {
-                break;
-            }
-            if ($depreciationYear === 0) {
-                $year++;
-                $depreciationYear++;
-                continue;
-            }
-
-            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
-            $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateAccounting());
-            $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient);
-            $depreciatedAmount += $depreciationAmount;
-            $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
-
-            $depreciation = new DepreciationAccounting();
-            $depreciation->update
-            (
-                $asset,
-                $group,
-                $year,
-                $depreciationYear,
-                $depreciationAmount,
-                100,
-                $depreciatedAmount,
-                $residualPrice,
-                true,
-                $rate
-            );
-
-            $this->entityManager->persist($depreciation);
-            $asset->addAccountingDepreciation($depreciation);
-            $group->addAccountingDepreciation($depreciation);
-            $year++;
-            $depreciationYear++;
-        }
+        return $depreciationAmount;
     }
 
     protected function copyTaxDepreciationsToAccounting(Asset $asset): void
@@ -162,12 +89,10 @@ class DepreciationCalculator
          * @var DepreciationTax $depreciation
          */
         foreach ($onlyTaxDepreciations as $depreciation) {
-            $group = $depreciation->getDepreciationGroup();
             $copiedAccountingDepreciation = new DepreciationAccounting();
             $copiedAccountingDepreciation->createFromTaxDepreciation($depreciation);
             $this->entityManager->persist($copiedAccountingDepreciation);
             $asset->addAccountingDepreciation($copiedAccountingDepreciation);
-            $group->addAccountingDepreciation($copiedAccountingDepreciation);
         }
         $this->entityManager->flush();
     }
@@ -181,7 +106,7 @@ class DepreciationCalculator
         return $residualPriceBase - $depreciatedAmount;
     }
 
-    protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice, bool $isCoefficient): float
+    protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice, bool $isCoefficient, float $percentage): float
     {
         if ($rate === null || $rate === (float)0) {
             return 0;
@@ -260,12 +185,27 @@ class DepreciationCalculator
         if ($disposalYear && $year > $disposalYear) {
             return false;
         }
-        if ($residualPrice === 0 || $residualPrice === (float)0 || $depreciationYear > 101) {
+        if ((int)$residualPrice === 0 || $depreciationYear > 101) {
             return false;
         }
         if ($totalDepreciationYears && $depreciationYear > $totalDepreciationYears && ($residualPrice !== (float)0)) {
             return false;
         }
         return true;
+    }
+
+    protected function getDisposalYear(?\DateTimeInterface $disposalDate): ?int
+    {
+        $disposalYear = null;
+        if ($disposalDate) {
+            $disposalYear = (int)$disposalDate->format('Y');
+        }
+        return $disposalYear;
+    }
+
+    protected function getCurrentYear(): int
+    {
+        $today = new \DateTimeImmutable('today');
+        return (int)$today->format('Y');
     }
 }

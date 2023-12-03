@@ -3,21 +3,21 @@
 namespace App\Odpisy\Action;
 
 use App\Entity\DepreciationAccounting;
+use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Requests\EditDepreciationRequest;
-use Doctrine\ORM\EntityManagerInterface;
 
 class EditAccountingDepreciationAction
 {
-    private EntityManagerInterface $entityManager;
+    private EditDepreciationCalculator $editDepreciationCalculator;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        EditDepreciationCalculator $editDepreciationCalculator
     ) {
-        $this->entityManager = $entityManager;
+        $this->editDepreciationCalculator = $editDepreciationCalculator;
     }
 
     public function __invoke(DepreciationAccounting $depreciation, EditDepreciationRequest $request): void
     {
-        // TODO: přepočítat
+        $this->editDepreciationCalculator->recalculateAccountingDepreciationsAfterEditingDepreciation($depreciation, $request);
     }
 }

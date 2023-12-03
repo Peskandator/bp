@@ -335,7 +335,7 @@ class AssetFormFactory
             //accounting box validation
 
             if (($typeCode === 1 || $typeCode === 3) && $values->only_tax === false) {
-                if ($groupAccounting === null || $groupAccounting->getEntity()->getId() !== $currentEntity->getId() || $groupAccounting->getMethod() !== DepreciationMethod::ACCOUNTING) {
+                if ($groupAccounting === null || $groupAccounting->getEntity()->getId() !== $currentEntity->getId()) {
                     $form['group_accounting']->addError('Prosím vyberte odp. skupinu');
                     $form->addError('Prosím vyberte účetní odp. skupinu');
                 }

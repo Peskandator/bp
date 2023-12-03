@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Odpisy\Requests\EditDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -148,6 +149,12 @@ class DepreciationAccounting implements Depreciation
         $this->isCoefficient = $depreciationTax->isCoefficient();
         $this->rate = $depreciationTax->getRate();
         $this->disposalDate = $depreciationTax->getDisposalDate();
+    }
+
+    public function updateNotExecutable(float $depreciatedAmount, float $residualPrice): void
+    {
+        $this->depreciatedAmount = $depreciatedAmount;
+        $this->residualPrice = $residualPrice;
     }
 
     public function getId(): int
