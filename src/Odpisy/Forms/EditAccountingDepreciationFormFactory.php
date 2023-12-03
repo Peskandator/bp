@@ -4,33 +4,25 @@ namespace App\Odpisy\Forms;
 
 use App\Entity\AccountingEntity;
 use App\Odpisy\Action\EditAccountingDepreciationAction;
-use App\Odpisy\Action\EditTaxDepreciationAction;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\ORM\DepreciationAccountingRepository;
-use App\Odpisy\ORM\DepreciationTaxRepository;
 use App\Odpisy\Requests\EditDepreciationRequest;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
-class EditDepreciationFormFactory
+class EditAccountingDepreciationFormFactory
 {
-    private DepreciationTaxRepository $depreciationTaxRepository;
     private DepreciationAccountingRepository $depreciationAccountingRepository;
-    private EditTaxDepreciationAction $editTaxDepreciationAction;
     private EditAccountingDepreciationAction $editAccountingDepreciationAction;
     private EditDepreciationCalculator $editDepreciationCalculator;
 
     public function __construct(
-        DepreciationTaxRepository $depreciationTaxRepository,
         DepreciationAccountingRepository $depreciationAccountingRepository,
-        EditTaxDepreciationAction $editTaxDepreciationAction,
         EditAccountingDepreciationAction $editAccountingDepreciationAction,
         EditDepreciationCalculator $editDepreciationCalculator,
     )
     {
-        $this->depreciationTaxRepository = $depreciationTaxRepository;
         $this->depreciationAccountingRepository = $depreciationAccountingRepository;
-        $this->editTaxDepreciationAction = $editTaxDepreciationAction;
         $this->editAccountingDepreciationAction = $editAccountingDepreciationAction;
         $this->editDepreciationCalculator = $editDepreciationCalculator;
     }
@@ -59,16 +51,9 @@ class EditDepreciationFormFactory
         $form
             ->addCheckbox('executable', '')
         ;
-        $form
-            ->addCheckbox('is_accounting', '')
-        ;
 
         $form->onValidate[] = function (Form $form, \stdClass $values) use ($currentEntity) {
-            if ($values->is_accounting) {
-                $depreciation = $this->depreciationAccountingRepository->find($values->id);
-            } else {
-                $depreciation = $this->depreciationTaxRepository->find($values->id);
-            }
+            $depreciation = $this->depreciationAccountingRepository->find($values->id);
             if ($depreciation === null) {
                 $form->addError('Odpis nebyl nalezen.');
                 $form->getPresenter()->flashMessage(FlashMessageType::ERROR, 'Odpis nebyl nalezen.');
@@ -88,29 +73,17 @@ class EditDepreciationFormFactory
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {
-            $isAccounting = $values->is_accounting;
-            if ($isAccounting) {
-                $depreciation = $this->depreciationAccountingRepository->find($values->id);
-            } else {
-                $depreciation = $this->depreciationTaxRepository->find($values->id);
-            }
-
+            $depreciation = $this->depreciationAccountingRepository->find($values->id);
             $request = new EditDepreciationRequest(
                 $values->id,
                 $values->amount,
                 $values->percentage,
                 $values->executable,
             );
-
-            if ($isAccounting) {
-                $this->editAccountingDepreciationAction->__invoke($depreciation, $request);
-            } else {
-                $this->editTaxDepreciationAction->__invoke($depreciation, $request);
-            }
+            $this->editAccountingDepreciationAction->__invoke($depreciation, $request);
             $form->getPresenter()->flashMessage('Odpis byl úspěšně upraven. Neprovedené odpisy následujících let byly přepočítány.', FlashMessageType::SUCCESS);
         };
 
         return $form;
     }
-
 }

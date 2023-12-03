@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
-use App\Odpisy\Forms\EditDepreciationFormFactory;
+use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
+use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\EnumerableSorter;
 use Nette\Application\UI\Form;
@@ -15,20 +16,23 @@ final class AssetPresenter extends BaseAdminPresenter
     private AssetFormFactory $assetFormFactory;
     private EnumerableSorter $enumerableSorter;
     private AssetFormJsonGenerator $jsonGenerator;
-    private EditDepreciationFormFactory $editDepreciationFormFactory;
+    private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
+    private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
         EnumerableSorter $enumerableSorter,
         AssetFormJsonGenerator $jsonGenerator,
-        EditDepreciationFormFactory $editDepreciationFormFactory,
+        EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
+        EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
     )
     {
         parent::__construct();
         $this->assetFormFactory = $assetFormFactory;
         $this->enumerableSorter = $enumerableSorter;
         $this->jsonGenerator = $jsonGenerator;
-        $this->editDepreciationFormFactory = $editDepreciationFormFactory;
+        $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
+        $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
     }
 
     public function actionDefault(int $assetId): void
@@ -71,9 +75,15 @@ final class AssetPresenter extends BaseAdminPresenter
         return $form;
     }
 
-    protected function createComponentEditDepreciationForm(): Form
+    protected function createComponentEditTaxDepreciationForm(): Form
     {
-        $form = $this->editDepreciationFormFactory->create($this->currentEntity);
+        $form = $this->editTaxDepreciationFormFactory->create($this->currentEntity);
+        return $form;
+    }
+
+    protected function createComponentEditAccountingDepreciationForm(): Form
+    {
+        $form = $this->editAccountingDepreciationFormFactory->create($this->currentEntity);
         return $form;
     }
 }

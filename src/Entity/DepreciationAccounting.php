@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
-use App\Odpisy\Requests\EditDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -264,5 +263,10 @@ class DepreciationAccounting implements Depreciation
     public function isAccountingDepreciation(): bool
     {
         return true;
+    }
+
+    public function isSameAsTax(): bool
+    {
+        return $this->getAsset()->isOnlyTax();
     }
 }

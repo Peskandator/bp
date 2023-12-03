@@ -11,16 +11,15 @@ export default function() {
         let percentage = $(`.depreciationTax-percentage-` + depreciationId).val();
         let executable = $(`.depreciationTax-executable-` + depreciationId).is(':checked');
 
-        $(`.form-depreciation-id`).val(depreciationId);
-        $(`.form-depreciation-amount`).val(depreciationAmount);
-        $(`.form-depreciation-percentage`).val(percentage);
+        $(`.form-tax-depreciation-id`).val(depreciationId);
+        $(`.form-tax-depreciation-amount`).val(depreciationAmount);
+        $(`.form-tax-depreciation-percentage`).val(percentage);
         if (executable === true) {
-            $(`.form-depreciation-executable`).prop("checked", true)
+            $(`.form-tax-depreciation-executable`).prop("checked", true)
         } else {
-            $(`.form-depreciation-executable`).prop("checked", false)
+            $(`.form-tax-depreciation-executable`).prop("checked", false)
         }
-        $(`.form-depreciation-isAccounting`).prop("checked", false);
-        $(`.edit-depreciation-form`).submit();
+        $(`.edit-tax-depreciation-form`).submit();
     });
 
     $(`.edit-depreciationAccounting-button`).click(function (event) {
@@ -31,16 +30,15 @@ export default function() {
         let percentage = $(`.depreciationAccounting-percentage-` + depreciationId).val();
         let executable = $(`.depreciationAccounting-executable-` + depreciationId).is(':checked');
 
-        $(`.form-depreciation-id`).val(depreciationId);
-        $(`.form-depreciation-amount`).val(depreciationAmount);
-        $(`.form-depreciation-percentage`).val(percentage);
+        $(`.form-accounting-depreciation-id`).val(depreciationId);
+        $(`.form-accounting-depreciation-amount`).val(depreciationAmount);
+        $(`.form-accounting-depreciation-percentage`).val(percentage);
 
         if (executable === true) {
-            $(`.form-depreciation-executable`).prop("checked", true)
+            $(`.form-accounting-depreciation-executable`).prop("checked", true)
         } else {
-            $(`.form-depreciation-executable`).prop("checked", false)
+            $(`.form-accounting-depreciation-executable`).prop("checked", false)
         }
-        $(`.form-depreciation-isAccounting`).prop("checked", true);
-        $(`.edit-depreciation-form`).submit();
+        $(`.edit-accounting-depreciation-form`).submit();
     });
 };

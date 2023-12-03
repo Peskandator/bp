@@ -5,20 +5,24 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
-use App\Odpisy\Forms\EditDepreciationFormFactory;
+use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
+use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use Nette\Application\UI\Form;
 
 final class DepreciationsPresenter extends BaseAdminPresenter
 {
-    private EditDepreciationFormFactory $editDepreciationFormFactory;
+    private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
+    private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;
 
     public function __construct(
-        EditDepreciationFormFactory $editDepreciationFormFactory,
+        EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
+        EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
     )
     {
-        $this->editDepreciationFormFactory = $editDepreciationFormFactory;
+        $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         parent::__construct();
+        $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
     }
 
     public function actionDefault(?int $yearArg = null, string $type = "tax"): void
@@ -92,9 +96,15 @@ final class DepreciationsPresenter extends BaseAdminPresenter
         return $availableYears;
     }
 
-    protected function createComponentEditDepreciationForm(): Form
+    protected function createComponentEditTaxDepreciationForm(): Form
     {
-        $form = $this->editDepreciationFormFactory->create($this->currentEntity);
+        $form = $this->editTaxDepreciationFormFactory->create($this->currentEntity);
+        return $form;
+    }
+
+    protected function createComponentEditAccountingDepreciationForm(): Form
+    {
+        $form = $this->editAccountingDepreciationFormFactory->create($this->currentEntity);
         return $form;
     }
 }
