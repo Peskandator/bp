@@ -138,15 +138,27 @@
                                                 {$depreciation->getRate()}
                                             </td>
                                             <td>
-                                                <span class="depreciationTax-percentage-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getPercentage()}</span>
+                                                <span class="depreciationTax-percentage-text-{$depreciationId} js-edit-text-tax js-text-tax-{$depreciationId}">{$depreciation->getPercentage()}</span>
                                                 <div class="form-group">
-                                                    <input type="number" class="depreciationTax-percentage-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getPercentage()}">
+                                                    <input type="number"
+                                                           class="depreciationTax-percentage-{$depreciationId} form-control js-edit-input-tax js-input-tax-{$depreciationId} js-percentage-input-tax"
+                                                           style="display: none"
+                                                           value="{$depreciation->getPercentage()}"
+                                                           data-depreciation-id="{$depreciationId}"
+                                                           data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
+                                                    >
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="depreciationTax-amount-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getDepreciationAmount()}</span>
+                                                <span class="depreciationTax-amount-text-{$depreciationId} js-edit-text-tax js-text-tax-{$depreciationId}">{$depreciation->getDepreciationAmount()}</span>
                                                 <div class="form-group">
-                                                    <input type="number" class="depreciationTax-amount-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getDepreciationAmount()}">
+                                                    <input type="number"
+                                                           class="depreciationTax-amount-{$depreciationId} form-control js-edit-input-tax js-input-tax-{$depreciationId} js-amount-input-tax"
+                                                           style="display: none"
+                                                           value="{$depreciation->getDepreciationAmount()}"
+                                                           data-depreciation-id="{$depreciationId}"
+                                                           data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
+                                                    >
                                                 </div>
                                             </td>
                                             <td>
@@ -156,13 +168,13 @@
                                                 {$depreciation->getResidualPrice()}
                                             </td>
                                             <td>
-                                                <div class="form-check depreciationTax-executable-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">
+                                                <div class="form-check depreciationTax-executable-text-{$depreciationId} js-edit-text-tax js-text-tax-{$depreciationId}">
                                                     <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
                                                 </div>
                                                 <div class="form-check">
                                                     <input style="display: none;"
                                                            class="form-check-input js-edit-executable-checkbox
-                                                        depreciationTax-executable-{$depreciationId} js-edit-input js-input-{$depreciationId}"
+                                                            depreciationTax-executable-{$depreciationId} js-edit-input-tax js-input-tax-{$depreciationId}"
                                                            type="checkbox" {if $depreciation->isExecutable()}checked{/if}
                                                            data-depreciation-id="{$depreciationId}"
                                                     >
@@ -176,8 +188,11 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex">
-                                                    <button class="edit-depreciationTax-button btn-primary btn btn-sm js-edit-input" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
-                                                    <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$depreciationId}"></i>
+                                                    <button class="edit-depreciationTax-button btn-primary btn btn-sm js-edit-input-tax" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
+                                                    <i class="fas fa-pencil-alt text-primary icon js-edit-text-tax js-edit-start-tax"
+                                                       title="Upravit"
+                                                       data-record-id="{$depreciationId}"
+                                                    ></i>
                                                 </div>
                                             </td>
                                         </tr>
@@ -250,15 +265,27 @@
                                             {$depreciation->getRate()}
                                         </td>
                                         <td>
-                                            <span class="depreciationAccounting-percentage-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getPercentage()}</span>
+                                            <span class="depreciationAccounting-percentage-text-{$depreciationId} js-edit-text-accounting js-text-accounting-{$depreciationId}">{$depreciation->getPercentage()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="depreciationAccounting-percentage-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getPercentage()}">
+                                                <input type="number"
+                                                       class="depreciationAccounting-percentage-{$depreciationId} form-control js-edit-input-accounting js-input-accounting-{$depreciationId} js-percentage-input-accounting"
+                                                       style="display: none"
+                                                       value="{$depreciation->getPercentage()}"
+                                                       data-depreciation-id="{$depreciationId}"
+                                                       data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
+                                                >
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="depreciationAccounting-amount-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">{$depreciation->getDepreciationAmount()}</span>
+                                            <span class="depreciationAccounting-amount-text-{$depreciationId} js-edit-text-accounting js-text-accounting-{$depreciationId}">{$depreciation->getDepreciationAmount()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="depreciationAccounting-amount-{$depreciationId} form-control js-edit-input js-input-{$depreciationId}" style="display: none" value="{$depreciation->getDepreciationAmount()}">
+                                                <input type="number"
+                                                       class="depreciationAccounting-amount-{$depreciationId} form-control js-edit-input-accounting js-input-accounting-{$depreciationId} js-amount-input-accounting"
+                                                       style="display: none"
+                                                       value="{$depreciation->getDepreciationAmount()}"
+                                                       data-depreciation-id="{$depreciationId}"
+                                                       data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
+                                                >
                                             </div>
                                         </td>
                                         <td>
@@ -268,13 +295,13 @@
                                             {$depreciation->getResidualPrice()}
                                         </td>
                                         <td>
-                                            <div class="form-check depreciationAccounting-executable-text-{$depreciationId} js-edit-text js-text-{$depreciationId}">
+                                            <div class="form-check depreciationAccounting-executable-text-{$depreciationId} js-edit-text-accounting js-text-accounting-{$depreciationId}">
                                                 <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
                                             </div>
                                             <div class="form-check">
                                                 <input style="display: none;"
                                                        class="form-check-input js-edit-executable-checkbox
-                                                        depreciationAccounting-executable-{$depreciationId} js-edit-input js-input-{$depreciationId}"
+                                                        depreciationAccounting-executable-{$depreciationId} js-edit-input-accounting js-input-accounting-{$depreciationId}"
                                                        type="checkbox" {if $depreciation->isExecutable()}checked{/if}
                                                        data-depreciation-id="{$depreciationId}"
                                                 >
@@ -289,8 +316,11 @@
                                         <td>
                                             {if !$depreciation->isSameAsTax()}
                                                 <div class="d-flex">
-                                                    <button class="edit-depreciationAccounting-button btn-primary btn btn-sm js-edit-input" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
-                                                    <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$depreciationId}"></i>
+                                                    <button class="edit-depreciationAccounting-button btn-primary btn btn-sm js-edit-input-accounting" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
+                                                    <i class="fas fa-pencil-alt text-primary icon js-edit-text-accounting js-edit-start-accounting"
+                                                       title="Upravit"
+                                                       data-record-id="{$depreciationId}"
+                                                    ></i>
                                                 </div>
                                             {/if}
                                         </td>

@@ -335,4 +335,46 @@ class EditDepreciationCalculator extends DepreciationCalculator
 
         return $depreciatedAmount;
     }
+
+    public function getBaseDepreciationAmountTax(DepreciationTax $depreciation): float
+    {
+        $asset = $depreciation->getAsset();
+        $group = $asset->getDepreciationGroupTax();
+        $year = $depreciation->getYear();
+        $entryPrice = $asset->getEntryPriceTax();
+        $correctEntryPrice = $asset->getCorrectEntryPriceTax();
+        $depreciatedAmountBase = $asset->getDepreciatedAmountTax();
+        $isCoefficient = $depreciation->isCoefficient();
+        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $depreciation->getYear());
+        $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
+        $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateTax());
+        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
+
+        return $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient, 100);
+    }
+    public function getBaseDepreciationAmountAccounting(DepreciationAccounting $depreciation): float
+    {
+        $asset = $depreciation->getAsset();
+        $group = $asset->getDepreciationGroupAccounting();
+        $year = $depreciation->getYear();
+        $entryPrice = $asset->getEntryPriceAccounting();
+        $correctEntryPrice = $asset->getCorrectEntryPriceAccounting();
+        $depreciatedAmountBase = $asset->getDepreciatedAmountAccounting();
+        $isCoefficient = $depreciation->isCoefficient();
+        $increaseDate = $asset->getIncreaseDateAccounting();
+        if ($depreciation->isSameAsTax()) {
+            $group = $asset->getDepreciationGroupTax();
+            $entryPrice = $asset->getEntryPriceTax();
+            $correctEntryPrice = $asset->getCorrectEntryPriceTax();
+            $depreciatedAmountBase = $asset->getDepreciatedAmountTax();
+            $increaseDate = $asset->getIncreaseDateTax();
+        }
+
+        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $depreciation->getYear());
+        $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
+        $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $increaseDate);
+        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
+
+        return $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient, 100);
+    }
 }

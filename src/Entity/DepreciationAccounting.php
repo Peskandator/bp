@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Odpisy\Components\EditDepreciationCalculator;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -211,7 +212,7 @@ class DepreciationAccounting implements Depreciation
         return $this->year;
     }
 
-    public function getPercentage(): int
+    public function getPercentage(): float
     {
         return $this->percentage;
     }
@@ -268,5 +269,10 @@ class DepreciationAccounting implements Depreciation
     public function isSameAsTax(): bool
     {
         return $this->getAsset()->isOnlyTax();
+    }
+
+    public function getBaseDepreciationAmount(EditDepreciationCalculator $calculator): float
+    {
+        return $calculator->getBaseDepreciationAmountAccounting($this);
     }
 }

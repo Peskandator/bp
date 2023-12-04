@@ -45,7 +45,6 @@ class EditTaxDepreciationFormFactory
             ->addText('percentage', 'Procento')
             ->addRule($form::FLOAT, 'Zadejte platné číslo')
             ->addRule($form::MIN, 'Prosím zadejte číslo větší než 0', 0)
-            ->addRule($form::MAX, 'Prosím zadejte číslo menší nebo rovno 100', 100)
             ->setRequired()
         ;
         $form

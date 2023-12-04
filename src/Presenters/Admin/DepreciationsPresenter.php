@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
+use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAdminPresenter;
@@ -14,15 +15,18 @@ final class DepreciationsPresenter extends BaseAdminPresenter
 {
     private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
     private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;
+    private EditDepreciationCalculator $editDepreciationCalculator;
 
     public function __construct(
         EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
         EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
+        EditDepreciationCalculator $editDepreciationCalculator,
     )
     {
         $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         parent::__construct();
         $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
+        $this->editDepreciationCalculator = $editDepreciationCalculator;
     }
 
     public function actionDefault(?int $yearArg = null, string $type = "tax"): void
@@ -42,6 +46,7 @@ final class DepreciationsPresenter extends BaseAdminPresenter
         $this->template->availableYears = $this->getAvailableYears();
         $this->template->selectedYear = $year;
         $this->template->viewAccounting = $viewAccounting;
+        $this->template->editDepreciationCalculator = $this->editDepreciationCalculator;
     }
 
     protected function getTaxDepreciationsForYear(int $year): array

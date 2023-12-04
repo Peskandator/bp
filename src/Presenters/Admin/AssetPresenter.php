@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAdminPresenter;
@@ -18,6 +19,7 @@ final class AssetPresenter extends BaseAdminPresenter
     private AssetFormJsonGenerator $jsonGenerator;
     private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
     private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;
+    private EditDepreciationCalculator $editDepreciationCalculator;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
@@ -25,6 +27,7 @@ final class AssetPresenter extends BaseAdminPresenter
         AssetFormJsonGenerator $jsonGenerator,
         EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
         EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
+        EditDepreciationCalculator $editDepreciationCalculator,
     )
     {
         parent::__construct();
@@ -33,6 +36,7 @@ final class AssetPresenter extends BaseAdminPresenter
         $this->jsonGenerator = $jsonGenerator;
         $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
+        $this->editDepreciationCalculator = $editDepreciationCalculator;
     }
 
     public function actionDefault(int $assetId): void
@@ -64,6 +68,8 @@ final class AssetPresenter extends BaseAdminPresenter
         $this->template->asset = $asset;
         $this->template->taxDepreciations = $asset->getTaxDepreciations();
         $this->template->accountingDepreciations = $asset->getAccountingDepreciations();
+        $this->template->editDepreciationCalculator = $this->editDepreciationCalculator;
+
         $this->template->activeTab = 3;
     }
 
