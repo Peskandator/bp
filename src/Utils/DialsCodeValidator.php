@@ -10,6 +10,7 @@ use App\Entity\Category;
 use App\Entity\DepreciationGroup;
 use App\Entity\Location;
 use App\Entity\Place;
+use App\Majetek\Enums\DepreciationMethod;
 
 class DialsCodeValidator
 {
@@ -151,21 +152,22 @@ class DialsCodeValidator
         return '';
     }
 
-    public function isDeprecationGroupValid(AccountingEntity $entity, ?int $groupNumber, ?int $method, ?string $prefix, ?int $currentGroupNumber = null, ?int $currentMethod = null, ?string $currentPrefix = null): string
+    public function isDeprecationGroupValid(AccountingEntity $entity, ?int $groupNumber, ?int $method, ?string $prefix, bool $editing, ?int $currentGroupNumber = null, ?int $currentMethod = null, ?string $currentPrefix = null): string
     {
-        if (!$groupNumber || !$method) {
+        if ((!$groupNumber || !$method ) && $method !== DepreciationMethod::ACCOUNTING) {
             return '';
         }
 
         $prefixLowered = $this->lowerPrefixStr($prefix);
-        if ($groupNumber === $currentGroupNumber && $method === $currentMethod && $prefixLowered === $this->lowerPrefixStr($currentPrefix)) {
+
+        if ($editing && $groupNumber === $currentGroupNumber && $method === $currentMethod && $prefixLowered === $this->lowerPrefixStr($currentPrefix)) {
             return '';
         }
 
-        if ($groupNumber < 1) {
+        if ($groupNumber && $groupNumber < 1) {
             return 'Číslo odpisové skupiny musí být větší než 0';
         }
-        if ($groupNumber > 7) {
+        if ($groupNumber && $groupNumber > 7) {
             return 'Číslo odpisové skupiny nemůže být větší než 7';
         }
 

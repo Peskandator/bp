@@ -843,7 +843,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
 
-            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method, $values->prefix);
+            $validationMsg = $this->dialsCodeValidator->isDeprecationGroupValid($this->currentEntity, $values->group_number, $values->method, $values->prefix, false);
             if ($validationMsg !== '') {
                 $form->addError($validationMsg);
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
@@ -999,6 +999,7 @@ final class DialsPresenter extends BaseAdminPresenter
                 $values->group_number,
                 $values->method,
                 $values->prefix,
+                true,
                 $group->getGroup(),
                 $group->getMethod(),
                 $group->getPrefix()
