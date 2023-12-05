@@ -65,12 +65,7 @@ export default function() {
     setInterval(function () {
         $(`.js-amount-input-tax`).each(function () {
             if ($(this).is(':focus')) {
-                let depreciationId = $(this).attr('data-depreciation-id');
-                let baseAmount = $(this).attr('data-base-amount');
-                let newAmount = $(this).val();
-
-                let percentage = (newAmount / baseAmount * 100).toFixed(4);
-                $(`.depreciationTax-percentage-` + depreciationId).val(percentage);
+                changePercentageByAmountTax($(this));
             }
         })
     }, 200)
@@ -78,11 +73,7 @@ export default function() {
     setInterval(function () {
         $(`.js-percentage-input-tax`).each(function () {
             if ($(this).is(':focus')) {
-                let depreciationId = $(this).attr('data-depreciation-id');
-                let baseAmount = $(this).attr('data-base-amount');
-                let newAmount = Math.round($(this).val() * baseAmount) / 100;
-
-                $(`.depreciationTax-amount-` + depreciationId).val(newAmount);
+                changeAmountByPercentageTax($(this));
             }
         })
     }, 200)
@@ -90,71 +81,68 @@ export default function() {
     setInterval(function () {
         $(`.js-amount-input-accounting`).each(function () {
             if ($(this).is(':focus')) {
-                let depreciationId = $(this).attr('data-depreciation-id');
-                let baseAmount = $(this).attr('data-base-amount');
-                let newAmount = $(this).val();
-
-                let percentage = (newAmount / baseAmount * 100).toFixed(4);
-                $(`.depreciationAccounting-percentage-` + depreciationId).val(percentage);
+                changePercentageByAmountAccounting($(this));
             }
         })
     }, 200)
 
     setInterval(function () {
         $(`.js-percentage-input-accounting`).each(function () {
-            if ($(this).is(':focus')) {
-                let depreciationId = $(this).attr('data-depreciation-id');
-                let baseAmount = $(this).attr('data-base-amount');
-                let newAmount = Math.round($(this).val() * baseAmount) / 100;
-
-                $(`.depreciationAccounting-amount-` + depreciationId).val(newAmount);
+            if ($(this).is(':focus')) {;
+                changeAmountByPercentageAccounting($(this));
             }
         })
     }, 200)
 
     $(`.js-amount-input-tax`).change(function () {
-        let depreciationId = $(this).attr('data-depreciation-id');
-        let baseAmount = $(this).attr('data-base-amount');
-        let newAmount = $(this).val();
-
-        let percentage = (newAmount / baseAmount * 100).toFixed(4) ;
-
-        $(`.depreciationTax-percentage-` + depreciationId).val(percentage);
+        changePercentageByAmountTax($(this));
     });
 
     $(`.js-percentage-input-tax`).change(function () {
-        let depreciationId = $(this).attr('data-depreciation-id');
-        let baseAmount = $(this).attr('data-base-amount');
-        let newAmount = Math.round($(this).val() * baseAmount) / 100;
-
-        $(`.depreciationTax-amount-` + depreciationId).val(newAmount);
+        changeAmountByPercentageTax($(this));
     });
 
     $(`.js-amount-input-accounting`).change(function () {
-        let depreciationId = $(this).attr('data-depreciation-id');
-        let baseAmount = $(this).attr('data-base-amount');
-        let newAmount = $(this).val();
-        let percentage = (newAmount / baseAmount * 100).toFixed(4) ;
-
-        $(`.depreciationAccounting-percentage-` + depreciationId).val(percentage);
+        changePercentageByAmountAccounting($(this));
     });
 
     $(`.js-percentage-input-accounting`).change(function () {
-        let depreciationId = $(this).attr('data-depreciation-id');
-        let baseAmount = $(this).attr('data-base-amount');
-        let newAmount = Math.round($(this).val() * baseAmount) / 100;
-
-        $(`.depreciationAccounting-amount-` + depreciationId).val(newAmount);
+        changeAmountByPercentageAccounting($(this));
     });
 
-    // TODO
-    // function changePercentageByAmount(e) {
-    //     let depreciationId = $(this).attr('data-depreciation-id');
-    //     let baseAmount = $(this).attr('data-base-amount');
-    //     let newAmount = $(this).val();
-    //     let percentage = (newAmount / baseAmount * 100).toFixed(4) ;
-    //
-    //     $(`.depreciationAccounting-percentage-` + depreciationId).val(percentage);
-    //
-    // }
+    function changePercentageByAmountTax(e) {
+        let depreciationId = e.attr('data-depreciation-id');
+        let percentageInput = $(`.depreciationTax-percentage-` + depreciationId);
+        changePercentageByAmount(e, percentageInput);
+    }
+
+    function changeAmountByPercentageTax(e) {
+        let depreciationId = e.attr('data-depreciation-id');
+        let baseAmount = e.attr('data-base-amount');
+        let newAmount = Math.round(e.val() * baseAmount) / 100;
+        $(`.depreciationTax-amount-` + depreciationId).val(newAmount);
+    }
+
+    function changePercentageByAmountAccounting(e) {
+        let depreciationId = e.attr('data-depreciation-id');
+        let percentageInput = $(`.depreciationAccounting-percentage-` + depreciationId);
+        changePercentageByAmount(e, percentageInput);
+    }
+
+    function changeAmountByPercentageAccounting(e) {
+        let depreciationId = e.attr('data-depreciation-id');
+        let baseAmount = e.attr('data-base-amount');
+        let newAmount = Math.round(e.val() * baseAmount) / 100;
+        $(`.depreciationAccounting-amount-` + depreciationId).val(newAmount);
+    }
+
+    function changePercentageByAmount(e, percentageInput) {
+        let baseAmount = e.attr('data-base-amount');
+        let newAmount = e.val();
+        if (baseAmount === 0) {
+            percentageInput.val(100);
+        }
+        let percentage = (newAmount / baseAmount * 100).toFixed(4);
+        percentageInput.val(percentage);
+    }
 };
