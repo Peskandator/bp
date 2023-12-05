@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
 use App\Odpisy\Components\EditDepreciationCalculator;
+use App\Odpisy\Requests\CreateDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -91,9 +92,29 @@ class DepreciationAccounting implements Depreciation
 
 
     public function __construct(
-        //empty
     ){
-        //empty
+    }
+
+    public function updateFromRequest(
+        CreateDepreciationRequest $request
+    ):void
+    {
+        $this->asset = $request->asset;
+        $this->depreciationGroup = $request->depreciationGroup;
+        $this->executable = $request->executable;
+        $this->percentage = $request->percentage;
+        $this->depreciationAmount = $request->depreciationAmount;
+        $this->depreciatedAmount = $request->depreciatedAmount;
+        $this->residualPrice = $request->residualPrice;
+        $this->executed = false;
+        $this->entryPrice = $request->asset->getEntryPriceAccounting();
+        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPriceAccounting();
+        $this->depreciationYear = $request->depreciationYear;
+        $this->depreciatedAmount = $request->depreciatedAmount;
+        $this->year = $request->year;
+        $this->method = $request->depreciationGroup->getMethod();
+        $this->isCoefficient = $request->depreciationGroup->isCoefficient();
+        $this->rate = $request->rate;
     }
 
     public function update(

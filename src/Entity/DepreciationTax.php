@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
 use App\Odpisy\Components\EditDepreciationCalculator;
+use App\Odpisy\Requests\CreateDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -91,35 +92,30 @@ class DepreciationTax implements Depreciation
 
 
     public function __construct(
-        Asset $asset,
-        DepreciationGroup $depreciationGroup,
-        int $year,
-        int $depreciationYear,
-        float $depreciationAmount,
-        float $percentage,
-        float $depreciatedAmount,
-        float $residualPrice,
-        bool $executable,
-        float $rate,
     ){
-        $this->asset = $asset;
-        $this->depreciationGroup = $depreciationGroup;
-        $this->executable = $executable;
-        $this->percentage = $percentage;
-        $this->depreciationAmount = $depreciationAmount;
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->residualPrice = $residualPrice;
+    }
+
+    public function updateFromRequest(
+        CreateDepreciationRequest $request
+    ){
+        $this->asset = $request->asset;
+        $this->depreciationGroup = $request->depreciationGroup;
+        $this->executable = $request->executable;
+        $this->percentage = $request->percentage;
+        $this->depreciationAmount = $request->depreciationAmount;
+        $this->depreciatedAmount = $request->depreciatedAmount;
+        $this->residualPrice = $request->residualPrice;
         $this->executed = false;
         $this->accounted = false;
-        $this->entryPrice = $asset->getEntryPriceTax();
-        $this->increasedEntryPrice = $asset->getIncreasedEntryPriceTax();
-        $this->depreciationYear = $depreciationYear;
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->year = $year;
-        $this->method = $depreciationGroup->getMethod();
-        $this->isCoefficient = $depreciationGroup->isCoefficient();
-        $this->rate = $rate;
-        $this->disposalDate = $asset->getDisposalDate();
+        $this->entryPrice = $request->asset->getEntryPriceTax();
+        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPriceTax();
+        $this->depreciationYear = $request->depreciationYear;
+        $this->depreciatedAmount = $request->depreciatedAmount;
+        $this->year = $request->year;
+        $this->method = $request->depreciationGroup->getMethod();
+        $this->isCoefficient = $request->depreciationGroup->isCoefficient();
+        $this->rate = $request->rate;
+        $this->disposalDate = $request->asset->getDisposalDate();
     }
 
     public function update(

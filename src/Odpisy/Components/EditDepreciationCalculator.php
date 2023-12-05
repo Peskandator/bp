@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Odpisy\Components;
 
+use App\Entity\Asset;
 use App\Entity\Depreciation;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
