@@ -129,7 +129,7 @@ class DepreciationAccounting implements Depreciation
         $this->disposalDate = $asset->getDisposalDate();
     }
 
-    public function createFromTaxDepreciation(DepreciationTax $depreciationTax): void
+    public function updateFromTaxDepreciation(DepreciationTax $depreciationTax): void
     {
         $this->asset = $depreciationTax->getAsset();
         $this->depreciationGroup = $depreciationTax->getDepreciationGroup();

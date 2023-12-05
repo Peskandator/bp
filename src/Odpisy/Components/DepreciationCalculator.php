@@ -81,16 +81,21 @@ class DepreciationCalculator
         return $depreciationAmount;
     }
 
-    protected function copyTaxDepreciationsToAccounting(Asset $asset): void
+    public function copyTaxDepreciationsToAccounting(Asset $asset): void
     {
         $onlyTaxDepreciations = $asset->getTaxDepreciations();
 
         /**
-         * @var DepreciationTax $depreciation
+         * @var DepreciationTax $depreciationTax
          */
-        foreach ($onlyTaxDepreciations as $depreciation) {
+        foreach ($onlyTaxDepreciations as $depreciationTax) {
+            $foundDepreciationAccounting = $asset->getAccountingDepreciationForYear($depreciationTax->getYear());
+            if ($foundDepreciationAccounting) {
+                $foundDepreciationAccounting->updateFromTaxDepreciation($depreciationTax);
+                continue;
+            }
             $copiedAccountingDepreciation = new DepreciationAccounting();
-            $copiedAccountingDepreciation->createFromTaxDepreciation($depreciation);
+            $copiedAccountingDepreciation->updateFromTaxDepreciation($depreciationTax);
             $this->entityManager->persist($copiedAccountingDepreciation);
             $asset->addAccountingDepreciation($copiedAccountingDepreciation);
         }
@@ -186,6 +191,9 @@ class DepreciationCalculator
             return false;
         }
         if ((int)$residualPrice === 0 || $depreciationYear > 101) {
+            return false;
+        }
+        if ($totalDepreciationYears === null) {
             return false;
         }
         if ($totalDepreciationYears && $depreciationYear > $totalDepreciationYears && ($residualPrice !== (float)0)) {

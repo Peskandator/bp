@@ -7,6 +7,7 @@ namespace App\Odpisy\Components;
 use App\Entity\Depreciation;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
+use App\Majetek\Enums\DepreciationMethod;
 use App\Odpisy\Requests\EditDepreciationRequest;
 use App\Odpisy\Requests\RecalculateDepreciationsRequest;
 use Doctrine\Common\Collections\Collection;
@@ -129,7 +130,9 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $isCoefficient,
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
-        $this->recalculateNextYearsDepreciationsAccounting($recalculateRequest);
+        if ($group->getMethod() !== DepreciationMethod::ACCOUNTING) {
+            $this->recalculateNextYearsDepreciationsAccounting($recalculateRequest);
+        }
         $this->entityManager->flush();
     }
 

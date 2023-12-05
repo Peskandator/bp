@@ -19,5 +19,9 @@ class EditTaxDepreciationAction
     public function __invoke(DepreciationTax $depreciation, EditDepreciationRequest $request): void
     {
         $this->editDepreciationCalculator->recalculateTaxDepreciationsAfterEditingDepreciation($depreciation, $request);
+        $asset = $depreciation->getAsset();
+        if ($asset->hasAccountingDepreciations() && $asset->isOnlyTax()) {
+            $this->editDepreciationCalculator->copyTaxDepreciationsToAccounting($asset);
+        }
     }
 }

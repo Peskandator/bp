@@ -88,7 +88,7 @@ export default function() {
 
     setInterval(function () {
         $(`.js-percentage-input-accounting`).each(function () {
-            if ($(this).is(':focus')) {;
+            if ($(this).is(':focus')) {
                 changeAmountByPercentageAccounting($(this));
             }
         })
@@ -137,10 +137,11 @@ export default function() {
     }
 
     function changePercentageByAmount(e, percentageInput) {
-        let baseAmount = e.attr('data-base-amount');
+        let baseAmount = parseInt(e.attr('data-base-amount'));
         let newAmount = e.val();
         if (baseAmount === 0) {
             percentageInput.val(100);
+            return;
         }
         let percentage = (newAmount / baseAmount * 100).toFixed(4);
         percentageInput.val(percentage);
