@@ -86,9 +86,10 @@ class DepreciationCalculator
         $year = $request->year;
         $depreciationYear = $request->depreciationYear;
         $depreciatedAmount = $request->depreciatedAmount;
+        $residualPrice = $request->residualPrice;
 
         while (true) {
-            if (!$this->checkGenerationForYear($request->totalDepreciationYears, $depreciationYear, $year, $request->disposalYear, $request->residualPrice)) {
+            if (!$this->checkGenerationForYear($request->totalDepreciationYears, $depreciationYear, $year, $request->disposalYear, $residualPrice)) {
                 $depreciation = $request->asset->getTaxDepreciationForYear($year);
                 if ($depreciation === null) {
                     break;
@@ -104,6 +105,7 @@ class DepreciationCalculator
 
             $depreciation = $this->updateTaxDepreciation($request->asset, $request->group, $year, $depreciationYear, $request->entryPrice, $request->correctEntryPrice, $depreciatedAmount, $request->isCoefficient);
             $depreciatedAmount = $depreciation->getDepreciatedAmount();
+            $residualPrice = $depreciation->getResidualPrice();
             if ($depreciation->isExecutable()) {
                 $depreciationYear++;
             }
@@ -117,7 +119,7 @@ class DepreciationCalculator
         $year = $request->year;
         $depreciationYear = $request->depreciationYear;
         $depreciatedAmount = $request->depreciatedAmount;
-        $residualPrice = $this->getResidualPrice($request->entryPrice, $request->correctEntryPrice, $depreciatedAmount, $depreciationYear);
+        $residualPrice = $request->residualPrice;
 
         while (true) {
             if (!$this->checkGenerationForYear($request->totalDepreciationYears, $depreciationYear, $year, $request->disposalYear, $residualPrice)) {
@@ -136,6 +138,7 @@ class DepreciationCalculator
 
             $depreciation = $this->updateAccountingDepreciation($request->asset, $request->group, $year, $depreciationYear, $request->entryPrice, $request->correctEntryPrice, $depreciatedAmount, $request->isCoefficient);
             $depreciatedAmount = $depreciation->getDepreciatedAmount();
+            $residualPrice = $depreciation->getResidualPrice();
             if ($depreciation->isExecutable()) {
                 $depreciationYear++;
             }
@@ -347,6 +350,8 @@ class DepreciationCalculator
 
     protected function checkGenerationForYear(?int $totalDepreciationYears, int $depreciationYear, int $year, ?int $disposalYear, ?float $residualPrice): bool
     {
+        bdump($residualPrice);
+
         if ($disposalYear && $year > $disposalYear) {
             return false;
         }
@@ -380,6 +385,9 @@ class DepreciationCalculator
     private function revertUpdateRequestAccountingMethodWithoutRate(DepreciationAccounting $depreciation, UpdateDepreciationRequest $request): UpdateDepreciationRequest
     {
         $depreciationAmount = $depreciation->getDepreciationAmount();
+        if ($depreciationAmount > $request->residualPrice) {
+            $depreciationAmount = $request->residualPrice;
+        }
         $request->depreciationAmount = $depreciationAmount;
         $request->residualPrice -= $depreciationAmount;
         $request->depreciatedAmount += $depreciationAmount;

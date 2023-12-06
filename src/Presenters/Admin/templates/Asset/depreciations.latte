@@ -140,10 +140,12 @@
                                         <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
                                     </td>
                                     <td>
-                                        <div class="d-flex">
-                                            <button class="edit-depreciationTax-button btn-primary btn btn-sm js-edit-input-tax" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
-                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text-tax js-edit-start-tax" title="Upravit" data-record-id="{$depreciationId}"></i>
-                                        </div>
+                                        {if !$depreciation->isExecuted()}
+                                            <div class="d-flex">
+                                                <button class="edit-depreciationTax-button btn-primary btn btn-sm js-edit-input-tax" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
+                                                <i class="fas fa-pencil-alt text-primary icon js-edit-text-tax js-edit-start-tax" title="Upravit" data-record-id="{$depreciationId}"></i>
+                                            </div>
+                                        {/if}
                                     </td>
                                 </tr>
                             {/foreach}
@@ -260,7 +262,7 @@
                                             <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
                                         </td>
                                         <td>
-                                            {if !$depreciation->isSameAsTax()}
+                                            {if !$depreciation->isSameAsTax() && !$depreciation->isExecuted()}
                                                 <div class="d-flex">
                                                     <button class="edit-depreciationAccounting-button btn-primary btn btn-sm js-edit-input-accounting" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
                                                     <i class="fas fa-pencil-alt text-primary icon js-edit-text-accounting js-edit-start-accounting" title="Upravit" data-record-id="{$depreciationId}"></i>

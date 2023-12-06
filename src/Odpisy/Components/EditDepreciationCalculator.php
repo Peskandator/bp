@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Odpisy\Components;
 
-use App\Entity\Asset;
 use App\Entity\Depreciation;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
-use App\Majetek\Enums\DepreciationMethod;
 use App\Odpisy\Requests\EditDepreciationRequest;
 use App\Odpisy\Requests\RecalculateDepreciationsRequest;
 use Doctrine\Common\Collections\Collection;
@@ -80,7 +78,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         $totalDepreciationYears = $group->getYears();
         $isCoefficient = $editedDepreciation->isCoefficient();
 
-        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getTaxDepreciations(), $year);
+        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getTaxDepreciations(), $year, $asset->getDepreciationYearTax());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getTaxDepreciations(), $depreciationYear, $depreciatedAmountBase);
 
         $recalculateEditedDepreciationRequest = new RecalculateDepreciationsRequest(
@@ -113,7 +111,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         $totalDepreciationYears = $group->getYears();
         $isCoefficient = $editedDepreciation->isCoefficient();
 
-        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $year);
+        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $year, $asset->getDepreciationYearAccounting());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
 
         $recalculateEditedDepreciationRequest = new RecalculateDepreciationsRequest(
@@ -130,9 +128,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $isCoefficient,
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
-        if ($group->getMethod() !== DepreciationMethod::ACCOUNTING) {
-            $this->calculateAccountingDepreciations($recalculateRequest);
-        }
+        $this->calculateAccountingDepreciations($recalculateRequest);
         $this->entityManager->flush();
     }
 
@@ -179,9 +175,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         );
     }
 
-
-
-    private function getCorrectDepreciationYearFromPrevious(Collection $depreciations, int $year): int
+    private function getCorrectDepreciationYearFromPrevious(Collection $depreciations, int $year, int $baseDepreciationYear): int
     {
         $yearCounter = $year - 1;
         $found = true;
@@ -201,7 +195,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $yearCounter--;
         }
 
-        return 1;
+        return $baseDepreciationYear;
     }
 
     private function getDepreciatedAmountFromPreviousDepreciation(Collection $depreciations, int $depreciationYear, float $depreciatedAmountBase): float
@@ -234,7 +228,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         $correctEntryPrice = $asset->getCorrectEntryPriceTax();
         $depreciatedAmountBase = $asset->getBaseDepreciatedAmountTax();
         $isCoefficient = $depreciation->isCoefficient();
-        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $depreciation->getYear());
+        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $depreciation->getYear(), $asset->getDepreciationYearTax());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
         $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateTax());
         $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
@@ -261,7 +255,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $increaseDate = $asset->getIncreaseDateTax();
         }
 
-        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $depreciation->getYear());
+        $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $depreciation->getYear(), $asset->getDepreciationYearAccounting());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
         $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $increaseDate);
         $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
