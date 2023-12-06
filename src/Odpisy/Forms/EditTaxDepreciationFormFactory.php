@@ -68,6 +68,10 @@ class EditTaxDepreciationFormFactory
                 $form['amount']->addError('Odpis je příliš vysoký. Oprávky by byly vyšší než vstupní cena');
                 $form->getPresenter()->flashMessage(FlashMessageType::ERROR, 'Odpis je příliš vysoký. Oprávky by byly vyšší než vstupní cena');
             }
+            if ($depreciation->isExecuted()) {
+                $form->addError('Nelze upravit již provedený odpis. Nejdříve musíte zrušit provedení.');
+                $form->getPresenter()->flashMessage(FlashMessageType::ERROR, 'Nelze upravit již provedený odpis. Nejdříve musíte zrušit provedení.');
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {

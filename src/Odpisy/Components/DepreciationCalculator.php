@@ -150,6 +150,10 @@ class DepreciationCalculator
         $isExecutable = true;
         $depreciation = $asset->getTaxDepreciationForYear($year);
         if ($depreciation) {
+            if ($depreciation->isExecuted()) {
+
+                return $depreciation;
+            }
             $percentage = $depreciation->getPercentage();
             $isExecutable = $depreciation->isExecutable();
         } else {
@@ -171,6 +175,10 @@ class DepreciationCalculator
         $isExecutable = true;
         $depreciation = $asset->getAccountingDepreciationForYear($year);
         if ($depreciation) {
+            if ($depreciation->isExecuted()) {
+
+                return $depreciation;
+            }
             $editingExisting = true;
             $percentage = $depreciation->getPercentage();
             $isExecutable = $depreciation->isExecutable();

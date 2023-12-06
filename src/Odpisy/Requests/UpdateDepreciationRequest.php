@@ -17,7 +17,7 @@ class UpdateDepreciationRequest
         public float $depreciatedAmount,
         public float $residualPrice,
         public bool $executable,
-        public float $rate,
+        public ?float $rate,
     ) {
     }
 }

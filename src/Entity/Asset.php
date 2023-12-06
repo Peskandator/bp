@@ -469,7 +469,10 @@ class Asset
     public function hasAccountingDepreciations(): bool
     {
         $typeCode = $this->getAssetType()->getCode();
-        if ($typeCode === 1 || $typeCode === 3) {
+        if ($typeCode === 1) {
+            return true;
+        }
+        if ($typeCode && !$this->isOnlyTax()) {
             return true;
         }
 
@@ -497,7 +500,7 @@ class Asset
                 $executedDepreciations->add($depreciation);
             }
         }
-        return $this->depreciationsTax;
+        return $executedDepreciations;
     }
 
     public function getExecutedAccountingDepreciations(): Collection
@@ -511,7 +514,7 @@ class Asset
                 $executedDepreciations->add($depreciation);
             }
         }
-        return $this->depreciationsAccounting;
+        return $executedDepreciations;
     }
 
     public function addTaxDepreciation(DepreciationTax $depreciation): void

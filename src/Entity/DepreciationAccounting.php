@@ -107,6 +107,7 @@ class DepreciationAccounting implements Depreciation
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->residualPrice = $request->residualPrice;
         $this->executed = false;
+        $this->accounted = false;
         $this->entryPrice = $request->asset->getEntryPriceAccounting();
         $this->increasedEntryPrice = $request->asset->getIncreasedEntryPriceAccounting();
         $this->depreciationYear = $request->depreciationYear;
@@ -170,12 +171,6 @@ class DepreciationAccounting implements Depreciation
         $this->isCoefficient = $depreciationTax->isCoefficient();
         $this->rate = $depreciationTax->getRate();
         $this->disposalDate = $depreciationTax->getDisposalDate();
-    }
-
-    public function updateNotExecutable(float $depreciatedAmount, float $residualPrice): void
-    {
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->residualPrice = $residualPrice;
     }
 
     public function getId(): int
