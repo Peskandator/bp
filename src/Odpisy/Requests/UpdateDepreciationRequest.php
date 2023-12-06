@@ -5,7 +5,7 @@ namespace App\Odpisy\Requests;
 use App\Entity\Asset;
 use App\Entity\DepreciationGroup;
 
-class CreateDepreciationRequest
+class UpdateDepreciationRequest
 {
     public function __construct(
         public Asset $asset,

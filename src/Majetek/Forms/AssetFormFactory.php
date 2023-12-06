@@ -425,7 +425,7 @@ class AssetFormFactory
 
             if ($editing) {
                 if (!$asset) {
-                    $form->getPresenter()->flashMessage('Majetek neexistuje', FlashMessageType::ERROR);
+                    $form->getPresenter()->flashMessage('Editovaný majetek neexistuje', FlashMessageType::ERROR);
                     $form->getPresenter()->redirect(':Admin:Assets:default');
                 }
                 $this->editAssetAction->__invoke($currentEntity, $asset, $request);

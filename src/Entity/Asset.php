@@ -32,6 +32,10 @@ class Asset
      */
     private ?\DateTimeInterface $entryDate;
     /**
+     * @ORM\Column(name="acquisition_date", type="date", nullable=false)
+     */
+    private \DateTimeInterface $acquisitionDate;
+    /**
      * @ORM\Column(name="entry_price_tax", type="float", nullable=true)
      */
     private ?float $entryPriceTax;
@@ -163,6 +167,7 @@ class Asset
         $this->note = $request->note;
         $this->depreciationsTax = new ArrayCollection();
         $this->depreciationsAccounting = new ArrayCollection();
+        $this->acquisitionDate = new \DateTimeImmutable();
     }
 
     public function update(CreateAssetRequest $request): void
@@ -227,6 +232,17 @@ class Asset
         return $this->entryDate;
     }
 
+    public function getAcquisitionDate(): ?\DateTimeInterface
+    {
+        return $this->acquisitionDate;
+    }
+
+    public function getAcquisitionYear(): int
+    {
+        $acquisitionDate = $this->getAcquisitionDate();
+        return (int)$acquisitionDate->format('Y');
+    }
+
     public function getEntryPriceTax(): ?float
     {
         return $this->entryPriceTax;
@@ -253,9 +269,24 @@ class Asset
         return $this->increaseDate;
     }
 
-    public function getDepreciatedAmountTax(): ?float
+    public function getBaseDepreciatedAmountTax(): ?float
     {
         return $this->depreciatedAmountTax;
+    }
+
+    public function getBaseDepreciatedAmountAccounting(): ?float
+    {
+        return $this->depreciatedAmountAccounting;
+    }
+
+    public function getDepreciatedAmountTax(): ?float
+    {
+        return $this->depreciatedAmountTax + $this->getExecutedTaxDepreciationsAmount();
+    }
+
+    public function getDepreciatedAmountAccounting(): ?float
+    {
+        return $this->depreciatedAmountAccounting + $this->getExecutedAccountingDepreciationsAmount();
     }
 
     public function getEntryPriceAccounting(): ?float
@@ -284,11 +315,6 @@ class Asset
         return $this->increaseDateAccounting;
     }
 
-    public function getDepreciatedAmountAccounting(): ?float
-    {
-        return $this->depreciatedAmountAccounting;
-    }
-
     public function isDisposed(): bool
     {
         return $this->isDisposed;
@@ -302,6 +328,34 @@ class Asset
     public function getDepreciationYearAccounting(): ?int
     {
         return $this->depreciationYearAccounting;
+    }
+
+    public function getExecutedTaxDepreciationsAmount(): float
+    {
+        $sum = 0;
+        $depreciations = $this->getExecutedTaxDepreciations();
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            $sum += $depreciation->getDepreciationAmount();
+        }
+
+        return $sum;
+    }
+
+    public function getExecutedAccountingDepreciationsAmount(): float
+    {
+        $sum = 0;
+        $depreciations = $this->getExecutedAccountingDepreciations();
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            $sum += $depreciation->getDepreciationAmount();
+        }
+
+        return $sum;
     }
 
     public function isOnlyTax(): bool
@@ -429,6 +483,34 @@ class Asset
 
     public function getAccountingDepreciations(): Collection
     {
+        return $this->depreciationsAccounting;
+    }
+
+    public function getExecutedTaxDepreciations(): Collection
+    {
+        $executedDepreciations = new ArrayCollection();
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($this->getTaxDepreciations() as $depreciation) {
+            if ($depreciation->isExecuted()) {
+                $executedDepreciations->add($depreciation);
+            }
+        }
+        return $this->depreciationsTax;
+    }
+
+    public function getExecutedAccountingDepreciations(): Collection
+    {
+        $executedDepreciations = new ArrayCollection();
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($this->getAccountingDepreciations() as $depreciation) {
+            if ($depreciation->isExecuted()) {
+                $executedDepreciations->add($depreciation);
+            }
+        }
         return $this->depreciationsAccounting;
     }
 

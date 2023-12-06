@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
 use App\Odpisy\Components\EditDepreciationCalculator;
-use App\Odpisy\Requests\CreateDepreciationRequest;
+use App\Odpisy\Requests\UpdateDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -96,7 +96,7 @@ class DepreciationTax implements Depreciation
     }
 
     public function updateFromRequest(
-        CreateDepreciationRequest $request
+        UpdateDepreciationRequest $request
     ){
         $this->asset = $request->asset;
         $this->depreciationGroup = $request->depreciationGroup;
