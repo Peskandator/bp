@@ -350,8 +350,6 @@ class DepreciationCalculator
 
     protected function checkGenerationForYear(?int $totalDepreciationYears, int $depreciationYear, int $year, ?int $disposalYear, ?float $residualPrice): bool
     {
-        bdump($residualPrice);
-
         if ($disposalYear && $year > $disposalYear) {
             return false;
         }
@@ -361,9 +359,9 @@ class DepreciationCalculator
         if ($totalDepreciationYears === null) {
             return false;
         }
-        if ($totalDepreciationYears && $depreciationYear > $totalDepreciationYears && ($residualPrice !== (float)0)) {
-            return false;
-        }
+//        if ($depreciationYear > $totalDepreciationYears && (int)$residualPrice === 0) {
+//            return false;
+//        }
         return true;
     }
 
@@ -374,12 +372,6 @@ class DepreciationCalculator
             $disposalYear = (int)$disposalDate->format('Y');
         }
         return $disposalYear;
-    }
-
-    protected function getCurrentYear(): int
-    {
-        $today = new \DateTimeImmutable('today');
-        return (int)$today->format('Y');
     }
 
     private function revertUpdateRequestAccountingMethodWithoutRate(DepreciationAccounting $depreciation, UpdateDepreciationRequest $request): UpdateDepreciationRequest

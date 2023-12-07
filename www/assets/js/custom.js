@@ -1,9 +1,11 @@
 
 //Imports
 import depreciations from './depreciations.js';
+import assetForm from './assetPage.js';
 
 $(document).ready(function(){
     depreciations();
+    assetForm();
 
     setTimeout(flashMessage, 4200);
     function flashMessage() {
@@ -522,5 +524,14 @@ $(document).ready(function(){
             editedGroupCoeffSelect.prop("disabled", false);
         }
     }
+
+    $('*[data-tab-index]').on('keypress',function(e) {
+        if(e.which === 13) {
+            e.preventDefault();
+            let index = $(this).attr('data-tab-index');
+            index++;
+            $('*[data-tab-index='+ index + ']').focus();
+        }
+    });
 });
 
