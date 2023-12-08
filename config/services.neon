@@ -12,6 +12,7 @@ services:
     - App\Utils\AcquisitionsProvider
     - App\Utils\DialsCodeValidator
     - App\Utils\EnumerableSorter
+    - App\Utils\DeletabilityResolver
     - App\Components\AdminMenu\AdminMenuFactoryInterface
 
     - App\Majetek\ORM\AccountingEntityRepository
@@ -37,6 +38,7 @@ services:
     - App\Majetek\Action\EditLocationAction
     - App\Majetek\Action\EditPlaceAction
     - App\Majetek\Action\DeleteAcquisitionAction
+    - App\Majetek\Action\DeleteDisposalAction
     - App\Majetek\Action\DeleteLocationAction
     - App\Majetek\Action\DeletePlaceAction
 

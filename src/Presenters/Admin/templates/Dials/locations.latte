@@ -80,13 +80,15 @@
                                             <div class="d-flex">
                                                 <button class="edit-location-button btn-primary btn btn-sm js-edit-input" style="display: none" data-location-id="{$location->getId()}">OK</button>
                                                 <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$location->getId()}"></i>
-                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
-                                                   title="Odstranit"
-                                                   data-bs-toggle="modal"
-                                                   data-bs-target="#deleteLocationModal"
-                                                   data-record-name="{$location->getName()}"
-                                                   data-record-id={$location->getId()}
-                                                ></i>
+                                                {if $deletabilityResolver->isLocationDeletable($location)}
+                                                    <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
+                                                       title="Odstranit"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#deleteLocationModal"
+                                                       data-record-name="{$location->getName()}"
+                                                       data-record-id={$location->getId()}
+                                                    ></i>
+                                                {/if}
                                             </div>
                                         </td>
                                     </tr>

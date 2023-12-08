@@ -160,13 +160,15 @@
                                         <div class="d-flex">
                                             <button class="edit-group-button btn-primary btn btn-sm js-edit-input" style="display: none" data-group-id="{$group->getId()}">OK</button>
                                             <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$group->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
-                                               title="Odstranit"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#deleteDepreciationGroupModal"
-                                               data-record-name="{$group->getGroup()} - {$group->getMethodText()}"
-                                               data-record-id={$group->getId()}
-                                            ></i>
+                                            {if $deletabilityResolver->isDepreciationGroupDeletable($group)}
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text icon-left align-self-center"
+                                                   title="Odstranit"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deleteDepreciationGroupModal"
+                                                   data-record-name="{$group->getGroup()} - {$group->getMethodText()}"
+                                                   data-record-id={$group->getId()}
+                                                ></i>
+                                            {/if}
                                         </div>
                                     </td>
                                 </tr>

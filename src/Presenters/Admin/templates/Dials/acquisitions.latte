@@ -18,6 +18,24 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="deleteDisposalModal" tabindex="-1" aria-labelledby="deleteDisposalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteDisposalLabel">Smazat způsob pořízení</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Chcete opravdu odstranit způsob pořízení <b class="js-modal-record-name"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger js-modal-delete-confirm">Odstranit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}
 
 {block content}
@@ -48,6 +66,12 @@
                             </div>
                         </form>
                         <form n:name="deleteAcquisitionForm" class="js-delete-form">
+                            <div class="form-errors" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <input n:name="id" class="js-delete-record-id">
+                        </form>
+                        <form n:name="deleteDisposalForm" class="js-delete-form">
                             <div class="form-errors" n:ifcontent>
                                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                             </div>
@@ -99,6 +123,12 @@
                                                 {if !$acquisition->isDefault()}
                                                     <button class="edit-acquisition-button btn-primary btn btn-sm js-edit-input" style="display: none" data-acquisition-id="{$acquisition->getId()}">OK</button>
                                                     <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$acquisition->getId()}"></i>
+                                                {else}
+                                                    {* TODO: DODĚLAT HOVNO*}
+                                                    <i class="fas fa-solid fa-pencil-slash icon"></i>
+                                                    <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
+                                                {/if}
+                                                {if $deletabilityResolver->isAcquisitionDeletable($acquisition)}
                                                     <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
                                                        title="Odstranit"
                                                        data-bs-toggle="modal"
@@ -106,10 +136,6 @@
                                                        data-record-name="{$acquisition->getName()}"
                                                        data-record-id={$acquisition->getId()}
                                                     ></i>
-                                                {else}
-                                                    {* TODO: DODĚLAT HOVNO*}
-                                                    <i class="fas fa-solid fa-pencil-slash icon"></i>
-                                                    <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
                                                 {/if}
                                             </div>
                                         </td>
@@ -144,17 +170,19 @@
                                                 {if !$disposal->isDefault()}
                                                     <button class="edit-disposal-button btn-primary btn btn-sm js-edit-input" style="display: none" data-disposal-id="{$disposal->getId()}">OK</button>
                                                     <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$disposal->getId()}"></i>
-                                                    <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
-                                                       title="Odstranit"
-                                                       data-bs-toggle="modal"
-                                                       data-bs-target="#deleteAcquisitionModal"
-                                                       data-record-name="{$disposal->getName()}"
-                                                       data-record-id={$disposal->getId()}
-                                                    ></i>
                                                 {else}
                                                     {* TODO: DODĚLAT HOVNO*}
                                                     <i class="fas fa-solid fa-pencil-slash icon"></i>
                                                     <i class="fas fa-regular fa-pencil-slash text-secondary icon"></i>
+                                                {/if}
+                                                {if $deletabilityResolver->isDisposalDeletable($disposal)}
+                                                    <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
+                                                       title="Odstranit"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#deleteDisposalModal"
+                                                       data-record-name="{$disposal->getName()}"
+                                                       data-record-id={$disposal->getId()}
+                                                    ></i>
                                                 {/if}
                                             </div>
                                         </td>

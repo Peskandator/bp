@@ -96,13 +96,15 @@
                                         <td class="d-flex">
                                             <button class="edit-place-button btn-primary btn btn-sm js-edit-input" style="display: none" data-place-id="{$place->getId()}">OK</button>
                                             <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$place->getId()}"></i>
-                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
-                                               title="Odstranit"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#deletePlaceModal"
-                                               data-record-name="{$place->getName()}"
-                                               data-record-id={$place->getId()}
-                                            ></i>
+                                            {if $deletabilityResolver->isPlaceDeletable($place)}
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button icon-left align-self-center"
+                                                   title="Odstranit"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deletePlaceModal"
+                                                   data-record-name="{$place->getName()}"
+                                                   data-record-id={$place->getId()}
+                                                ></i>
+                                            {/if}
                                         </td>
                                     </tr>
                                 {/foreach}

@@ -15,6 +15,7 @@ use App\Majetek\Action\AddPlaceAction;
 use App\Majetek\Action\DeleteAcquisitionAction;
 use App\Majetek\Action\DeleteCategoryAction;
 use App\Majetek\Action\DeleteDepreciationGroupAction;
+use App\Majetek\Action\DeleteDisposalAction;
 use App\Majetek\Action\DeleteLocationAction;
 use App\Majetek\Action\DeletePlaceAction;
 use App\Majetek\Action\EditAcquisitionAction;
@@ -37,6 +38,7 @@ use App\Majetek\Requests\CreateCategoryRequest;
 use App\Majetek\Requests\CreateDepreciationGroupRequest;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\AcquisitionsProvider;
+use App\Utils\DeletabilityResolver;
 use App\Utils\DialsCodeValidator;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
@@ -72,6 +74,8 @@ final class DialsPresenter extends BaseAdminPresenter
     private EnumerableSorter $enumerableSorter;
     private DisposalRepository $disposalRepository;
     private EditDisposalAction $editDisposalAction;
+    private DeletabilityResolver $deletabilityResolver;
+    private DeleteDisposalAction $deleteDisposalAction;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -100,7 +104,9 @@ final class DialsPresenter extends BaseAdminPresenter
         EditCategoryAction $editCategoryAction,
         EnumerableSorter $enumerableSorter,
         DisposalRepository $disposalRepository,
-        EditDisposalAction $editDisposalAction
+        EditDisposalAction $editDisposalAction,
+        DeletabilityResolver $deletabilityResolver,
+        DeleteDisposalAction $deleteDisposalAction,
     )
     {
         parent::__construct();
@@ -131,23 +137,28 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->enumerableSorter = $enumerableSorter;
         $this->disposalRepository = $disposalRepository;
         $this->editDisposalAction = $editDisposalAction;
+        $this->deletabilityResolver = $deletabilityResolver;
+        $this->deleteDisposalAction = $deleteDisposalAction;
     }
 
     public function actionLocations(): void
     {
         $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
+        $this->template->deletabilityResolver = $this->deletabilityResolver;
     }
 
     public function actionPlaces(): void
     {
         $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
         $this->template->places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
+        $this->template->deletabilityResolver = $this->deletabilityResolver;
     }
 
     public function actionAcquisitions(): void
     {
         $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
         $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
+        $this->template->deletabilityResolver = $this->deletabilityResolver;
     }
 
     public function actionAssetTypes(): void
@@ -159,6 +170,7 @@ final class DialsPresenter extends BaseAdminPresenter
     {
         $this->template->groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
+        $this->template->deletabilityResolver = $this->deletabilityResolver;
     }
 
     public function actionDepreciationGroups(): void
@@ -171,6 +183,7 @@ final class DialsPresenter extends BaseAdminPresenter
         $this->template->cpSelect = $cpSelect;
         $this->template->methods = $methodIds;
         $this->template->methodNames = $methodNames;
+        $this->template->deletabilityResolver = $this->deletabilityResolver;
     }
 
     protected function createComponentAddLocationForm(): Form
@@ -363,6 +376,41 @@ final class DialsPresenter extends BaseAdminPresenter
         return $form;
     }
 
+    protected function createComponentDeleteDisposalForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addHidden('id')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send',);
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $disposal = $this->disposalRepository->find((int)$values->id);
+
+            if (!$disposal) {
+                $form->addError('Záznam nebyl nalezen.');
+                $this->flashMessage('Záznam nebyl nalezen.', FlashMessageType::ERROR);
+                return;
+            }
+            $entity = $disposal->getEntity();
+            $form = $this->checkAccessToElementsEntity($form, $entity);
+            if (!$this->deletabilityResolver->isDisposalDeletable($disposal)) {
+                $form->addError('Způsob vyřazení nelze smazat, je přiřazen k majetku.');
+            }
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $disposal = $this->disposalRepository->find((int)$values->id);
+            $this->deleteDisposalAction->__invoke($disposal);
+            $this->flashMessage('Záznam byl smazán.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
+    }
+
     protected function createComponentEditLocationForm(): Form
     {
         $form = new Form;
@@ -494,6 +542,9 @@ final class DialsPresenter extends BaseAdminPresenter
             }
             $entity = $acquisition->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
+            if (!$this->deletabilityResolver->isAcquisitionDeletable($acquisition)) {
+                $form->addError('Způsob pořízení nelze smazat, je přiřazen k majetku.');
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -533,6 +584,9 @@ final class DialsPresenter extends BaseAdminPresenter
                 $this->flashMessage('Toto středisko nelze smazat, protože je navázáno na místa v číselníku míst.',FlashMessageType::ERROR);
                 return;
             }
+            if (!$this->deletabilityResolver->isLocationDeletable($location)) {
+                $form->addError('Středisko nelze smazat, je přiřazeno k majetku.');
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -564,6 +618,9 @@ final class DialsPresenter extends BaseAdminPresenter
             }
             $entity = $place->getLocation()->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
+            if (!$this->deletabilityResolver->isPlaceDeletable($place)) {
+                $form->addError('Místo nelze smazat, je přiřazeno k majetku.');
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -704,6 +761,10 @@ final class DialsPresenter extends BaseAdminPresenter
             }
             $entity = $category->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
+
+            if (!$this->deletabilityResolver->isCategoryDeletable($category)) {
+                $form->addError('Kategorii nelze smazat, stále do ní přiřazen majetek');
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -909,6 +970,10 @@ final class DialsPresenter extends BaseAdminPresenter
             }
             $entity = $group->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
+
+            if (!$this->deletabilityResolver->isDepreciationGroupDeletable($group)) {
+                $form->addError('Odpisovou skupinu nelze smazat, je přiřazena k majetku.');
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {

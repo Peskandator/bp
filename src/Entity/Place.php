@@ -67,4 +67,9 @@ class Place
     {
         return $this->location;
     }
+
+    public function getEntity(): AccountingEntity
+    {
+        return $this->getLocation()->getEntity();
+    }
 }

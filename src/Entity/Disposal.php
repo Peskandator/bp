@@ -66,7 +66,7 @@ class Disposal
         return $this->code;
     }
 
-    public function getEntity(): ?AccountingEntity
+    public function getEntity(): AccountingEntity
     {
         return $this->entity;
     }
