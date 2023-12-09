@@ -269,7 +269,7 @@ export default function() {
                 placeSelect.find("option").each(function() {
                     let placeId = parseInt($(this).val());
                     let locationIdPlace = placesLocationsObj[placeId];
-                    if (locationIdPlace === 0 || locationIdPlace === locationId) {
+                    if (!locationIdPlace || locationIdPlace === locationId) {
                         $(this).show();
                     } else {
                         $(this).hide();
@@ -283,8 +283,11 @@ export default function() {
         }
 
         placeSelect.change(function(){
-            let locationId = parseInt(placeSelect.find(':selected').attr('data-location-id'));
+            let placeId = parseInt(placeSelect.find(':selected').val());
+            let locationId = placesLocationsObj[placeId];
+
             if (locationId && locationId !== 0) {
+
                 locationSelect.val(locationId);
             }
         });
@@ -295,5 +298,4 @@ export default function() {
             changeAcquisition();
         }
     }
-
 };
