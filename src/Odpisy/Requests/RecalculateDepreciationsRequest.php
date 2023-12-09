@@ -19,6 +19,7 @@ class RecalculateDepreciationsRequest
         public float $residualPrice,
         public float $depreciatedAmount,
         public bool $isCoefficient,
+        public ?\DateTimeInterface $increaseDate,
     ) {
     }
 }

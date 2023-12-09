@@ -6,7 +6,6 @@ namespace App\Odpisy\Components;
 
 use App\Entity\Asset;
 use App\Entity\DepreciationAccounting;
-use App\Entity\DepreciationGroup;
 use App\Entity\DepreciationTax;
 use App\Majetek\Enums\DepreciationMethod;
 use App\Odpisy\Requests\UpdateDepreciationRequest;
@@ -43,7 +42,7 @@ class DepreciationCalculator
         }
     }
 
-    private function getCalculationRequestTax(Asset $asset): RecalculateDepreciationsRequest
+    protected function getCalculationRequestTax(Asset $asset): RecalculateDepreciationsRequest
     {
         $group = $asset->getDepreciationGroupTax();
 
@@ -58,11 +57,12 @@ class DepreciationCalculator
             $asset->getCorrectEntryPriceTax(),
             $asset->getEntryPriceTax() - $asset->getBaseDepreciatedAmountTax(),
             $asset->getBaseDepreciatedAmountTax(),
-            $group->isCoefficient()
+            $group->isCoefficient(),
+            $asset->getIncreaseDateTax()
         );
     }
 
-    private function getCalculationRequestAccounting(Asset $asset): RecalculateDepreciationsRequest
+    protected function getCalculationRequestAccounting(Asset $asset): RecalculateDepreciationsRequest
     {
         $group = $asset->getDepreciationGroupAccounting();
 
@@ -77,20 +77,16 @@ class DepreciationCalculator
             $asset->getCorrectEntryPriceAccounting(),
             $asset->getEntryPriceAccounting() - $asset->getBaseDepreciatedAmountAccounting(),
             $asset->getBaseDepreciatedAmountAccounting(),
-            $group->isCoefficient()
+            $group->isCoefficient(),
+            $asset->getIncreaseDateAccounting()
         );
     }
 
     protected function calculateTaxDepreciations(RecalculateDepreciationsRequest $request): void
     {
-        $year = $request->year;
-        $depreciationYear = $request->depreciationYear;
-        $depreciatedAmount = $request->depreciatedAmount;
-        $residualPrice = $request->residualPrice;
-
         while (true) {
-            if (!$this->checkGenerationForYear($request->totalDepreciationYears, $depreciationYear, $year, $request->disposalYear, $residualPrice)) {
-                $depreciation = $request->asset->getTaxDepreciationForYear($year);
+            if (!$this->checkGenerationForYear($request)) {
+                $depreciation = $request->asset->getTaxDepreciationForYear($request->year);
                 if ($depreciation === null) {
                     break;
                 }
@@ -99,31 +95,26 @@ class DepreciationCalculator
                 }
                 $request->asset->getTaxDepreciations()->removeElement($depreciation);
                 $this->entityManager->remove($depreciation);
-                $year++;
+                $request->year++;
                 continue;
             }
 
-            $depreciation = $this->updateTaxDepreciation($request->asset, $request->group, $year, $depreciationYear, $request->entryPrice, $request->correctEntryPrice, $depreciatedAmount, $request->isCoefficient);
-            $depreciatedAmount = $depreciation->getDepreciatedAmount();
-            $residualPrice = $depreciation->getResidualPrice();
+            $depreciation = $this->updateTaxDepreciation($request);
+            $request->depreciatedAmount = $depreciation->getDepreciatedAmount();
+            $request->residualPrice = $depreciation->getResidualPrice();
             if ($depreciation->isExecutable()) {
-                $depreciationYear++;
+                $request->depreciationYear++;
             }
-            $year++;
+            $request->year++;
         }
         $this->entityManager->flush();
     }
 
     protected function calculateAccountingDepreciations(RecalculateDepreciationsRequest $request): void
     {
-        $year = $request->year;
-        $depreciationYear = $request->depreciationYear;
-        $depreciatedAmount = $request->depreciatedAmount;
-        $residualPrice = $request->residualPrice;
-
         while (true) {
-            if (!$this->checkGenerationForYear($request->totalDepreciationYears, $depreciationYear, $year, $request->disposalYear, $residualPrice)) {
-                $depreciation = $request->asset->getAccountingDepreciationForYear($year);
+            if (!$this->checkGenerationForYear($request)) {
+                $depreciation = $request->asset->getAccountingDepreciationForYear($request->year);
                 if ($depreciation === null) {
                     break;
                 }
@@ -132,26 +123,26 @@ class DepreciationCalculator
                 }
                 $request->asset->getAccountingDepreciations()->removeElement($depreciation);
                 $this->entityManager->remove($depreciation);
-                $year++;
+                $request->year++;
                 continue;
             }
 
-            $depreciation = $this->updateAccountingDepreciation($request->asset, $request->group, $year, $depreciationYear, $request->entryPrice, $request->correctEntryPrice, $depreciatedAmount, $request->isCoefficient);
-            $depreciatedAmount = $depreciation->getDepreciatedAmount();
-            $residualPrice = $depreciation->getResidualPrice();
+            $depreciation = $this->updateAccountingDepreciation($request);
+            $request->depreciatedAmount = $depreciation->getDepreciatedAmount();
+            $request->residualPrice = $depreciation->getResidualPrice();
             if ($depreciation->isExecutable()) {
-                $depreciationYear++;
+                $request->depreciationYear++;
             }
-            $year++;
+            $request->year++;
         }
         $this->entityManager->flush();
     }
 
-    protected function updateTaxDepreciation(Asset $asset, DepreciationGroup $group, int $year, int $depreciationYear, float $entryPrice, float $correctEntryPrice, float $depreciatedAmount, bool $isCoefficient): DepreciationTax
+    protected function updateTaxDepreciation(RecalculateDepreciationsRequest $request): DepreciationTax
     {
         $percentage = 100;
         $isExecutable = true;
-        $depreciation = $asset->getTaxDepreciationForYear($year);
+        $depreciation = $request->asset->getTaxDepreciationForYear($request->year);
         if ($depreciation) {
             if ($depreciation->isExecuted()) {
 
@@ -163,20 +154,20 @@ class DepreciationCalculator
             $depreciation = new DepreciationTax(
             );
             $this->entityManager->persist($depreciation);
-            $asset->addTaxDepreciation($depreciation);
+            $request->asset->addTaxDepreciation($depreciation);
         }
-        $request = $this->generateUpdateDepreciationRequest($asset, $group, $year, $depreciationYear, $entryPrice, $correctEntryPrice, $depreciatedAmount, $isCoefficient, $percentage, $asset->getIncreaseDateTax(), $isExecutable);
-        $depreciation->updateFromRequest($request);
+        $updateRequest = $this->generateUpdateDepreciationRequest($request, $percentage, $isExecutable);
+        $depreciation->updateFromRequest($updateRequest);
 
         return $depreciation;
     }
 
-    protected function updateAccountingDepreciation(Asset $asset, DepreciationGroup $group, int $year, int $depreciationYear, float $entryPrice, float $correctEntryPrice, float $depreciatedAmount, bool $isCoefficient): DepreciationAccounting
+    protected function updateAccountingDepreciation(RecalculateDepreciationsRequest $request): DepreciationAccounting
     {
         $editingExisting = false;
         $percentage = 100;
         $isExecutable = true;
-        $depreciation = $asset->getAccountingDepreciationForYear($year);
+        $depreciation = $request->asset->getAccountingDepreciationForYear($request->year);
         if ($depreciation) {
             if ($depreciation->isExecuted()) {
 
@@ -189,33 +180,33 @@ class DepreciationCalculator
             $depreciation = new DepreciationAccounting(
             );
             $this->entityManager->persist($depreciation);
-            $asset->addAccountingDepreciation($depreciation);
+            $request->asset->addAccountingDepreciation($depreciation);
         }
-        $request = $this->generateUpdateDepreciationRequest($asset, $group, $year, $depreciationYear, $entryPrice, $correctEntryPrice, $depreciatedAmount, $isCoefficient, $percentage, $asset->getIncreaseDateAccounting(), $isExecutable);
-        if ($editingExisting && $group->getMethod() === DepreciationMethod::ACCOUNTING && $this->getDepreciationRate($group, $depreciationYear, $year, $asset->getIncreaseDateAccounting()) === null) {
-            $request = $this->revertUpdateRequestAccountingMethodWithoutRate($depreciation, $request);
+        $updateRequest = $this->generateUpdateDepreciationRequest($request, $percentage, $isExecutable);
+        if ($editingExisting && $request->group->getMethod() === DepreciationMethod::ACCOUNTING && $this->getDepreciationRate($request) === null) {
+            $updateRequest = $this->revertUpdateRequestAccountingMethodWithoutRate($depreciation, $updateRequest);
         }
-        $depreciation->updateFromRequest($request);
+        $depreciation->updateFromRequest($updateRequest);
 
         return $depreciation;
     }
 
-    protected function generateUpdateDepreciationRequest(Asset $asset, DepreciationGroup $group, int $year, int $depreciationYear, float $entryPrice, float $correctEntryPrice, float $depreciatedAmount, bool $isCoefficient, float $percentage, ?\DateTimeInterface $increaseDate, bool $isExecutable): UpdateDepreciationRequest
+    protected function generateUpdateDepreciationRequest(RecalculateDepreciationsRequest $request, float $percentage, bool $isExecutable): UpdateDepreciationRequest
     {
-        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
-        $rate = $this->getDepreciationRate($group, $depreciationYear, $year, $increaseDate);
-        $depreciationAmount = $this->getDepreciationAmount($group->getMethod(), $depreciationYear, $rate, $entryPrice, $correctEntryPrice, $residualPrice, $isCoefficient, $percentage, $isExecutable);
-        $depreciatedAmount += $depreciationAmount;
-        $residualPrice = $this->getResidualPrice($entryPrice, $correctEntryPrice, $depreciatedAmount, $depreciationYear);
+        $residualPrice = $this->getResidualPrice($request->entryPrice, $request->correctEntryPrice, $request->depreciatedAmount, $request->depreciationYear);
+        $rate = $this->getDepreciationRate($request);
+        $depreciationAmount = $this->getDepreciationAmount($request, $rate, $residualPrice, $percentage, $isExecutable);
+        $request->depreciatedAmount += $depreciationAmount;
+        $residualPrice = $this->getResidualPrice($request->entryPrice, $request->correctEntryPrice, $request->depreciatedAmount, $request->depreciationYear);
 
         return new UpdateDepreciationRequest(
-            $asset,
-            $group,
-            $year,
-            $depreciationYear,
+            $request->asset,
+            $request->group,
+            $request->year,
+            $request->depreciationYear,
             $depreciationAmount,
             $percentage,
-            $depreciatedAmount,
+            $request->depreciatedAmount,
             $residualPrice,
             $isExecutable,
             $rate
@@ -274,25 +265,25 @@ class DepreciationCalculator
         return $residualPriceBase - $depreciatedAmount;
     }
 
-    protected function getDepreciationAmount(int $method, int $depreciationYear, ?float $rate, float $entryPrice, float $correctEntryPrice, float $residualPrice, bool $isCoefficient, float $percentage, bool $isExecutable): float
+    protected function getDepreciationAmount(RecalculateDepreciationsRequest $request, ?float $rate, float $residualPrice, float $percentage, bool $isExecutable): float
     {
         if ($rate === null || $rate === (float)0 || (int)$percentage === 0 || !$isExecutable) {
             return 0;
         }
 
-        $isMethodAccelerated = ($method === DepreciationMethod::ACCELERATED || $isCoefficient);
+        $isMethodAccelerated = ($request->group->getMethod() === DepreciationMethod::ACCELERATED || $request->isCoefficient);
 
-        if ($depreciationYear === 1) {
+        if ($request->depreciationYear === 1) {
             if ($isMethodAccelerated) {
-                $baseDepreciationAmount = $this->calculateDepreciationAmountAccelerated($entryPrice, $rate, $depreciationYear);
+                $baseDepreciationAmount = $this->calculateDepreciationAmountAccelerated($request->entryPrice, $rate, $request->depreciationYear);
             } else {
-                $baseDepreciationAmount = $this->calculateDepreciationAmountUniform($entryPrice, $rate);
+                $baseDepreciationAmount = $this->calculateDepreciationAmountUniform($request->entryPrice, $rate);
             }
         } else {
             if ($isMethodAccelerated) {
-                $baseDepreciationAmount = $this->calculateDepreciationAmountAccelerated($residualPrice, $rate, $depreciationYear);
+                $baseDepreciationAmount = $this->calculateDepreciationAmountAccelerated($residualPrice, $rate, $request->depreciationYear);
             } else {
-                $baseDepreciationAmount = $this->calculateDepreciationAmountUniform($correctEntryPrice, $rate);
+                $baseDepreciationAmount = $this->calculateDepreciationAmountUniform($request->correctEntryPrice, $rate);
             }
         }
         $depreciationAmount = round($baseDepreciationAmount * $percentage / 100, 2);
@@ -308,14 +299,14 @@ class DepreciationCalculator
         return $entryPrice * $percentage / 100;
     }
 
-    protected function getDepreciationRate(DepreciationGroup $group, int $depreciationYear, int $year, ?\DateTimeInterface $increaseDate): ?float
+    protected function getDepreciationRate(RecalculateDepreciationsRequest $request): ?float
     {
-        $rate = $group->getRate();
-        if ($this->isIncreased($increaseDate, $year)) {
-            $rate = $group->getRateIncreasedPrice();
+        $rate = $request->group->getRate();
+        if ($this->isIncreased($request->increaseDate, $request->year)) {
+            $rate = $request->group->getRateIncreasedPrice();
         }
-        if ($depreciationYear === 1) {
-            $rate = $group->getRateFirstYear();
+        if ($request->depreciationYear === 1) {
+            $rate = $request->group->getRateFirstYear();
         }
 
         return $rate;
@@ -348,20 +339,20 @@ class DepreciationCalculator
         return false;
     }
 
-    protected function checkGenerationForYear(?int $totalDepreciationYears, int $depreciationYear, int $year, ?int $disposalYear, ?float $residualPrice): bool
+    protected function checkGenerationForYear(RecalculateDepreciationsRequest $request): bool
     {
-        if ($disposalYear && $year > $disposalYear) {
+        if ($request->disposalYear && $request->year > $request->disposalYear) {
             return false;
         }
-        if ((int)$residualPrice === 0 || $depreciationYear > 101) {
+        if ((int)$request->residualPrice === 0 || $request->depreciationYear > 101) {
             return false;
         }
-        if ($totalDepreciationYears === null) {
+        if ($request->totalDepreciationYears === null) {
             return false;
         }
-//        if ($depreciationYear > $totalDepreciationYears && (int)$residualPrice === 0) {
-//            return false;
-//        }
+        if ($request->depreciationYear > ($request->totalDepreciationYears + 10)) {
+            return false;
+        }
         return true;
     }
 
