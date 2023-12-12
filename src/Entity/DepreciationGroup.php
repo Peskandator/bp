@@ -25,7 +25,7 @@ class DepreciationGroup
      */
     private ?int $group;
     /**
-     * @ORM\Column(name="prefix", type="string")
+     * @ORM\Column(name="prefix", type="string", nullable=true)
      */
     private ?string $prefix;
     /**

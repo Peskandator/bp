@@ -42,10 +42,10 @@ export default function() {
         const groupInfoObj = jQuery.parseJSON(groupInfoJson);
 
         assetGroupTaxSelect.change(function(){
-            changeDepreciationGroup();
+            changeDepreciationGroupTax();
         });
 
-        function changeDepreciationGroup(){
+        function changeDepreciationGroupTax(){
             let groupId = assetGroupTaxSelect.find(':selected').val();
 
             let rateFirstYear = "";
@@ -103,7 +103,7 @@ export default function() {
             // var value = $('#assetGroupTaxSelect').find(":selected").val();
             // if (value === 0 || value === '0') {
             assetGroupTaxSelect.val(groupId);
-            changeDepreciationGroup();
+            changeDepreciationGroupTax();
             // }
         });
 
@@ -294,7 +294,7 @@ export default function() {
 
         if ($(`.js-edit-asset-page`).length > 0) {
             changeAssetTypeSelect();
-            changeDepreciationGroup();
+            changeDepreciationGroupTax();
             changeAcquisition();
         }
     }
