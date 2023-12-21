@@ -13,10 +13,6 @@ main {
     min-height: 100%;
 }
 
-.sidebar {
-    background-color: white;
-}
-
 .main-content {
     padding: 40px;
 }
@@ -135,14 +131,6 @@ h1 {
 
 h6 {
     font-size: 18px !important;
-}
-
-.item-active {
-    background-color: rgb(240 240 240);
-}
-
-.sidebar .links a:hover {
-    background-color: #d2f4ea;
 }
 
 .asset-form .form-control {

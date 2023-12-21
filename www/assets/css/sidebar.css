@@ -1,0 +1,39 @@
+.sidebar {
+    background-color: white;
+}
+
+.sidebar-mobile {
+    width: 50px;
+    background-color: white;
+}
+
+#offcanvas {
+    width: 280px;
+    background-color: white;
+}
+
+.item-active {
+    background-color: rgb(240 240 240);
+}
+
+.sidebar .links a:hover {
+    background-color: #d2f4ea;
+}
+
+.sidebar-mobile {
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .sidebar-mobile {
+        display: block;
+    }
+    .sidebar {
+        display: none;
+    }
+}
+
+.hamburger-button {
+    padding: 0;
+}
+
