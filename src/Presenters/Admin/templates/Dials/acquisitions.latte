@@ -94,7 +94,7 @@
                                             <span class="acquisition-name-text-{$acquisitionId} js-edit-text js-text-{$acquisitionId}">{$acquisition->getName()}</span>
                                             {if !$acquisition->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getName()}">
+                                                    <input type="text" class="acquisition-name-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getName()}" data-tab-index="1">
                                                 </div>
                                             {/if}
                                         </td>
@@ -102,7 +102,7 @@
                                             <span class="acquisition-code-text-{$acquisitionId} js-edit-text js-text-{$acquisitionId}">{$acquisition->getCode()}</span>
                                             {if !$acquisition->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getCode()}" min="7" max="999">
+                                                    <input type="number" class="acquisition-code-{$acquisitionId} form-control js-edit-input js-input-{$acquisitionId}" style="display: none" value="{$acquisition->getCode()}" min="7" max="999" data-tab-index="2">
                                                 </div>
                                             {/if}
                                         </td>
@@ -114,7 +114,8 @@
                                             <div class="form-check">
                                                 <input style="display: none; margin-top: 10px"
                                                        class="form-check-input acquisition-disposal-{$acquisitionId} js-edit-input js-input-{$acquisitionId}"
-                                                       type="checkbox" checked=""
+                                                       type="checkbox"
+                                                       checked=""
                                                 >
                                             </div>
                                         </td>
@@ -148,7 +149,7 @@
                                             <span class="disposal-name-text-{$disposalId} js-edit-text js-text-{$disposalId}">{$disposal->getName()}</span>
                                             {if !$disposal->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="text" class="disposal-name-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getName()}">
+                                                    <input type="text" class="disposal-name-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getName()}" data-tab-index="3">
                                                 </div>
                                             {/if}
                                         </td>
@@ -156,7 +157,7 @@
                                             <span class="disposal-code-text-{$disposalId} js-edit-text js-text-{$disposalId}">{$disposal->getCode()}</span>
                                             {if !$disposal->isDefault()}
                                                 <div class="form-group">
-                                                    <input type="number" class="disposal-code-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getCode()}" min="1" max="999">
+                                                    <input type="number" class="disposal-code-{$disposalId} form-control js-edit-input js-input-{$disposalId}" style="display: none" value="{$disposal->getCode()}" min="1" max="999" data-tab-index="4">
                                                 </div>
                                             {/if}
                                         </td>
@@ -202,14 +203,14 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="acquisitionName">Text</label>
-                                    <input n:name="name" type="text" class="form-control" id="acquisitionName">
+                                    <input n:name="name" type="text" class="form-control" id="acquisitionName" data-tab-index-1="1">
                                     <small class="form-error" n:ifcontent>{inputError name}</small>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="acquisitionCode">Kód</label>
-                                    <input n:name="code" type="number" class="form-control" id="acquisitionCode" min="1" max="999">
+                                    <input n:name="code" type="number" class="form-control" id="acquisitionCode" min="1" max="999" data-tab-index-1="2">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
                                 </div>
                             </div>

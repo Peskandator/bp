@@ -1,0 +1,45 @@
+{define menuItems}
+    {if isset($currentEntity) && $currentEntity !== null}
+        <a href="{plink :Admin:Dashboard:default}" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+            <span class="fs-5 fw-semibold sidebar-title">{$currentEntity->getName()}</span>
+        </a>
+        <ul class="list-unstyled ps-0 links">
+
+            {var $counter = 0}
+            {foreach $sections as $section}
+                {var $counter = $counter + 1}
+                {var $isActive = $section->isActive()}
+                {var $items = $section->getItems()}
+                <li class="mb-1">
+                    <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#menu-item-{$counter}" aria-expanded="{if $isActive}true{else}false{/if}">
+                        {$section->getText()}
+                    </button>
+                    <div class="collapse{if $isActive} show{/if}" id="menu-item-{$counter}">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            {foreach $items as $item}
+                                <li><a href="{$item->getLink()}" class="link-body-emphasis d-inline-flex text-decoration-none rounded {if $item->isActive()}item-active{/if}">{$item->getText()}</a></li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </li>
+            {/foreach}
+            <li class="border-top my-3"></li>
+        </ul>
+    {/if}
+    <ul class="list-unstyled ps-0 links">
+        <li class="mb-1">
+            <div class="menu-signout d-flex flex-column">
+                <div class="">
+                    <a href="{$profileLink}" class="link-dark d-inline-flex text-decoration-none rounded{if $isProfileLinkActive === true} item-active{/if}">Profil</a>
+                </div>
+                <div class="">
+                    <a href="{$entitiesLink[0]}" class="link-dark d-inline-flex text-decoration-none rounded{if $entitiesLink[1] === true} item-active{/if}">Účetní jednotky</a>
+                </div>
+            </div>
+        </li>
+        <li class="border-bottom my-3"></li>
+    </ul>
+    <div class="menu-signout links">
+        <a href="{$signOutLink}" class="link-dark d-inline-flex text-decoration-none rounded">Odhlásit se</a>
+    </div>
+{/define}

@@ -53,13 +53,24 @@
                                         <td>
                                             <span class="assettype-series-text-{$typeId} js-edit-text js-text-{$typeId}">{$type->getSeries()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="assettype-series-{$typeId} form-control js-edit-input js-input-{$typeId}" style="display: none" value="{$type->getSeries()}">
+                                                <input
+                                                    type="number" class="assettype-series-{$typeId} form-control js-edit-input js-input-{$typeId}"
+                                                    style="display: none"
+                                                    value="{$type->getSeries()}"
+                                                    data-tab-index="1"
+                                                >
                                             </div>
                                         </td>
                                         <td>
                                             <span class="assettype-step-text-{$typeId} js-edit-text js-text-{$typeId}">{$type->getStep()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="assettype-step-{$typeId} form-control js-edit-input js-input-{$typeId}" style="display: none" value="{$type->getStep()}">
+                                                <input
+                                                    type="number"
+                                                    class="assettype-step-{$typeId} form-control js-edit-input js-input-{$typeId}"
+                                                    style="display: none"
+                                                    value="{$type->getStep()}"
+                                                    data-tab-index="2"
+                                                >
                                             </div>
                                         </td>
                                         <td>
@@ -72,7 +83,6 @@
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

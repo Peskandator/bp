@@ -67,13 +67,13 @@
                                         <td>
                                             <span class="location-name-text-{$locationId} js-edit-text js-text-{$locationId}">{$location->getName()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="location-name-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getName()}">
+                                                <input type="text" class="location-name-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getName()}" data-tab-index="1">
                                             </div>
                                         </td>
                                         <td>
                                             <span class="location-code-text-{$locationId} js-edit-text js-text-{$locationId}">{$location->getCode()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="location-code-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getCode()}" min="7" max="999">
+                                                <input type="number" class="location-code-{$locationId} form-control js-edit-input js-input-{$locationId}" style="display: none" value="{$location->getCode()}" min="7" max="999" data-tab-index="2">
                                             </div>
                                         </td>
                                         <td>
@@ -107,14 +107,14 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="locationName">Název</label>
-                                    <input n:name="name" type="text" class="form-control" id="locationName">
+                                    <input n:name="name" type="text" class="form-control" id="locationName" data-tab-index-1="1">
                                     <small class="form-error" n:ifcontent>{inputError name}</small>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="locationCode">Číslo střediska</label>
-                                    <input n:name="code" type="number" class="form-control" id="locationCode" min="1" max="999">
+                                    <input n:name="code" type="number" class="form-control" id="locationCode" min="1" max="999" data-tab-index-1="2">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
                                 </div>
                             </div>

@@ -32,5 +32,14 @@ $(document).ready(function(){
             $('*[data-tab-index='+ index + ']').focus();
         }
     });
+
+    $('*[data-tab-index-1]').on('keypress',function(e) {
+        if(e.which === 13) {
+            e.preventDefault();
+            let index = $(this).attr('data-tab-index-1');
+            index++;
+            $('*[data-tab-index-1='+ index + ']').focus();
+        }
+    });
 });
 

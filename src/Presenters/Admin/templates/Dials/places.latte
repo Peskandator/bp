@@ -71,13 +71,13 @@
                                         <td>
                                             <span class="place-name-text-{$placeId} js-edit-text js-text-{$placeId}">{$place->getName()}</span>
                                             <div class="form-group">
-                                                <input type="text" class="place-name-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getName()}">
+                                                <input type="text" class="place-name-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getName()}" data-tab-index="1">
                                             </div>
                                         </td>
                                         <td>
                                             <span class="place-location-text-{$placeId} js-edit-text js-text-{$placeId}">{$place->getLocation()->getName()}</span>
                                             <div class="form-group">
-                                                <select class="place-location-{$placeId} form-select js-edit-input js-input-{$placeId}" style="display: none">
+                                                <select class="place-location-{$placeId} form-select js-edit-input js-input-{$placeId}" style="display: none" data-tab-index="2">
                                                     <option value="{$currentLocation->getId()}">{$currentLocation->getCode()} - {$currentLocation->getName()}</option>
                                                     {foreach $locations as $location}
                                                         {if $currentLocation->getId() !== $location->getId()}
@@ -90,7 +90,7 @@
                                         <td>
                                             <span class="place-code-text-{$placeId} js-edit-text js-text-{$placeId}">{$place->getCode()}</span>
                                             <div class="form-group">
-                                                <input type="number" class="place-code-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getCode()}" min="7" max="999">
+                                                <input type="number" class="place-code-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getCode()}" min="7" max="999" data-tab-index="3">
                                             </div>
                                         </td>
                                         <td class="d-flex">
@@ -122,7 +122,7 @@
                             <div class="col-5">
                                 <div class="form-group">
                                     <label for="placeName">Název místa</label>
-                                    <input n:name="name" type="text" class="form-control" id="placeName">
+                                    <input n:name="name" type="text" class="form-control" id="placeName" data-tab-index-1="1">
                                     <small class="form-error" n:ifcontent>{inputError name}</small>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                             <div class="col-5">
                                 <div class="form-group">
                                     <label for="locationSelect">Středisko</label>
-                                    <select n:name="location" id="locationSelect" class="form-select">
+                                    <select n:name="location" id="locationSelect" class="form-select" data-tab-index-1="2">
                                     </select>
                                     <small class="form-error" n:ifcontent>{inputError location}</small>
                                 </div>
@@ -139,7 +139,7 @@
                             <div class="col-2">
                                 <div class="form-group">
                                     <label for="placeCode">Kód místa</label>
-                                    <input n:name="code" type="number" class="form-control" id="placeCode" min="1" max="999">
+                                    <input n:name="code" type="number" class="form-control" id="placeCode" min="1" max="999" data-tab-index-1="3">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
                                 </div>
                             </div>
