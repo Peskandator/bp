@@ -272,7 +272,7 @@ class DepreciationCalculator
             return 0;
         }
 
-        $isMethodAccelerated = ($request->group->getMethod() === DepreciationMethod::ACCELERATED || $request->rateFormat === RateFormat::PERCENTAGE);
+        $isMethodAccelerated = ($request->group->getMethod() === DepreciationMethod::ACCELERATED || $request->rateFormat === RateFormat::COEFFICIENT);
 
         if ($request->depreciationYear === 1) {
             if ($isMethodAccelerated) {
