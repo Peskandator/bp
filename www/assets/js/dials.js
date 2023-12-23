@@ -156,18 +156,18 @@ export default function() {
 
     let coefficientSelect = $('#groupCoeffSelect');
     let groupMethodSelect = $('#groupMethodSelect');
-    let ownMethod = coefficientSelect.find(`option[value="2"]`);
+    let ownMethod = coefficientSelect.find(`option[value="3"]`);
     groupMethodSelect.change(changeGroupMethodSelect);
     function changeGroupMethodSelect() {
         let selected = parseInt(groupMethodSelect.find(':selected').val());
         toggleOwnWayOption(selected);
         if (selected === 1 || selected === 3) {
             coefficientSelect.prop("disabled", true);
-            coefficientSelect.val(0);
+            coefficientSelect.val(1);
         }
         else if (selected === 2) {
             coefficientSelect.prop("disabled", true);
-            coefficientSelect.val(1);
+            coefficientSelect.val(2);
         } else {
             coefficientSelect.prop("disabled", false);
         }
@@ -197,12 +197,12 @@ export default function() {
 
         let editedGroupCoeffSelectClass = 'group-coeff-' + editedGroupId;
         let editedGroupCoeffSelect = $('.' + editedGroupCoeffSelectClass)
-        if (selected === 1) {
-            editedGroupCoeffSelect.prop("disabled", true);
-            editedGroupCoeffSelect.val(0);
-        } else if (selected === 2) {
+        if (selected === 1 || selected === 3) {
             editedGroupCoeffSelect.prop("disabled", true);
             editedGroupCoeffSelect.val(1);
+        } else if (selected === 2) {
+            editedGroupCoeffSelect.prop("disabled", true);
+            editedGroupCoeffSelect.val(2);
         } else {
             editedGroupCoeffSelect.prop("disabled", false);
         }

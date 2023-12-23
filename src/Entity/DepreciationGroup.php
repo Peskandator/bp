@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Enums\RateFormat;
 use App\Majetek\Requests\CreateDepreciationGroupRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -41,9 +42,9 @@ class DepreciationGroup
      */
     private ?int $months;
     /**
-     * @ORM\Column(name="is_coefficient", type="boolean")
+     * @ORM\Column(name="rate_format", type="integer", nullable=false)
      */
-    private bool $isCoefficient;
+    private int $rateFormat;
     /**
      * @ORM\Column(name="rate_first_year", type="float", nullable=true)
      */
@@ -70,7 +71,7 @@ class DepreciationGroup
         ?string $prefix,
         ?int $years,
         ?int $months,
-        bool $isCoefficient,
+        int $rateFormat,
         ?float $rateFirstYear,
         ?float $rate,
         ?float $rateIncreasedPrice,
@@ -81,7 +82,7 @@ class DepreciationGroup
         $this->setPrefix($prefix);
         $this->years = $years;
         $this->months = $months;
-        $this->isCoefficient = $isCoefficient;
+        $this->rateFormat = $rateFormat;
         $this->rateFirstYear = $rateFirstYear;
         $this->rate = $rate;
         $this->rateIncreasedPrice = $rateIncreasedPrice;
@@ -95,7 +96,7 @@ class DepreciationGroup
         $this->setPrefix($request->prefix);
         $this->years = $request->years;
         $this->months = $request->months;
-        $this->isCoefficient = $request->isCoefficient;
+        $this->rateFormat = $request->rateFormat;
         $this->rateFirstYear = $request->rateFirstYear;
         $this->rate = $request->rate;
         $this->rateIncreasedPrice = $request->rateIncreasedPrice;
@@ -153,7 +154,12 @@ class DepreciationGroup
 
     public function isCoefficient(): bool
     {
-        return $this->isCoefficient;
+        return $this->rateFormat === RateFormat::COEFFICIENT;
+    }
+
+    public function getRateFormat(): int
+    {
+        return $this->rateFormat;
     }
 
     public function getRateFirstYear(): ?float

@@ -29,7 +29,7 @@ class AddDepreciationGroupAction
             $request->prefix,
             $request->years,
             $request->months,
-            $request->isCoefficient,
+            $request->rateFormat,
             $request->rateFirstYear,
             $request->rate,
             $request->rateIncreasedPrice,

@@ -42,7 +42,7 @@
                                 <input n:name="prefix" class="form-group-prefix">
                                 <input n:name="years" class="form-group-years">
                                 <input n:name="months" class="form-group-months">
-                                <input n:name="is_coefficient" class="form-group-coeff">
+                                <input n:name="rate_format" class="form-group-coeff">
                                 <input n:name="rate_first_year" class="form-group-first">
                                 <input n:name="rate" class="form-group-rate">
                                 <input n:name="rate_increased_price" class="form-group-increased">
@@ -54,7 +54,7 @@
                                 <div n:foreach="$form['prefix']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Prefix -</b> {$error}</div>
                                 <div n:foreach="$form['years']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Počet let -</b> {$error}</div>
                                 <div n:foreach="$form['months']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Počet měsíců -</b> {$error}</div>
-                                <div n:foreach="$form['is_coefficient']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Koef. / procento -</b> {$error}</div>
+                                <div n:foreach="$form['rate_format']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Koef. / procento -</b> {$error}</div>
                                 <div n:foreach="$form['rate_first_year']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Sazba 1. rok -</b> {$error}</div>
                                 <div n:foreach="$form['rate']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Sazba další roky -</b> {$error}</div>
                                 <div n:foreach="$form['rate_increased_price']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Sazba zvýš. VC -</b> {$error}</div>
@@ -74,7 +74,7 @@
                                 <th>Prefix</th>
                                 <th>Počet let</th>
                                 <th>Počet měsíců</th>
-                                <th>Koef./%</th>
+                                <th>Koeficient/%</th>
                                 <th>Sazba 1. rok</th>
                                 <th>Sazba další roky</th>
                                 <th>Sazba zvýš. VC</th>
@@ -85,7 +85,7 @@
                             {foreach $groups as $group}
                                 {var $groupId = strval($group->getId())}
                                 {var $currentGroupNumber = $group->getGroup()}
-                                {var $isCoefficient = $group->isCoefficient()}
+                                {var $rateFormat = $group->getRateFormat()}
                                 <tr>
                                     <td>
                                         <span class="group-method-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getMethodText()}</span>
@@ -125,16 +125,15 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="group-coeff-text-{$groupId} js-edit-text js-text-{$groupId}">{if $isCoefficient}K{else}P{/if}</span>
+                                        <span class="group-coeff-text-{$groupId} js-edit-text js-text-{$groupId}">{$rateFormatsShort[$rateFormat]}</span>
                                         <div class="form-group">
                                             <select class="group-coeff-{$groupId} group-coeff-select form-select js-edit-input js-input-{$groupId}" style="display: none">
-                                                {if $isCoefficient}
-                                                    <option value="1">K</option>
-                                                    <option value="0">P</option>
-                                                {else}
-                                                    <option value="0">P</option>
-                                                    <option value="1">K</option>
-                                                {/if}
+                                                <option value="{$rateFormat}">{$rateFormatsShort[$rateFormat]}</option>
+                                                {foreach $rateFormatsShort as $value => $rateFormatShort}
+                                                    {if $rateFormat !== $value}
+                                                        <option value="{$value}">{$rateFormatShort}</option>
+                                                    {/if}
+                                                {/foreach}
                                             </select>
                                         </div>
                                     </td>
@@ -224,8 +223,8 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="groupCoeffSelect">Koeficient/procento</label>
-                                    <select n:name="is_coefficient" class="form-select" id="groupCoeffSelect" data-tab-index-1="6"></select>
-                                    <small class="form-error" n:ifcontent>{inputError is_coefficient}</small>
+                                    <select n:name="rate_format" class="form-select" id="groupCoeffSelect" data-tab-index-1="6"></select>
+                                    <small class="form-error" n:ifcontent>{inputError rate_format}</small>
                                 </div>
                             </div>
                             <div class="col-3">

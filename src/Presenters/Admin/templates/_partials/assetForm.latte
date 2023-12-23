@@ -299,9 +299,50 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="assetGroupAccountingSelect">Odp. sk. a způsob</label>
-                                    <select n:name="group_accounting" class="form-select" id="assetGroupAccountingSelect" data-tab-index="21">
+                                    <select n:name="group_accounting"
+                                            class="form-select"
+                                            id="assetGroupAccountingSelect"
+                                            data-tab-index="21"
+                                            data-groups-info-json="{$groupsInfoJson}"
+                                    >
                                     </select>
                                     <small class="form-error" n:ifcontent>{inputError group_accounting}</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="assetGroupAccountingYearsMonths">Počet <span id="assetGroupAccountingYearsText">let</span><span id="assetGroupAccountingMonthsText" style="display: none">měsíců</span></label>
+                                    <input type="number" class="form-control" id="assetGroupAccountingYearsMonths" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="assetGroupAccountingRates" class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="assetGroupAccounting1">
+                                        Sazba 1. rok -
+                                        <span class="assetGroupAccountingPerc">%</span>
+                                        <span class="assetGroupAccountingKoef" style="display: none">koef.</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="assetGroupAccounting1" value="" disabled>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="assetGroupAccounting2">Sazba další r. -
+                                        <span class="assetGroupAccountingPerc">%</span>
+                                        <span class="assetGroupAccountingKoef" style="display: none">koef.</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="assetGroupAccounting2" value="" disabled>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="assetGroupAccounting3">Sazba zvýš. VC -
+                                        <span class="assetGroupAccountingPerc">%</span>
+                                        <span class="assetGroupAccountingKoef" style="display: none">koef.</span>
+                                    </label>
+                                    <input type="number" class="form-control" id="assetGroupAccounting3" value="" disabled>
                                 </div>
                             </div>
                         </div>

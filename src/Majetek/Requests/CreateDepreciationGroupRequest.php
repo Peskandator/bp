@@ -10,7 +10,7 @@ class CreateDepreciationGroupRequest
         public ?string $prefix,
         public ?int $years,
         public ?int $months,
-        public bool $isCoefficient,
+        public int $rateFormat,
         public ?float $rateFirstYear,
         public ?float $rate,
         public ?float $rateIncreasedPrice,

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Enums\RateFormat;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Requests\UpdateDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,9 +49,9 @@ class DepreciationTax implements Depreciation
      */
     private float $percentage;
     /**
-     * @ORM\Column(name="is_coefficient", type="boolean")
+     * @ORM\Column(name="rate_format", type="integer", nullable=false)
      */
-    private bool $isCoefficient;
+    private int $rateFormat;
     /**
      * @ORM\Column(name="rate", type="float", nullable=false)
      */
@@ -113,7 +114,7 @@ class DepreciationTax implements Depreciation
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->year = $request->year;
         $this->method = $request->depreciationGroup->getMethod();
-        $this->isCoefficient = $request->depreciationGroup->isCoefficient();
+        $this->rateFormat = $request->depreciationGroup->getRateFormat();
         $this->rate = $request->rate;
         $this->disposalDate = $request->asset->getDisposalDate();
     }
@@ -145,7 +146,7 @@ class DepreciationTax implements Depreciation
         $this->depreciatedAmount = $depreciatedAmount;
         $this->year = $year;
         $this->method = $depreciationGroup->getMethod();
-        $this->isCoefficient = $depreciationGroup->isCoefficient();
+        $this->rateFormat = $depreciationGroup->getRateFormat();
         $this->rate = $rate;
     }
 
@@ -243,7 +244,12 @@ class DepreciationTax implements Depreciation
 
     public function isCoefficient(): bool
     {
-        return $this->isCoefficient;
+        return $this->rateFormat === RateFormat::COEFFICIENT;
+    }
+
+    public function getRateFormat(): int
+    {
+        return $this->rateFormat;
     }
 
     public function getRate(): float

@@ -12,9 +12,17 @@ final class RateFormat
     public const OWN_METHOD = 3;
     public const NAMES =
         [
-            0 => 'Procento',
-            1 => 'Koeficient',
-            2 => 'Vlastní způsob',
+            1 => 'Procento',
+            2 => 'Koeficient',
+            3 => 'Vlastní způsob',
+        ]
+    ;
+
+    public const NAMES_SHORT =
+        [
+            1 => 'P',
+            2 => 'K',
+            3 => 'VZ',
         ]
     ;
 

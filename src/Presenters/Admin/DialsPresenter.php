@@ -175,12 +175,12 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionDepreciationGroups(): void
     {
-        $cpSelect = RateFormat::NAMES;
         $methodNames = DepreciationMethod::getNames();
         $methodIds = [1,2,3,4];
 
         $this->template->groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
-        $this->template->cpSelect = $cpSelect;
+        $this->template->cpSelect = RateFormat::NAMES;
+        $this->template->rateFormatsShort = RateFormat::NAMES_SHORT;
         $this->template->methods = $methodIds;
         $this->template->methodNames = $methodNames;
         $this->template->deletabilityResolver = $this->deletabilityResolver;
@@ -871,7 +871,7 @@ final class DialsPresenter extends BaseAdminPresenter
         ;
         $cpSelect = RateFormat::NAMES;
         $form
-            ->addSelect('is_coefficient', 'Koef./Procento', $cpSelect)
+            ->addSelect('rate_format', 'Koef./Procento', $cpSelect)
             ->setRequired(true)
         ;
         $form
@@ -915,15 +915,13 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
-            $isCoefficient = $values->is_coefficient === 1;
-
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
                 $values->prefix,
                 $values->years,
                 $values->months,
-                $isCoefficient,
+                $values->rate_format,
                 $values->rate_first_year,
                 $values->rate,
                 $values->rate_increased_price,
@@ -1021,7 +1019,7 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addRule($form::MAX, 'Může být nejvýše 999', 999)
         ;
         $form
-            ->addInteger('is_coefficient', 'Koef./Procento')
+            ->addInteger('rate_format', 'Koef./Procento')
             ->setRequired(true)
         ;
         $form
@@ -1080,14 +1078,13 @@ final class DialsPresenter extends BaseAdminPresenter
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             $group = $this->depreciationGroupRepository->find((int)$values->id);
-            $isCoefficient = $values->is_coefficient === 1;
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
                 $values->prefix,
                 $values->years,
                 $values->months,
-                $isCoefficient,
+                $values->rate_format,
                 $values->rate_first_year,
                 $values->rate,
                 $values->rate_increased_price,
@@ -1231,17 +1228,16 @@ final class DialsPresenter extends BaseAdminPresenter
             }
         }
 
-        $isCoefficient = $values->is_coefficient === 1;
-        if ($values->method === DepreciationMethod::UNIFORM && $isCoefficient) {
-            $form['is_coefficient']->addError('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"');
+        if ($values->method === DepreciationMethod::UNIFORM && $values->rate_format !== RateFormat::PERCENTAGE) {
+            $form['rate_format']->addError('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"');
             $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
         }
-        if ($values->method === DepreciationMethod::EXTRAORDINARY && $isCoefficient) {
-            $form['is_coefficient']->addError('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"');
+        if ($values->method === DepreciationMethod::EXTRAORDINARY && $values->rate_format !== RateFormat::PERCENTAGE) {
+            $form['rate_format']->addError('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"');
             $this->flashMessage('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
         }
-        if ($values->method === DepreciationMethod::ACCELERATED && !$isCoefficient) {
-            $form['is_coefficient']->addError('U zrychleného způsobu odpisování musí být zvolena možnost "Koeficient"');
+        if ($values->method === DepreciationMethod::ACCELERATED && $values->rate_format !== RateFormat::COEFFICIENT) {
+            $form['rate_format']->addError('U zrychleného způsobu odpisování musí být zvolena možnost "Koeficient"');
             $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Koeficient"',FlashMessageType::ERROR);
         }
     }

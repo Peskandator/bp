@@ -28,7 +28,7 @@ class AssetFormJsonGenerator
          * @var Category $category
          */
         foreach ($categories as $category) {
-            $group =  $category->getDepreciationGroup();
+            $group = $category->getDepreciationGroup();
             if ($group) {
                 $jsonArr[(string)$category->getId()] = $group->getId();
                 continue;
@@ -134,7 +134,7 @@ class AssetFormJsonGenerator
     public function getGroupsInfoJson(AccountingEntity $entity): string
     {
         $info = [];
-        $groups = $entity->getDepreciationGroupsWithoutAccounting();
+        $groups = $entity->getDepreciationGroups();
         /**
          * @var DepreciationGroup $group
          */
@@ -144,7 +144,7 @@ class AssetFormJsonGenerator
             $info[(string)$group->getId()]['rate-increased'] = $group->getRateIncreasedPrice();
             $info[(string)$group->getId()]['years'] = $group->getYears();
             $info[(string)$group->getId()]['months'] = $group->getMonths();
-            $info[(string)$group->getId()]['coeff'] = $group->isCoefficient() ? 1 : 0;
+            $info[(string)$group->getId()]['rate-format'] = $group->getRateFormat();
         }
 
         return json_encode($info);

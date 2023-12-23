@@ -350,6 +350,9 @@ class DepreciationCalculator
         if ($request->totalDepreciationYears === null) {
             return false;
         }
+        if ($request->depreciationYear > ($request->totalDepreciationYears) && $this->getDepreciationRate($request) === null) {
+            return false;
+        }
         if ($request->depreciationYear > ($request->totalDepreciationYears + 10)) {
             return false;
         }

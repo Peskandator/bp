@@ -53,7 +53,7 @@ export default function() {
             let rateIncreasedPrice = "";
             let years = "";
             let months = "";
-            let isCoeff = "";
+            let rateFormat = 1;
 
             if (groupId && groupId !== 0 && groupInfoObj[groupId]) {
                 rateFirstYear = groupInfoObj[groupId]['rate-first'];
@@ -61,10 +61,10 @@ export default function() {
                 rateIncreasedPrice = groupInfoObj[groupId]['rate-increased'];
                 years = groupInfoObj[groupId]['years'];
                 months = groupInfoObj[groupId]['months'];
-                isCoeff = groupInfoObj[groupId]['coeff'];
+                rateFormat = parseInt(groupInfoObj[groupId]['rate-format']);
             }
 
-            if (isCoeff === '1') {
+            if (rateFormat === 2) {
                 $('.assetGroupTaxPerc').hide();
                 $('.assetGroupTaxKoef').show();
             } else {
@@ -106,6 +106,63 @@ export default function() {
             changeDepreciationGroupTax();
             // }
         });
+
+        let assetGroupAccountingSelect = $('#assetGroupAccountingSelect');
+        const groupInfoJsonAccounting = assetGroupAccountingSelect.attr('data-groups-info-json');
+        const groupInfoObjAccounting = jQuery.parseJSON(groupInfoJsonAccounting);
+        const assetGroupAccountingRates = $('#assetGroupAccountingRates');
+
+        assetGroupAccountingSelect.change(function(){
+            changeDepreciationGroupAccounting();
+        });
+
+        function changeDepreciationGroupAccounting(){
+            let groupId = assetGroupAccountingSelect.find(':selected').val();
+
+            let rateFirstYear = "";
+            let rate = "";
+            let rateIncreasedPrice = "";
+            let years = "";
+            let months = "";
+            let rateFormat = 1;
+
+            if (groupId && groupId !== 0 && groupInfoObjAccounting[groupId]) {
+                rateFirstYear = groupInfoObjAccounting[groupId]['rate-first'];
+                rate = groupInfoObjAccounting[groupId]['rate'];
+                rateIncreasedPrice = groupInfoObjAccounting[groupId]['rate-increased'];
+                years = groupInfoObjAccounting[groupId]['years'];
+                months = groupInfoObjAccounting[groupId]['months'];
+                rateFormat = parseInt(groupInfoObjAccounting[groupId]['rate-format']);
+            }
+
+            if (rateFormat === 3) {
+                assetGroupAccountingRates.hide();
+            } else {
+                assetGroupAccountingRates.show();
+            }
+
+            if (rateFormat === 2) {
+                $('.assetGroupAccountingPerc').hide();
+                $('.assetGroupAccountingKoef').show();
+            } else {
+                $('.assetGroupAccountingPerc').show();
+                $('.assetGroupAccountingKoef').hide();
+            }
+
+            if (months && months !== '' && months !== '0') {
+                $('#assetGroupAccountingMonthsText').show()
+                $('#assetGroupAccountingYearsText').hide()
+                $('#assetGroupAccountingYearsMonths').val(months)
+            } else {
+                $('#assetGroupAccountingMonthsText').hide()
+                $('#assetGroupAccountingYearsText').show()
+                $('#assetGroupAccountingYearsMonths').val(years)
+            }
+
+            $('#assetGroupAccounting1').val(rateFirstYear);
+            $('#assetGroupAccounting2').val(rate);
+            $('#assetGroupAccounting3').val(rateIncreasedPrice);
+        }
 
         let entryPriceTaxInput = $('#assetEntryPriceTax');
         let increasedPriceTaxInput = $('#assetIncreasedPriceTax');
@@ -295,6 +352,7 @@ export default function() {
         if ($(`.js-edit-asset-page`).length > 0) {
             changeAssetTypeSelect();
             changeDepreciationGroupTax();
+            changeDepreciationGroupAccounting();
             changeAcquisition();
         }
     }

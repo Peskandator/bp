@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Enums\RateFormat;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Requests\UpdateDepreciationRequest;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,9 +49,9 @@ class DepreciationAccounting implements Depreciation
      */
     private float $percentage;
     /**
-     * @ORM\Column(name="is_coefficient", type="boolean")
+     * @ORM\Column(name="rate_format", type="integer", nullable=false)
      */
-    private bool $isCoefficient;
+    private int $rateFormat;
     /**
      * @ORM\Column(name="rate", type="float", nullable=true)
      */
@@ -114,7 +115,7 @@ class DepreciationAccounting implements Depreciation
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->year = $request->year;
         $this->method = $request->depreciationGroup->getMethod();
-        $this->isCoefficient = $request->depreciationGroup->isCoefficient();
+        $this->rateFormat = $request->depreciationGroup->getRateFormat();
         $this->rate = $request->rate;
     }
 
@@ -146,7 +147,7 @@ class DepreciationAccounting implements Depreciation
         $this->depreciatedAmount = $depreciatedAmount;
         $this->year = $year;
         $this->method = $depreciationGroup->getMethod();
-        $this->isCoefficient = $depreciationGroup->isCoefficient();
+        $this->rateFormat = $depreciationGroup->getRateFormat();
         $this->rate = $rate;
         $this->disposalDate = $asset->getDisposalDate();
     }
@@ -168,7 +169,7 @@ class DepreciationAccounting implements Depreciation
         $this->depreciatedAmount = $depreciationTax->getDepreciatedAmount();
         $this->year = $depreciationTax->getYear();
         $this->method = $depreciationTax->getMethod();
-        $this->isCoefficient = $depreciationTax->isCoefficient();
+        $this->rateFormat = $depreciationTax->getRateFormat();
         $this->rate = $depreciationTax->getRate();
         $this->disposalDate = $depreciationTax->getDisposalDate();
     }
@@ -264,7 +265,7 @@ class DepreciationAccounting implements Depreciation
 
     public function isCoefficient(): bool
     {
-        return $this->isCoefficient;
+        return $this->rateFormat === RateFormat::COEFFICIENT;
     }
 
     public function getRate(): ?float
