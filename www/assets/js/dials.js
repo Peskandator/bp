@@ -248,7 +248,6 @@ export default function() {
         let selected = parseInt(rateFormatSelect.find(':selected').val());
         if (selected === 3) {
             editRates.hide();
-            editRates.find('input').val("");
         } else {
             editRates.show();
         }

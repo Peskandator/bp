@@ -1098,6 +1098,11 @@ final class DialsPresenter extends BaseAdminPresenter
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             $group = $this->depreciationGroupRepository->find((int)$values->id);
             $rateFormat = $this->getRateFormatForMethod($values->method, $values->rate_format);
+            if ($rateFormat === RateFormat::OWN_METHOD) {
+                $values->rate_first_year = null;
+                $values->rate = null;
+                $values->rate_increased_price = null;
+            }
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
