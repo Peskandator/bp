@@ -154,6 +154,7 @@ export default function() {
         $(`.edit-assettype-form`).submit();
     });
 
+    const rates = $(`.js-rates`);
     let coefficientSelect = $('#groupCoeffSelect');
     let groupMethodSelect = $('#groupMethodSelect');
     let percentageFormat = coefficientSelect.find(`option[value="1"]`);
@@ -161,9 +162,11 @@ export default function() {
     let ownMethod = coefficientSelect.find(`option[value="3"]`);
     groupMethodSelect.change(changeGroupMethodSelect);
 
+
     if (groupMethodSelect.length > 0) {
         toggleOwnWayOption(0);
         changeGroupMethodSelect();
+        changeCoefficientSelect();
     }
 
     function changeGroupMethodSelect() {
@@ -182,6 +185,7 @@ export default function() {
             percentageFormat.prop("disabled", false);
             coefficientFormat.prop("disabled", false);
         }
+        changeCoefficientSelect();
     }
 
     function toggleOwnWayOption(selected) {
@@ -189,6 +193,17 @@ export default function() {
             ownMethod.prop("disabled", false);
         } else {
             ownMethod.prop("disabled", true);
+        }
+    }
+
+    coefficientSelect.change(changeCoefficientSelect)
+    function changeCoefficientSelect() {
+        let selected = parseInt(coefficientSelect.find(':selected').val());
+        if (selected === 3) {
+            rates.hide();
+            rates.find('input').val("");
+        } else {
+            rates.show();
         }
     }
 
@@ -215,6 +230,27 @@ export default function() {
             editedGroupCoeffSelect.val(2);
         } else {
             editedGroupCoeffSelect.prop("disabled", false);
+        }
+        changeEditCoefficientSelect(editedGroupCoeffSelect);
+    }
+
+    const editRateFormatSelects = $('[id^="edit-rate-format-select-"]');
+    editRateFormatSelects.change(changeEditCoefficientSelect);
+    function changeEditCoefficientSelect(selectInput) {
+        let rateFormatSelect = $(this);
+        if (rateFormatSelect.length === 0) {
+            rateFormatSelect = $(selectInput);
+        }
+        let editedGroupId = rateFormatSelect.attr('data-group-id');
+        let editRatesClass = 'js-edit-rates-' + editedGroupId;
+        let editRates = $('.' + editRatesClass);
+
+        let selected = parseInt(rateFormatSelect.find(':selected').val());
+        if (selected === 3) {
+            editRates.hide();
+            editRates.find('input').val("");
+        } else {
+            editRates.show();
         }
     }
 }

@@ -12,6 +12,7 @@ use App\Majetek\ORM\AssetRepository;
 use App\Utils\CurrentUser;
 use App\Utils\FlashMessageType;
 use Nette\Application\Attributes\Persistent;
+use Nette\Application\UI\Form;
 use Nette\Application\UI\Presenter;
 
 abstract class BaseAdminPresenter extends Presenter
@@ -141,5 +142,15 @@ abstract class BaseAdminPresenter extends Presenter
         }
 
         return $asset;
+    }
+
+    protected function checkAccessToElementsEntity(Form $form, ?AccountingEntity $entity): Form
+    {
+        if (!$entity || $entity->getId() !== $this->currentEntityId) {
+            $form->addError('K této akci nemáte oprávnění.');
+            $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
+        }
+
+        return $form;
     }
 }

@@ -127,7 +127,7 @@
                                     <td>
                                         <span class="group-coeff-text-{$groupId} js-edit-text js-text-{$groupId}">{$rateFormatsShort[$rateFormat]}</span>
                                         <div class="form-group">
-                                            <select class="group-coeff-{$groupId} group-coeff-select form-select js-edit-input js-input-{$groupId}" style="display: none">
+                                            <select id="edit-rate-format-select-{$groupId}" class="group-coeff-{$groupId} group-coeff-select form-select js-edit-input js-input-{$groupId}" style="display: none" data-group-id="{$groupId}">
                                                 <option value="{$rateFormat}">{$rateFormatsShort[$rateFormat]}</option>
                                                 {foreach $rateFormatsShort as $value => $rateFormatShort}
                                                     {if $rateFormat !== $value}
@@ -139,19 +139,19 @@
                                     </td>
                                     <td>
                                         <span class="group-first-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getRateFirstYear()|float}</span>
-                                        <div class="form-group">
+                                        <div class="form-group js-edit-rates-{$groupId}">
                                             <input type="number" step="0.01" class="group-first-{$groupId} form-control js-edit-input js-input-{$groupId}" style="display: none" value="{$group->getRateFirstYear()}" data-tab-index="6">
                                         </div>
                                     </td>
                                     <td>
                                         <span class="group-rate-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getRate()|float}</span>
-                                        <div class="form-group">
+                                        <div class="form-group js-edit-rates-{$groupId}">
                                             <input type="number" step="0.01" class="group-rate-{$groupId} form-control js-edit-input js-input-{$groupId}" style="display: none" value="{$group->getRate()}" data-tab-index="7">
                                         </div>
                                     </td>
                                     <td>
                                         <span class="group-increased-text-{$groupId} js-edit-text js-text-{$groupId}">{$group->getRateIncreasedPrice()|float}</span>
-                                        <div class="form-group">
+                                        <div class="form-group js-edit-rates-{$groupId}">
                                             <input type="number" step="0.01" class="group-increased-{$groupId} form-control js-edit-input js-input-{$groupId}" style="display: none" value="{$group->getRateIncreasedPrice()}" data-tab-index="8">
                                         </div>
                                     </td>
@@ -227,21 +227,21 @@
                                     <small class="form-error" n:ifcontent>{inputError rate_format}</small>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-3 js-rates">
                                 <div class="form-group">
                                     <label for="groupFirstRate">Sazba 1. rok</label>
                                     <input n:name="rate_first_year" type="number" step="0.01" class="form-control" id="groupFirstRate" min="0" max="100" data-tab-index-1="7">
                                     <small class="form-error" n:ifcontent>{inputError rate_first_year}</small>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-3 js-rates">
                                 <div class="form-group">
                                     <label for="groupRate">Sazba další roky</label>
                                     <input n:name="rate" type="number" class="form-control" id="groupRate" step="0.01" min="0" max="100" data-tab-index-1="8">
                                     <small class="form-error" n:ifcontent>{inputError rate}</small>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="col-3 js-rates">
                                 <div class="form-group">
                                     <label for="groupRateIncreased">Sazba zvýš. VC</label>
                                     <input n:name="rate_increased_price" type="number" class="form-control" step="0.01" id="groupRateIncreased" min="0" max="100" data-tab-index-1="9">

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Entity\Asset;
+use App\Majetek\Action\DeleteAssetAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Majetek\ORM\AssetRepository;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\EnumerableSorter;
+use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
 final class AssetsPresenter extends BaseAdminPresenter
@@ -15,22 +18,28 @@ final class AssetsPresenter extends BaseAdminPresenter
     private EnumerableSorter $enumerableSorter;
     private AssetFormFactory $assetFormFactory;
     private AssetFormJsonGenerator $jsonGenerator;
+    private AssetRepository $assetRepository;
+    private DeleteAssetAction $deleteAssetAction;
 
     public function __construct(
         EnumerableSorter $enumerableSorter,
         AssetFormFactory $assetFormFactory,
-        AssetFormJsonGenerator $jsonGenerator
+        AssetFormJsonGenerator $jsonGenerator,
+        AssetRepository $assetRepository,
+        DeleteAssetAction $deleteAssetAction,
     )
     {
         parent::__construct();
         $this->enumerableSorter = $enumerableSorter;
         $this->assetFormFactory = $assetFormFactory;
         $this->jsonGenerator = $jsonGenerator;
+        $this->assetRepository = $assetRepository;
+        $this->deleteAssetAction = $deleteAssetAction;
     }
 
     public function actionDefault(?int $view = null): void
     {
-        $assets = $this->getFilteredAssets($view);;
+        $assets = $this->getFilteredAssets($view);
         $this->template->assets = $assets;
         $this->template->activeTab = $view;
     }
@@ -70,5 +79,37 @@ final class AssetsPresenter extends BaseAdminPresenter
         }
 
         return $assets;
+    }
+
+    protected function createComponentDeleteAssetForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addHidden('id')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send');
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $asset = $this->assetRepository->find((int)$values->id);
+
+            if (!$asset) {
+                $form->addError('Majetek nebyl nalezen.');
+                $this->flashMessage('Majetek nebyl nalezen.', FlashMessageType::ERROR);
+                return;
+            }
+            $entity = $asset->getEntity();
+            $form = $this->checkAccessToElementsEntity($form, $entity);
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $asset = $this->assetRepository->find((int)$values->id);
+            $this->deleteAssetAction->__invoke($asset);
+            $this->flashMessage('Majetek byl smazán.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
+        return $form;
     }
 }

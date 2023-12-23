@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 
-use App\Entity\AccountingEntity;
 use App\Entity\DepreciationGroup;
 use App\Entity\Location;
 use App\Majetek\Action\AddAcquisitionAction;
@@ -1216,16 +1215,6 @@ final class DialsPresenter extends BaseAdminPresenter
             $this->flashMessage('Kategorie byla upravena.', FlashMessageType::SUCCESS);
             $this->redirect('this');
         };
-
-        return $form;
-    }
-
-    protected function checkAccessToElementsEntity(Form $form, ?AccountingEntity $entity): Form
-    {
-        if (!$entity || $entity->getId() !== $this->currentEntityId) {
-            $form->addError('K této akci nemáte oprávnění.');
-            $this->flashMessage('K této akci nemáte oprávnění',FlashMessageType::ERROR);
-        }
 
         return $form;
     }

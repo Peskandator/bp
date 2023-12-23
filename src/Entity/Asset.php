@@ -513,6 +513,16 @@ class Asset
         return $this->depreciationsAccounting;
     }
 
+    public function clearTaxDepreciations(): void
+    {
+        $this->depreciationsTax->clear();
+    }
+
+    public function clearAccountingDepreciations(): void
+    {
+        $this->depreciationsAccounting->clear();
+    }
+
     public function getExecutedTaxDepreciations(): Collection
     {
         $executedDepreciations = new ArrayCollection();
