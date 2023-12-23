@@ -911,17 +911,21 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
 
-            $this->checkDepreciationGroupValidity($form, $values);
+            if ($this->getRateFormatForMethod($values->method, $values->rate_format) !== RateFormat::OWN_METHOD) {
+                $this->checkDepreciationGroupValidity($form, $values);
+            }
+            $this->checkDepreciationTime($form, $values->years, $values->months);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $rateFormat = $this->getRateFormatForMethod($values->method, $values->rate_format);
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
                 $values->prefix,
                 $values->years,
                 $values->months,
-                $values->rate_format,
+                $rateFormat,
                 $values->rate_first_year,
                 $values->rate,
                 $values->rate_increased_price,
@@ -932,6 +936,18 @@ final class DialsPresenter extends BaseAdminPresenter
         };
 
         return $form;
+    }
+
+    protected function getRateFormatForMethod(int $method, $rateFormat): int
+    {
+        if ($method === 2) {
+            return 2;
+        }
+        if ($method === 4) {
+            return $rateFormat;
+        }
+
+        return 1;
     }
 
     protected function checkDepreciationTime(Form $form, $years, $months): void
@@ -1018,8 +1034,9 @@ final class DialsPresenter extends BaseAdminPresenter
             ->addRule($form::MIN, 'Musí být nejméně 1', 1)
             ->addRule($form::MAX, 'Může být nejvýše 999', 999)
         ;
+        $cpSelect = RateFormat::NAMES;
         $form
-            ->addInteger('rate_format', 'Koef./Procento')
+            ->addSelect('rate_format', 'Koef./Procento', $cpSelect)
             ->setRequired(true)
         ;
         $form
@@ -1073,18 +1090,22 @@ final class DialsPresenter extends BaseAdminPresenter
                 return;
             }
 
-            $this->checkDepreciationGroupValidity($form, $values);
+            if ($this->getRateFormatForMethod($values->method, $values->rate_format) !== RateFormat::OWN_METHOD) {
+                $this->checkDepreciationGroupValidity($form, $values);
+            }
+            $this->checkDepreciationTime($form, $values->years, $values->months);
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
             $group = $this->depreciationGroupRepository->find((int)$values->id);
+            $rateFormat = $this->getRateFormatForMethod($values->method, $values->rate_format);
             $request = new CreateDepreciationGroupRequest(
                 $values->method,
                 $values->group_number,
                 $values->prefix,
                 $values->years,
                 $values->months,
-                $values->rate_format,
+                $rateFormat,
                 $values->rate_first_year,
                 $values->rate,
                 $values->rate_increased_price,
@@ -1211,34 +1232,17 @@ final class DialsPresenter extends BaseAdminPresenter
 
     protected function checkDepreciationGroupValidity(Form $form, \stdClass $values): void
     {
-        if ($values->method !== DepreciationMethod::ACCOUNTING) {
-            $this->checkDepreciationTime($form, $values->years, $values->months);
-
-            if (!$values->group_number) {
-                $form['group_number']->addError('Toto pole je povinné.');
-            }
-            if ($values->rate_first_year === null) {
-                $form['rate_first_year']->addError('Toto pole je povinné.');
-            }
-            if ($values->rate === null) {
-                $form['rate']->addError('Toto pole je povinné.');
-            }
-            if ($values->rate_increased_price === null) {
-                $form['rate_increased_price']->addError('Toto pole je povinné.');
-            }
+        if (!$values->group_number) {
+            $form['group_number']->addError('Toto pole je povinné.');
         }
-
-        if ($values->method === DepreciationMethod::UNIFORM && $values->rate_format !== RateFormat::PERCENTAGE) {
-            $form['rate_format']->addError('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"');
-            $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
+        if ($values->rate_first_year === null) {
+            $form['rate_first_year']->addError('Toto pole je povinné.');
         }
-        if ($values->method === DepreciationMethod::EXTRAORDINARY && $values->rate_format !== RateFormat::PERCENTAGE) {
-            $form['rate_format']->addError('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"');
-            $this->flashMessage('U mimořádného způsobu odpisování musí být zvolena možnost "Procento"',FlashMessageType::ERROR);
+        if ($values->rate === null) {
+            $form['rate']->addError('Toto pole je povinné.');
         }
-        if ($values->method === DepreciationMethod::ACCELERATED && $values->rate_format !== RateFormat::COEFFICIENT) {
-            $form['rate_format']->addError('U zrychleného způsobu odpisování musí být zvolena možnost "Koeficient"');
-            $this->flashMessage('U rovnoměrného způsobu odpisování musí být zvolena možnost "Koeficient"',FlashMessageType::ERROR);
+        if ($values->rate_increased_price === null) {
+            $form['rate_increased_price']->addError('Toto pole je povinné.');
         }
     }
 }

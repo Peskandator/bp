@@ -156,24 +156,34 @@ export default function() {
 
     let coefficientSelect = $('#groupCoeffSelect');
     let groupMethodSelect = $('#groupMethodSelect');
+    let percentageFormat = coefficientSelect.find(`option[value="1"]`);
+    let coefficientFormat = coefficientSelect.find(`option[value="2"]`);
     let ownMethod = coefficientSelect.find(`option[value="3"]`);
     groupMethodSelect.change(changeGroupMethodSelect);
+
+    if (groupMethodSelect.length > 0) {
+        toggleOwnWayOption(0);
+        changeGroupMethodSelect();
+    }
+
     function changeGroupMethodSelect() {
         let selected = parseInt(groupMethodSelect.find(':selected').val());
         toggleOwnWayOption(selected);
         if (selected === 1 || selected === 3) {
-            coefficientSelect.prop("disabled", true);
+            percentageFormat.prop("disabled", false);
+            coefficientFormat.prop("disabled", true);
             coefficientSelect.val(1);
         }
         else if (selected === 2) {
-            coefficientSelect.prop("disabled", true);
+            percentageFormat.prop("disabled", true);
+            coefficientFormat.prop("disabled", false);
             coefficientSelect.val(2);
         } else {
-            coefficientSelect.prop("disabled", false);
+            percentageFormat.prop("disabled", false);
+            coefficientFormat.prop("disabled", false);
         }
     }
 
-    toggleOwnWayOption(0);
     function toggleOwnWayOption(selected) {
         if (selected === 4) {
             ownMethod.prop("disabled", false);

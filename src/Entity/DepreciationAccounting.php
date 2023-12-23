@@ -268,6 +268,11 @@ class DepreciationAccounting implements Depreciation
         return $this->rateFormat === RateFormat::COEFFICIENT;
     }
 
+    public function getRateFormat(): int
+    {
+        return $this->rateFormat;
+    }
+
     public function getRate(): ?float
     {
         return $this->rate;

@@ -8,6 +8,7 @@ use App\Entity\Asset;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Enums\RateFormat;
 use App\Odpisy\Requests\UpdateDepreciationRequest;
 use App\Odpisy\Requests\RecalculateDepreciationsRequest;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,7 +58,7 @@ class DepreciationCalculator
             $asset->getCorrectEntryPriceTax(),
             $asset->getEntryPriceTax() - $asset->getBaseDepreciatedAmountTax(),
             $asset->getBaseDepreciatedAmountTax(),
-            $group->isCoefficient(),
+            $group->getRateFormat(),
             $asset->getIncreaseDateTax()
         );
     }
@@ -77,7 +78,7 @@ class DepreciationCalculator
             $asset->getCorrectEntryPriceAccounting(),
             $asset->getEntryPriceAccounting() - $asset->getBaseDepreciatedAmountAccounting(),
             $asset->getBaseDepreciatedAmountAccounting(),
-            $group->isCoefficient(),
+            $group->getRateFormat(),
             $asset->getIncreaseDateAccounting()
         );
     }
@@ -183,7 +184,7 @@ class DepreciationCalculator
             $request->asset->addAccountingDepreciation($depreciation);
         }
         $updateRequest = $this->generateUpdateDepreciationRequest($request, $percentage, $isExecutable);
-        if ($editingExisting && $request->group->getMethod() === DepreciationMethod::ACCOUNTING && $this->getDepreciationRate($request) === null) {
+        if ($editingExisting && $request->group->getRateFormat() === RateFormat::OWN_METHOD) {
             $updateRequest = $this->revertUpdateRequestAccountingMethodWithoutRate($depreciation, $updateRequest);
         }
         $depreciation->updateFromRequest($updateRequest);
@@ -271,7 +272,7 @@ class DepreciationCalculator
             return 0;
         }
 
-        $isMethodAccelerated = ($request->group->getMethod() === DepreciationMethod::ACCELERATED || $request->isCoefficient);
+        $isMethodAccelerated = ($request->group->getMethod() === DepreciationMethod::ACCELERATED || $request->rateFormat === RateFormat::PERCENTAGE);
 
         if ($request->depreciationYear === 1) {
             if ($isMethodAccelerated) {

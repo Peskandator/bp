@@ -76,7 +76,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         $depreciatedAmountBase = $asset->getBaseDepreciatedAmountTax();
         $group = $editedDepreciation->getDepreciationGroup();
         $totalDepreciationYears = $group->getYears();
-        $isCoefficient = $editedDepreciation->isCoefficient();
+        $rateFormat = $editedDepreciation->getRateFormat();
 
         $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getTaxDepreciations(), $year, $asset->getDepreciationYearTax());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getTaxDepreciations(), $depreciationYear, $depreciatedAmountBase);
@@ -92,7 +92,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $correctEntryPrice,
             0,
             $depreciatedAmount,
-            $isCoefficient,
+            $rateFormat,
             $asset->getIncreaseDateTax()
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
@@ -110,7 +110,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         $depreciatedAmountBase = $asset->getBaseDepreciatedAmountAccounting();
         $group = $editedDepreciation->getDepreciationGroup();
         $totalDepreciationYears = $group->getYears();
-        $isCoefficient = $editedDepreciation->isCoefficient();
+        $rateFormat = $editedDepreciation->getRateFormat();
 
         $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $year, $asset->getDepreciationYearAccounting());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
@@ -126,7 +126,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $correctEntryPrice,
             0,
             $depreciatedAmount,
-            $isCoefficient,
+            $rateFormat,
             $asset->getIncreaseDateAccounting()
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
