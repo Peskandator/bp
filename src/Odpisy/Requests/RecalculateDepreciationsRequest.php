@@ -14,6 +14,7 @@ class RecalculateDepreciationsRequest
         public int $year,
         public ?int $disposalYear,
         public ?int $totalDepreciationYears,
+        public ?int $totalDepreciationMonths,
         public float $entryPrice,
         public float $correctEntryPrice,
         public float $residualPrice,

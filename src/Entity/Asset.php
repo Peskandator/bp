@@ -243,6 +243,12 @@ class Asset
         return (int)$acquisitionDate->format('Y');
     }
 
+    public function getAcquisitionMonth(): int
+    {
+        $acquisitionDate = $this->getAcquisitionDate();
+        return (int)$acquisitionDate->format('m');
+    }
+
     public function getEntryPriceTax(): ?float
     {
         return $this->entryPriceTax;
@@ -366,6 +372,24 @@ class Asset
     public function getDisposalDate(): ?\DateTimeInterface
     {
         return $this->disposalDate;
+    }
+
+    public function getDisposalYear(): ?int
+    {
+        $disposalDate = $this->getDisposalDate();
+        if ($disposalDate !== null) {
+            return (int)$disposalDate->format('Y');
+        }
+        return null;
+    }
+
+    public function getDisposalMonth(): ?int
+    {
+        $disposalDate = $this->getDisposalDate();
+        if ($disposalDate !== null) {
+            return (int)$disposalDate->format('m');
+        }
+        return null;
     }
 
     public function getProducer(): ?string

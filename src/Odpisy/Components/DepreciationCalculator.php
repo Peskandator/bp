@@ -6,6 +6,7 @@ namespace App\Odpisy\Components;
 
 use App\Entity\Asset;
 use App\Entity\DepreciationAccounting;
+use App\Entity\DepreciationGroup;
 use App\Entity\DepreciationTax;
 use App\Majetek\Enums\DepreciationMethod;
 use App\Majetek\Enums\RateFormat;
@@ -52,8 +53,9 @@ class DepreciationCalculator
             $asset->getDepreciationGroupTax(),
             $asset->getDepreciationYearTax(),
             $asset->getAcquisitionYear(),
-            $this->getDisposalYear($asset->getDisposalDate()),
-            $group->getYears(),
+            $asset->getDisposalYear(),
+            $this->getTotalDepreciationYears($group),
+            $group->getMonths(),
             $asset->getEntryPriceTax(),
             $asset->getCorrectEntryPriceTax(),
             $asset->getEntryPriceTax() - $asset->getBaseDepreciatedAmountTax(),
@@ -72,8 +74,9 @@ class DepreciationCalculator
             $asset->getDepreciationGroupAccounting(),
             $asset->getDepreciationYearAccounting(),
             $asset->getAcquisitionYear(),
-            $this->getDisposalYear($asset->getDisposalDate()),
-            $group->getYears(),
+            $asset->getDisposalYear(),
+            $this->getTotalDepreciationYears($group),
+            $group->getMonths(),
             $asset->getEntryPriceAccounting(),
             $asset->getCorrectEntryPriceAccounting(),
             $asset->getEntryPriceAccounting() - $asset->getBaseDepreciatedAmountAccounting(),
@@ -280,11 +283,19 @@ class DepreciationCalculator
             } else {
                 $baseDepreciationAmount = $this->calculateDepreciationAmountUniform($request->entryPrice, $rate);
             }
+            if ($request->totalDepreciationMonths !== null) {
+                $fractionUpper = 13 - $request->asset->getAcquisitionMonth();
+                $baseDepreciationAmount = $baseDepreciationAmount * $fractionUpper / 12;
+            }
         } else {
             if ($isMethodAccelerated) {
                 $baseDepreciationAmount = $this->calculateDepreciationAmountAccelerated($residualPrice, $rate, $request->depreciationYear);
             } else {
                 $baseDepreciationAmount = $this->calculateDepreciationAmountUniform($request->correctEntryPrice, $rate);
+            }
+            if ($request->totalDepreciationMonths !== null && $request->disposalYear === $request->year) {
+                $fractionUpper = $request->asset->getDisposalMonth();
+                $baseDepreciationAmount = $baseDepreciationAmount * $fractionUpper / 12;
             }
         }
         $depreciationAmount = round($baseDepreciationAmount * $percentage / 100, 2);
@@ -360,15 +371,6 @@ class DepreciationCalculator
         return true;
     }
 
-    protected function getDisposalYear(?\DateTimeInterface $disposalDate): ?int
-    {
-        $disposalYear = null;
-        if ($disposalDate) {
-            $disposalYear = (int)$disposalDate->format('Y');
-        }
-        return $disposalYear;
-    }
-
     private function revertUpdateRequestAccountingMethodWithoutRate(DepreciationAccounting $depreciation, UpdateDepreciationRequest $request): UpdateDepreciationRequest
     {
         $depreciationAmount = $depreciation->getDepreciationAmount();
@@ -380,5 +382,17 @@ class DepreciationCalculator
         $request->depreciatedAmount += $depreciationAmount;
 
         return $request;
+    }
+
+    protected function getTotalDepreciationYears(DepreciationGroup $group): int
+    {
+        $years = $group->getYears();
+        $months = $group->getMonths();
+
+        if ($years !== null) {
+            return $years;
+        }
+
+        return (int)ceil($months / 12);
     }
 }

@@ -70,29 +70,25 @@ class EditDepreciationCalculator extends DepreciationCalculator
     {
         $year = $editedDepreciation->getYear();
         $asset = $editedDepreciation->getAsset();
-        $disposalYear = $this->getDisposalYear($asset->getDisposalDate());
-        $entryPrice = $asset->getEntryPriceTax();
-        $correctEntryPrice = $asset->getCorrectEntryPriceTax();
-        $depreciatedAmountBase = $asset->getBaseDepreciatedAmountTax();
         $group = $editedDepreciation->getDepreciationGroup();
-        $totalDepreciationYears = $group->getYears();
-        $rateFormat = $editedDepreciation->getRateFormat();
 
+        $depreciatedAmountBase = $asset->getBaseDepreciatedAmountTax();
         $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getTaxDepreciations(), $year, $asset->getDepreciationYearTax());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getTaxDepreciations(), $depreciationYear, $depreciatedAmountBase);
 
         $recalculateEditedDepreciationRequest = new RecalculateDepreciationsRequest(
             $asset,
-            $group,
+            $editedDepreciation->getDepreciationGroup(),
             $depreciationYear,
             $year,
-            $disposalYear,
-            $totalDepreciationYears,
-            $entryPrice,
-            $correctEntryPrice,
+            $asset->getDisposalYear(),
+            $this->getTotalDepreciationYears($group),
+            $group->getMonths(),
+            $asset->getEntryPriceTax(),
+            $asset->getCorrectEntryPriceTax(),
             0,
             $depreciatedAmount,
-            $rateFormat,
+            $editedDepreciation->getRateFormat(),
             $asset->getIncreaseDateTax()
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
@@ -104,14 +100,9 @@ class EditDepreciationCalculator extends DepreciationCalculator
     {
         $year = $editedDepreciation->getYear();
         $asset = $editedDepreciation->getAsset();
-        $disposalYear = $this->getDisposalYear($asset->getDisposalDate());
-        $entryPrice = $asset->getEntryPriceAccounting();
-        $correctEntryPrice = $asset->getCorrectEntryPriceAccounting();
-        $depreciatedAmountBase = $asset->getBaseDepreciatedAmountAccounting();
         $group = $editedDepreciation->getDepreciationGroup();
-        $totalDepreciationYears = $group->getYears();
-        $rateFormat = $editedDepreciation->getRateFormat();
 
+        $depreciatedAmountBase = $asset->getBaseDepreciatedAmountAccounting();
         $depreciationYear = $this->getCorrectDepreciationYearFromPrevious($asset->getAccountingDepreciations(), $year, $asset->getDepreciationYearAccounting());
         $depreciatedAmount = $this->getDepreciatedAmountFromPreviousDepreciation($asset->getAccountingDepreciations(), $depreciationYear, $depreciatedAmountBase);
 
@@ -120,13 +111,14 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $group,
             $depreciationYear,
             $year,
-            $disposalYear,
-            $totalDepreciationYears,
-            $entryPrice,
-            $correctEntryPrice,
+            $asset->getDisposalYear(),
+            $this->getTotalDepreciationYears($group),
+            $group->getMonths(),
+            $asset->getEntryPriceAccounting(),
+            $asset->getCorrectEntryPriceAccounting(),
             0,
             $depreciatedAmount,
-            $rateFormat,
+            $editedDepreciation->getRateFormat(),
             $asset->getIncreaseDateAccounting()
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
