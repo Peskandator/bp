@@ -23,8 +23,8 @@ final class DepreciationsPresenter extends BaseAdminPresenter
         EditDepreciationCalculator $editDepreciationCalculator,
     )
     {
-        $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         parent::__construct();
+        $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
         $this->editDepreciationCalculator = $editDepreciationCalculator;
     }
@@ -41,64 +41,12 @@ final class DepreciationsPresenter extends BaseAdminPresenter
             $viewAccounting = true;
         }
 
-        $this->template->taxDepreciations = $this->getTaxDepreciationsForYear($year);
-        $this->template->accountingDepreciations = $this->getAccountingDepreciationsForYear($year);
-        $this->template->availableYears = $this->getAvailableYears();
+        $this->template->taxDepreciations = $this->currentEntity->getTaxDepreciationsForYear($year);
+        $this->template->accountingDepreciations = $this->currentEntity->getAccountingDepreciationsForYear($year);
+        $this->template->availableYears = $this->currentEntity->getAvailableYears();
         $this->template->selectedYear = $year;
         $this->template->viewAccounting = $viewAccounting;
         $this->template->editDepreciationCalculator = $this->editDepreciationCalculator;
-    }
-
-    protected function getTaxDepreciationsForYear(int $year): array
-    {
-        $matched = [];
-        $depreciations = $this->currentEntity->getTaxDepreciations();
-
-        /**
-         * @var DepreciationTax $depreciation
-         */
-        foreach ($depreciations as $depreciation) {
-            if ($depreciation->getYear() === $year) {
-                $matched[] = $depreciation;
-            }
-        }
-
-        return $matched;
-    }
-
-    protected function getAccountingDepreciationsForYear(int $year): array
-    {
-        $matched = [];
-        $depreciations = $this->currentEntity->getAccountingDepreciations();
-
-        /**
-         * @var DepreciationAccounting $depreciation
-         */
-        foreach ($depreciations as $depreciation) {
-            if ($depreciation->getYear() === $year) {
-                $matched[] = $depreciation;
-            }
-        }
-
-        return $matched;
-    }
-
-    protected function getAvailableYears(): array
-    {
-        $availableYears = [];
-
-        $depreciations = $this->currentEntity->getTaxDepreciations();
-        /**
-         * @var DepreciationTax $depreciation
-         */
-        foreach ($depreciations as $depreciation) {
-            $depreciationYear = $depreciation->getYear();
-            if (!in_array($depreciationYear, $availableYears)) {
-                $availableYears[] = $depreciationYear;
-            }
-        }
-
-        return $availableYears;
     }
 
     protected function createComponentEditTaxDepreciationForm(): Form

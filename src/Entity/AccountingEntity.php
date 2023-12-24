@@ -280,4 +280,66 @@ class AccountingEntity
 
         return $depreciations;
     }
+
+    public function getTaxDepreciationsForYear(int $year): array
+    {
+        $matched = [];
+        $depreciations = $this->getTaxDepreciations();
+
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            if ($depreciation->getYear() === $year) {
+                $matched[] = $depreciation;
+            }
+        }
+
+        return $matched;
+    }
+
+    public function getAccountingDepreciationsForYear(int $year): array
+    {
+        $matched = [];
+        $depreciations = $this->getAccountingDepreciations();
+
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            if ($depreciation->getYear() === $year) {
+                $matched[] = $depreciation;
+            }
+        }
+
+        return $matched;
+    }
+
+    public function getAvailableYears(): array
+    {
+        $availableYears = [];
+        $depreciationsTax = $this->getTaxDepreciations();
+        $depreciationsAccounting = $this->getTaxDepreciations();
+
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($depreciationsTax as $depreciation) {
+            $depreciationYear = $depreciation->getYear();
+            if (!in_array($depreciationYear, $availableYears)) {
+                $availableYears[] = $depreciationYear;
+            }
+        }
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($depreciationsAccounting as $depreciation) {
+            $depreciationYear = $depreciation->getYear();
+            if (!in_array($depreciationYear, $availableYears)) {
+                $availableYears[] = $depreciationYear;
+            }
+        }
+
+        return $availableYears;
+    }
 }

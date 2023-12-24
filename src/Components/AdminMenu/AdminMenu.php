@@ -91,6 +91,12 @@ class AdminMenu extends Control
             [],
             $this->getCurrentLinkCallable()
         );
+        $items[] = $this->createMenuItem(
+            'Provést odpisy',
+            $this->getPresenter()->lazyLink(':Admin:ExecuteDepreciations:default'),
+            [],
+            $this->getCurrentLinkCallable()
+        );
 
         return $items;
     }

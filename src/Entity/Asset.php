@@ -475,24 +475,14 @@ class Asset
         return $this->depreciationGroupAccounting;
     }
 
-    public function getTotalDepreciationsTax(): ?float
-    {
-        return 0;
-    }
-
-    public function getTotalDepreciationsAccounting(): ?float
-    {
-        return 0;
-    }
-
     public function getAmortisedPriceTax(): ?float
     {
-        return $this->getEntryPriceTax() - $this->getTotalDepreciationsTax();
+        return $this->getEntryPriceTax() - $this->getDepreciatedAmountTax();
     }
 
     public function getAmortisedPriceAccounting(): ?float
     {
-        return $this->getEntryPriceAccounting() - $this->getTotalDepreciationsAccounting();
+        return $this->getEntryPriceAccounting() - $this->getDepreciatedAmountAccounting();
     }
 
     public function getUnits(): ?int
@@ -508,7 +498,7 @@ class Asset
     public function isWithTaxDepreciations(): bool
     {
         $typeCode = $this->getAssetType()->getCode();
-        if ($typeCode === 1 && $this->hasTaxDepreciations()) {
+        if ($typeCode === 1 && $this->hasTaxDepreciations() && $this->isIncluded()) {
             return true;
         }
 
@@ -518,10 +508,10 @@ class Asset
     public function hasAccountingDepreciations(): bool
     {
         $typeCode = $this->getAssetType()->getCode();
-        if ($typeCode === 1) {
+        if ($typeCode === 1 && $this->isIncluded()) {
             return true;
         }
-        if ($typeCode === 3 && !$this->isOnlyTax()) {
+        if ($typeCode === 3 && !$this->isOnlyTax() && $this->isIncluded()) {
             return true;
         }
 
