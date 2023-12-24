@@ -17,6 +17,16 @@ main {
     padding: 40px;
 }
 
+main {
+    width: 100%;
+}
+
+.main-content {
+    overflow-x: auto;
+    max-width: 100%;
+    width: 100%;
+}
+
 .homepage-bg {
     background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     background-size: cover;
@@ -90,10 +100,6 @@ h1 {
     margin-left: 2px;
 }
 
-.main-content {
-    width: 100%;
-}
-
 .card-active {
     border: #28a745 2px solid;
     min-height: 146px;
@@ -158,4 +164,8 @@ h6 {
     margin-left: auto;
     font-size: 19px;
     margin-right: 20px;
+}
+
+.scrollme {
+    overflow-x: auto;
 }

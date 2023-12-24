@@ -146,4 +146,14 @@ export default function() {
         let percentage = (newAmount / baseAmount * 100).toFixed(4);
         percentageInput.val(percentage);
     }
+
+
+    $(`.js-execute-depreciations-button`).click(function (e) {
+        let year = parseInt($(this).attr('data-execute-year'));
+        $(`.js-modal-year`).val(year);
+    });
+
+    $(`.js-modal-execute-depreciations-confirm`).click(function (e) {
+        $(`.js-execute-depreciations-form`).submit();
+    });
 };

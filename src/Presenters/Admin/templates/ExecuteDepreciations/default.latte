@@ -1,29 +1,70 @@
 {layout $adminlayoutPath}
 
-{block content}
+{block modals}
+    <div class="modal fade" id="executeDepreciationsModal" tabindex="-1" aria-labelledby="executeDeprecitionsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="executeDeprecitionsLabel">Provést odpisy</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Opravdu chcete provést odpisy za rok <b class="js-modal-year"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-warning js-modal-execute-depreciations-confirm">Provést</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
 
-    <div class="js-page-execute-depreciations">
+{block content}
+    <div class="js-page-depreciations">
         <h1>Odpisy k provedení</h1>
 
+        <form n:name="executeDepreciationsForm" class="js-execute-depreciations-form">
+            <div class="form-errors" n:ifcontent>
+                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+            </div>
+        </form>
         <div class="row">
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="main-card mb-3 card">
-                    <div class="card-body">
-                        <div class="form-group d-flex mb-0" style="max-width: 300px; margin-right: 12px">
-                            <label for="yearSelect" style="font-size: 1.5rem; margin-right: 17px; margin-bottom: 0">Rok:</label>
-                            <select id="yearSelect"
-                                    class="form-select"
-                                    onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);"
-                                    style="margin-top: 7px"
-                            >
-                                <option value="">{$selectedYear}</option>
-                                {foreach $availableYears as $year}
-                                    {if $year !== $selectedYear}
-                                        <option value="{plink :default, $year}">{$year}</option>
-                                    {/if}
-                                {/foreach}
-                            </select>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-xl-3 col-sm-6 col-12 mb-3">
+                        <div class="main-card card">
+                            <div class="card-body">
+                                <div class="form-group d-flex mb-0" style="max-width: 300px; margin-right: 12px">
+                                    <label for="yearSelect" style="font-size: 1.5rem; margin-right: 17px; margin-bottom: 0">Rok:</label>
+                                    <select
+                                        id="yearSelect"
+                                        class="form-select"
+                                        onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);"
+                                        style="margin-top: 7px"
+                                    >
+                                        <option value="">{$selectedYear}</option>
+                                        {foreach $availableYears as $year}
+                                            {if $year !== $selectedYear}
+                                                <option value="{plink :default, $year}">{$year}</option>
+                                            {/if}
+                                        {/foreach}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div class="col-xl-9 col-sm-6 col-12 mb-3 d-flex" style="align-items: center">
+                        <button
+                            type="button"
+                            class="js-execute-depreciations-button btn btn-warning btn-lg"
+                            style="margin-left: auto"
+                            data-bs-toggle="modal"
+                            data-bs-target="#executeDepreciationsModal"
+                            data-execute-year="{$selectedYear}"
+                        >
+                            Provést odpisy
+                        </button>
                     </div>
                 </div>
             </div>
@@ -42,9 +83,9 @@
                                     <tr>
                                         <th></th>
                                         <th></th>
-                                        <th colspan="4" style="font-size: 20px">Daňové</th>
+                                        <th colspan="3" style="font-size: 20px">Daňové</th>
                                         <th></th>
-                                        <th colspan="4" style="font-size: 20px">Účetní</th>
+                                        <th colspan="3" style="font-size: 20px">Účetní</th>
                                     </tr>
                                     <tr>
                                         <th>Majetek</th>
@@ -52,12 +93,10 @@
                                         <th>Odp.sk.</th>
                                         <th>Odpis</th>
                                         <th>ZC</th>
-                                        <th>Provést</th>
                                         <th></th>
                                         <th>Odp.sk.</th>
                                         <th>Odpis</th>
                                         <th>ZC</th>
-                                        <th>Provést</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,7 +106,7 @@
                                     {var $asset = $assets[$assetId]}
                                     <tr>
                                         <td>
-                                            <a n:href=":Admin:Asset:default, $asset->getId()" class="clickable-link">{$asset->getName()}</a>
+                                            <a n:href=":Admin:Asset:depreciations, $asset->getId()" class="clickable-link">{$asset->getName()}</a>
                                         </td>
                                         <td>
                                             {$asset->getInventoryNumber()}
@@ -80,15 +119,10 @@
                                                 {$depreciationTax->getDepreciationAmount()}
                                             </td>
                                             <td>
-                                                {$depreciationTax->getDepreciatedAmount()}
-                                            </td>
-                                            <td>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" disabled {if $depreciationTax->isExecutable()}checked=""{/if}>
-                                                </div>
+                                                {$depreciationTax->getResidualPrice()}
                                             </td>
                                         {else}
-                                            <td></td><td></td><td></td><td></td>
+                                            <td></td><td></td><td></td>
                                         {/if}
                                         <td></td>
                                         {if $depreciationAccounting}
@@ -99,15 +133,10 @@
                                                 {$depreciationAccounting->getDepreciationAmount()}
                                             </td>
                                             <td>
-                                                {$depreciationAccounting->getDepreciatedAmount()}
-                                            </td>
-                                            <td>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" disabled {if $depreciationAccounting->isExecutable()}checked=""{/if}>
-                                                </div>
+                                                {$depreciationAccounting->getResidualPrice()}
                                             </td>
                                         {else}
-                                            <td></td><td></td><td></td><td></td>
+                                            <td></td><td></td><td></td>
                                         {/if}
                                     </tr>
                                 {/foreach}

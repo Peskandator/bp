@@ -226,6 +226,11 @@ class DepreciationTax implements Depreciation
         return $this->executed;
     }
 
+    public function setExecuted(bool $value): void
+    {
+        $this->executed = $value;
+    }
+
     public function isAccounted(): bool
     {
         return $this->accounted;

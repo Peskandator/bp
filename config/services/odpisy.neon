@@ -4,9 +4,11 @@ services:
 
     - App\Odpisy\Forms\EditTaxDepreciationFormFactory
     - App\Odpisy\Forms\EditAccountingDepreciationFormFactory
+    - App\Odpisy\Forms\ExecuteDepreciationsFormFactory
 
     - App\Odpisy\Action\EditTaxDepreciationAction
     - App\Odpisy\Action\EditAccountingDepreciationAction
+    - App\Odpisy\Action\ExecuteDepreciationsAction
 
     - App\Odpisy\ORM\DepreciationTaxRepository
     - App\Odpisy\ORM\DepreciationAccountingRepository
