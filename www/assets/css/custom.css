@@ -153,3 +153,9 @@ h6 {
     text-decoration: underline;
 }
 
+.card-header-checkbox {
+    margin-top: 5px;
+    margin-left: auto;
+    font-size: 19px;
+    margin-right: 20px;
+}

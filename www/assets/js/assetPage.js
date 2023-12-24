@@ -12,13 +12,28 @@ export default function() {
             });
         });
 
-        function checkOnlyTaxCheckbox(checkBox) {
-            if (checkBox.prop("checked") === true) {
+        function checkOnlyTaxCheckbox(checkbox) {
+            if (checkbox.prop("checked") === true) {
                 $(`.js-only-tax-false`).hide();
             } else {
                 $(`.js-only-tax-false`).show();
             }
         }
+
+        $(`.js-has-tax-depreciations-checkbox`).each(function () {
+            checkHasTaxDepreciationsCheckbox($(this));
+            $(this).change(function () {
+                checkHasTaxDepreciationsCheckbox($(this));
+            });
+        });
+        function checkHasTaxDepreciationsCheckbox(checkbox) {
+            if (checkbox.prop("checked") === false) {
+                $(`.js-tax-depreciations-content`).hide();
+            } else {
+                $(`.js-tax-depreciations-content`).show();
+            }
+        }
+
 
         const acquisitionSelect = $('#assetAcquisitionSelect');
         const acquisitionCodeJson = acquisitionSelect.attr('data-codes-json');

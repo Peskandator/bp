@@ -521,7 +521,7 @@ class Asset
         if ($typeCode === 1) {
             return true;
         }
-        if ($typeCode && !$this->isOnlyTax()) {
+        if ($typeCode === 3 && !$this->isOnlyTax()) {
             return true;
         }
 

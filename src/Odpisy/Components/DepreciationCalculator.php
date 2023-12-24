@@ -242,8 +242,10 @@ class DepreciationCalculator
          * @var DepreciationAccounting $depreciation
          */
         foreach ($depreciationsArr as $depreciation) {
-            $depreciations->removeElement($depreciation);
-            $this->entityManager->remove($depreciation);
+            if (!$depreciation->isExecuted()) {
+                $depreciations->removeElement($depreciation);
+                $this->entityManager->remove($depreciation);
+            }
         }
     }
 
@@ -255,8 +257,10 @@ class DepreciationCalculator
          * @var DepreciationTax $depreciation
          */
         foreach ($depreciationsArr as $depreciation) {
-            $depreciations->removeElement($depreciation);
-            $this->entityManager->remove($depreciation);
+            if (!$depreciation->isExecuted()) {
+                $depreciations->removeElement($depreciation);
+                $this->entityManager->remove($depreciation);
+            }
         }
     }
 
