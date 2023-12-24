@@ -76,6 +76,14 @@ class Asset
      */
     private bool $isOnlyTax;
     /**
+     * @ORM\Column(name="has_tax_depreciations", type="boolean")
+     */
+    private bool $hasTaxDepreciations;
+    /**
+     * @ORM\Column(name="is_included", type="boolean")
+     */
+    private bool $isIncluded;
+    /**
      * @ORM\Column(name="producer", type="string", nullable=true)
      */
     private ?string $producer;
@@ -155,6 +163,10 @@ class Asset
      * @ORM\OneToMany(targetEntity="DepreciationAccounting", mappedBy="asset")
      */
     private Collection $depreciationsAccounting;
+    /**
+     * @ORM\OneToMany(targetEntity="Movement", mappedBy="asset")
+     */
+    private Collection $movements;
 
     public function __construct(
         AccountingEntity $entity,
@@ -167,6 +179,7 @@ class Asset
         $this->note = $request->note;
         $this->depreciationsTax = new ArrayCollection();
         $this->depreciationsAccounting = new ArrayCollection();
+        $this->movements = new ArrayCollection();
         $this->acquisitionDate = new \DateTimeImmutable();
     }
 
@@ -189,6 +202,8 @@ class Asset
         $this->place = $request->place;
         $this->units = $request->units;
         $this->isOnlyTax = $request->onlyTax;
+        $this->hasTaxDepreciations = $request->hasTaxDepreciations;
+        $this->isIncluded = $request->isIncluded;
         $this->depreciationGroupTax = $request->depreciationGroupTax;
         $this->entryPriceTax = $request->entryPriceTax;
         $this->increasedEntryPriceTax = $request->increasedPriceTax;
@@ -369,6 +384,16 @@ class Asset
         return $this->isOnlyTax;
     }
 
+    public function hasTaxDepreciations(): bool
+    {
+        return $this->hasTaxDepreciations;
+    }
+
+    public function isIncluded(): bool
+    {
+        return $this->isIncluded;
+    }
+
     public function getDisposalDate(): ?\DateTimeInterface
     {
         return $this->disposalDate;
@@ -480,10 +505,10 @@ class Asset
         return $this->note;
     }
 
-    public function hasTaxDepreciations(): bool
+    public function isWithTaxDepreciations(): bool
     {
         $typeCode = $this->getAssetType()->getCode();
-        if ($typeCode === 1) {
+        if ($typeCode === 1 && $this->hasTaxDepreciations()) {
             return true;
         }
 
@@ -513,6 +538,11 @@ class Asset
         return $this->depreciationsAccounting;
     }
 
+    public function getMovements(): Collection
+    {
+        return $this->movements;
+    }
+
     public function clearTaxDepreciations(): void
     {
         $this->depreciationsTax->clear();
@@ -521,6 +551,11 @@ class Asset
     public function clearAccountingDepreciations(): void
     {
         $this->depreciationsAccounting->clear();
+    }
+
+    public function clearMovements(): void
+    {
+        $this->movements->clear();
     }
 
     public function getExecutedTaxDepreciations(): Collection

@@ -81,7 +81,7 @@ class DepreciationAccounting implements Depreciation
      */
     private ?\DateTimeInterface $disposalDate;
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Asset", inversedBy="depreciationsAccounting", inversedBy="assets")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Asset", inversedBy="depreciationsAccounting")
      * @ORM\JoinColumn(name="asset_id", referencedColumnName="id", nullable=false)
      */
     private Asset $asset;

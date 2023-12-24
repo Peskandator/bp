@@ -22,6 +22,7 @@ class CreateAssetRequest
         public ?Place $place,
         public ?int $units,
         public bool $onlyTax,
+        public bool $hasTaxDepreciations,
         public ?DepreciationGroup $depreciationGroupTax,
         public ?float $entryPriceTax,
         public ?float $increasedPriceTax,
@@ -38,7 +39,8 @@ class CreateAssetRequest
         public ?int $variableSymbol,
         public ?\DateTimeInterface $entryDate,
         public ?\DateTimeInterface $disposalDate,
-        public ?string $note
+        public ?string $note,
+        public bool $isIncluded,
     ) {
     }
 }

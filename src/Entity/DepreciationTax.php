@@ -81,7 +81,7 @@ class DepreciationTax implements Depreciation
      */
     private ?\DateTimeInterface $disposalDate;
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Asset", inversedBy="depreciationsTax", inversedBy="assets")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Asset", inversedBy="depreciationsTax")
      * @ORM\JoinColumn(name="asset_id", referencedColumnName="id", nullable=false)
      */
     private Asset $asset;

@@ -125,6 +125,14 @@ class AssetFormFactory
             ->addCheckbox('only_tax')
             ->setDefaultValue(true)
         ;
+        $form
+            ->addCheckbox('has_tax_depreciations')
+            ->setDefaultValue(true)
+        ;
+        $form
+            ->addCheckbox('is_included')
+            ->setDefaultValue(true)
+        ;
 
         $assetTypesIds = $this->getAssetTypeIdsForCodes($currentEntity);
         $accountingAllowedTypes = [$assetTypesIds[AssetTypesCodes::DEPRECIABLE], $assetTypesIds[AssetTypesCodes::SMALL]];
@@ -294,7 +302,7 @@ class AssetFormFactory
             }
             $typeCode = $type->getCode();
             //tax box validation
-            if ($typeCode === 1) {
+            if ($typeCode === 1 && $values->has_tax_depreciations) {
                 if ($groupTax === null || $groupTax->getEntity()->getId() !== $currentEntity->getId() || $groupTax->getMethod() === DepreciationMethod::ACCOUNTING) {
                     $form['group_tax']->addError('Prosím vyberte odp. skupinu');
                     $form->addError('Prosím vyberte daňovou odpisovou skupinu');
@@ -404,6 +412,7 @@ class AssetFormFactory
                 $place,
                 $units,
                 $values->only_tax,
+                $values->has_tax_depreciations,
                 $groupTax,
                 $values->entry_price_tax,
                 $values->increased_price_tax,
@@ -420,7 +429,8 @@ class AssetFormFactory
                 $values->variable_symbol,
                 $values->entry_date,
                 $values->disposal_date,
-                $values->note
+                $values->note,
+                $values->is_included,
             );
 
             if ($editing) {
@@ -448,6 +458,8 @@ class AssetFormFactory
             'producer' => $asset->getProducer(),
             'units' => $asset->getUnits(),
             'only_tax' => $asset->isOnlyTax(),
+            'has_tax_depreciations' => $asset->hasTaxDepreciations(),
+            'is_included' => $asset->isIncluded(),
             'entry_price_tax' => $asset->getEntryPriceTax(),
             'increased_price_tax' => $asset->getIncreasedEntryPriceTax(),
             'increase_date' => $this->getDefaultDateValue($asset->getIncreaseDateTax()),

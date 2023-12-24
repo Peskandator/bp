@@ -19,6 +19,7 @@ class DeleteAssetAction
     {
         $taxDepreciations = $asset->getTaxDepreciations();
         $accountingDepreciations = $asset->getAccountingDepreciations();
+        $movements = $asset->getMovements();
 
         foreach ($taxDepreciations as $depreciation) {
             $this->entityManager->remove($depreciation);
@@ -28,9 +29,10 @@ class DeleteAssetAction
             $this->entityManager->remove($depreciation);
         }
         $asset->clearAccountingDepreciations();
-
-        // vymazat pohyby
-
+        foreach ($movements as $movement) {
+            $this->entityManager->remove($movement);
+        }
+        $asset->clearMovements();
 
         $this->entityManager->remove($asset);
         $this->entityManager->flush();

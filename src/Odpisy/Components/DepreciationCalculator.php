@@ -26,7 +26,7 @@ class DepreciationCalculator
 
     public function updateDepreciationPlan(Asset $asset): void
     {
-        if ($asset->hasTaxDepreciations()) {
+        if ($asset->isWithTaxDepreciations()) {
             $requestTax = $this->getCalculationRequestTax($asset);
             $this->calculateTaxDepreciations($requestTax);
         } else {
