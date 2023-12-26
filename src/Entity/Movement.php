@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Majetek\Enums\MovementType;
 use App\Majetek\Requests\CreateMovementRequest;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,6 +28,10 @@ class Movement
      */
     private float $value;
     /**
+     * @ORM\Column(name="residual_price", type="float", nullable=true)
+     */
+    private ?float $residualPrice;
+    /**
      * @ORM\Column(name="date", type="date", nullable=false)
      */
     private DateTimeInterface $date;
@@ -47,6 +52,16 @@ class Movement
      * @ORM\JoinColumn(name="asset_id", referencedColumnName="id", nullable=false)
      */
     private Asset $asset;
+    /**
+     * @ORM\OneToOne(targetEntity="DepreciationTax")
+     * @ORM\JoinColumn(name="depreciation_tax_id", referencedColumnName="id", nullable=true)
+     */
+    private ?DepreciationTax $depreciationTax;
+    /**
+     * @ORM\OneToOne(targetEntity="DepreciationAccounting")
+     * @ORM\JoinColumn(name="depreciation_accounting_id", referencedColumnName="id", nullable=true)
+     */
+    private ?DepreciationAccounting $depreciationAccounting;
 
 
     public function __construct(
@@ -55,7 +70,8 @@ class Movement
         $this->asset = $request->asset;
         $this->type = $request->type;
         $this->value = $request->value;
-        $this->date = $request->date;
+        $this->residualPrice = $request->residualPrice;
+        $this->date = new \DateTimeImmutable();
         $this->accountCredited = $request->accountCredited;
         $this->accountDebited = $request->accountDebited;
         $this->description = $request->description;
@@ -81,9 +97,19 @@ class Movement
         return $this->type;
     }
 
+    public function getTypeName(): string
+    {
+        return MovementType::NAMES[$this->type];
+    }
+
     public function getValue(): float
     {
         return $this->value;
+    }
+
+    public function getResidualPrice(): ?float
+    {
+        return $this->residualPrice;
     }
 
     public function getDate(): DateTimeInterface
@@ -104,5 +130,26 @@ class Movement
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getDepreciation(): ?Depreciation
+    {
+        if ($this->type === MovementType::DEPRECIATION_ACCOUNTING) {
+            return $this->depreciationAccounting;
+        }
+        if ($this->type === MovementType::DEPRECIATION_TAX) {
+            return $this->depreciationTax;
+        }
+        return null;
+    }
+
+    public function setTaxDepreciation(DepreciationTax $depreciationTax): void
+    {
+        $this->depreciationTax = $depreciationTax;
+    }
+
+    public function setAccountingDepreciation(DepreciationAccounting $depreciationAccounting): void
+    {
+        $this->depreciationAccounting = $depreciationAccounting;
     }
 }

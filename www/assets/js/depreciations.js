@@ -147,13 +147,12 @@ export default function() {
         percentageInput.val(percentage);
     }
 
-
-    $(`.js-execute-depreciations-button`).click(function (e) {
+    $(`.js-execute-depreciations-button`).click(function () {
         let year = parseInt($(this).attr('data-execute-year'));
-        $(`.js-modal-year`).val(year);
+        $(`.js-modal-year`).text(year);
     });
 
-    $(`.js-modal-execute-depreciations-confirm`).click(function (e) {
+    $(`.js-modal-execute-depreciations-confirm`).click(function () {
         $(`.js-execute-depreciations-form`).submit();
     });
 };

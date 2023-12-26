@@ -6,4 +6,58 @@
 
     {include assetTabs from 'assetTabs.latte'}
 
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Pohyby</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive px-3 card-body">
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                            <tr>
+                                <th>Typ</th>
+                                <th>Datum</th>
+                                <th>Hodnota</th>
+                                <th>ZC</th>
+                                <th>Popis</th>
+                                <th>Účet MD</th>
+                                <th>Účet DAL</th>
+                                <th>Rozdíl</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $movements as $movement}
+                                <tr>
+                                    <td>
+                                        {$movement->getTypeName()}
+                                    </td>
+                                    <td>
+                                        {$movement->getDate()->format('j. n. Y')}
+                                    </td>
+                                    <td>
+                                        {$movement->getValue()}
+                                    </td>
+                                    <td>
+                                        {$movement->getResidualPrice()}
+                                    </td>
+                                    <td>
+                                        {$movement->getDescription()}
+                                    </td>
+                                    <td>
+                                        {$movement->getAccountDebited()}
+                                    </td>
+                                    <td>
+                                        {$movement->getAccountCredited()}
+                                    </td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}

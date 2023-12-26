@@ -59,6 +59,7 @@ final class AssetPresenter extends BaseAdminPresenter
         $asset = $this->findAssetById($assetId);
         $this->template->asset = $asset;
         $this->template->activeTab = 2;
+        $this->template->movements = $asset->getMovements();
     }
 
     public function actionDepreciations(int $assetId): void
