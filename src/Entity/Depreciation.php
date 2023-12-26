@@ -6,6 +6,7 @@ namespace App\Entity;
 
 interface Depreciation
 {
+    public function getId(): int;
     public function getDepreciationAmount(): float;
     public function getDepreciatedAmount(): float;
     public function getResidualPrice(): float;

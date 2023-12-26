@@ -27,6 +27,7 @@ class ExecuteDepreciationsFormFactory
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $data) {
             $this->executeDepreciationsAction->__invoke($currentEntity, $data);
             $form->getPresenter()->flashMessage('Odpisy byly provedeny. Pohyby byly vytvořeny.', FlashMessageType::SUCCESS);
+            $form->getPresenter()->redirect('this');
         };
 
         return $form;

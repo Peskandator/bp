@@ -1,11 +1,11 @@
 {layout $adminlayoutPath}
 
 {block modals}
-    <div class="modal fade" id="executeDepreciationsModal" tabindex="-1" aria-labelledby="executeDeprecitionsLabel" aria-hidden="true">
+    <div class="modal fade" id="executeDepreciationsModal" tabindex="-1" aria-labelledby="executeDepreciationsLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="executeDeprecitionsLabel">Provést odpisy</h1>
+                    <h1 class="modal-title fs-5" id="executeDepreciationsLabel">Provést odpisy</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -18,6 +18,23 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="cancelExecutionModal" tabindex="-1" aria-labelledby="cancelExecutionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="cancelExecutionLabel">Zrušit provedení odpisů</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Opravdu chcete zrušit provedení odpisů za rok <b class="js-modal-year"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger js-modal-cancel-execution-confirm">Zrušit provedení</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}
 
 {block content}
@@ -25,6 +42,11 @@
         <h1>Odpisy k provedení</h1>
 
         <form n:name="executeDepreciationsForm" class="js-execute-depreciations-form">
+            <div class="form-errors" n:ifcontent>
+                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+            </div>
+        </form>
+        <form n:name="cancelExecutedDepreciationsForm" class="js-cancel-execution-form">
             <div class="form-errors" n:ifcontent>
                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
             </div>
@@ -55,16 +77,31 @@
                         </div>
                     </div>
                     <div class="col-xl-9 col-sm-6 col-12 mb-3 d-flex" style="align-items: center">
-                        <button
-                            type="button"
-                            class="js-execute-depreciations-button btn btn-warning btn-lg"
-                            style="margin-left: auto"
-                            data-bs-toggle="modal"
-                            data-bs-target="#executeDepreciationsModal"
-                            data-execute-year="{$selectedYear}"
-                        >
-                            Provést odpisy
-                        </button>
+                        <div style="margin-left: auto">
+                            {if $isExecutionCancelAvailable}
+                                <button
+                                    type="button"
+                                    class="js-cancel-execution-button btn btn-danger btn-lg"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#cancelExecutionModal"
+                                    data-execute-year="{$selectedYear}"
+                                >
+                                    Zrušit provedení odpisů
+                                </button>
+                            {/if}
+                            {if count($executableDepreciations) > 0}
+                                <button
+                                    type="button"
+                                    class="js-execute-depreciations-button btn btn-warning btn-lg"
+                                    style="margin-left: 30px"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#executeDepreciationsModal"
+                                    data-execute-year="{$selectedYear}"
+                                >
+                                    Provést odpisy
+                                </button>
+                            {/if}
+                        </div>
                     </div>
                 </div>
             </div>

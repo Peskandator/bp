@@ -6,21 +6,28 @@ namespace App\Presenters\Admin;
 use App\Entity\Asset;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
+use App\Odpisy\Components\CancelDepreciationExecutionResolver;
+use App\Odpisy\Forms\CancelDepreciationExecutionFormFactory;
 use App\Odpisy\Forms\ExecuteDepreciationsFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use Nette\Application\UI\Form;
 
 final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
 {
-
     private ExecuteDepreciationsFormFactory $executeDepreciationsFormFactory;
+    private CancelDepreciationExecutionFormFactory $cancelDepreciationExecutionFormFactory;
+    private CancelDepreciationExecutionResolver $cancelDepreciationExecutionResolver;
 
     public function __construct(
         ExecuteDepreciationsFormFactory $executeDepreciationsFormFactory,
+        CancelDepreciationExecutionFormFactory $cancelDepreciationExecutionFormFactory,
+        CancelDepreciationExecutionResolver $cancelDepreciationExecutionResolver,
     )
     {
         parent::__construct();
         $this->executeDepreciationsFormFactory = $executeDepreciationsFormFactory;
+        $this->cancelDepreciationExecutionFormFactory = $cancelDepreciationExecutionFormFactory;
+        $this->cancelDepreciationExecutionResolver = $cancelDepreciationExecutionResolver;
     }
 
     public function actionDefault(?int $yearArg = null): void
@@ -37,12 +44,20 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
         $this->template->totalDifference = $this->getTotalDifference($executableDepreciations);
         $this->template->availableYears = $this->currentEntity->getAvailableYears();
         $this->template->selectedYear = $year;
+        $this->template->isExecutionCancelAvailable = $this->cancelDepreciationExecutionResolver->areCancellableExecutedDepreciationsForYearExisting($this->currentEntity, $year);
     }
 
     protected function createComponentExecuteDepreciationsForm(): Form
     {
         $year = $this->template->selectedYear;
         $form = $this->executeDepreciationsFormFactory->create($this->currentEntity, $this->getExecutableDepreciationsByAssetForYear($year));
+        return $form;
+    }
+
+    protected function createComponentCancelExecutedDepreciationsForm(): Form
+    {
+        $year = $this->template->selectedYear;
+        $form = $this->cancelDepreciationExecutionFormFactory->create($this->currentEntity, $year);
         return $form;
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Majetek\Enums\MovementType;
 use App\Majetek\Requests\CreateAssetRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -531,6 +532,53 @@ class Asset
     public function getMovements(): Collection
     {
         return $this->movements;
+    }
+
+    public function getMovementsWithType(int $type): array
+    {
+        $resultArr = [];
+        /**
+         * @var Movement $movement
+         */
+        foreach ($this->getMovements() as $movement) {
+            if ($movement->getType() === $type) {
+                $resultArr[] = $movement;
+            }
+        }
+
+        return $resultArr;
+    }
+
+    public function getDepreciationTaxExecutionMovement(DepreciationTax $depreciationTax): ?Movement
+    {
+        $depreciationTaxId = $depreciationTax->getId();
+        $movements = $this->getMovementsWithType(MovementType::DEPRECIATION_TAX);
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            if ($movement->getDepreciation()->getId() === $depreciationTaxId) {
+                return $movement;
+            }
+        }
+
+        return null;
+    }
+
+    public function getDepreciationAccountingExecutionMovement(DepreciationAccounting $depreciationAccounting): ?Movement
+    {
+        $depreciationAccountingId = $depreciationAccounting->getId();
+        $movements = $this->getMovementsWithType(MovementType::DEPRECIATION_ACCOUNTING);
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            if ($movement->getDepreciation()->getId() === $depreciationAccountingId) {
+                return $movement;
+            }
+        }
+
+        return null;
     }
 
     public function clearTaxDepreciations(): void

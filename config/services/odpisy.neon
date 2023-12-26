@@ -1,14 +1,17 @@
 services:
     - App\Odpisy\Components\DepreciationPlanProvider
     - App\Odpisy\Components\EditDepreciationCalculator
+    - App\Odpisy\Components\CancelDepreciationExecutionResolver
 
     - App\Odpisy\Forms\EditTaxDepreciationFormFactory
     - App\Odpisy\Forms\EditAccountingDepreciationFormFactory
     - App\Odpisy\Forms\ExecuteDepreciationsFormFactory
+    - App\Odpisy\Forms\CancelDepreciationExecutionFormFactory
 
     - App\Odpisy\Action\EditTaxDepreciationAction
     - App\Odpisy\Action\EditAccountingDepreciationAction
     - App\Odpisy\Action\ExecuteDepreciationsAction
+    - App\Odpisy\Action\CancelDepreciationExecutionAction
 
     - App\Odpisy\ORM\DepreciationTaxRepository
     - App\Odpisy\ORM\DepreciationAccountingRepository

@@ -84,6 +84,7 @@ class EditTaxDepreciationFormFactory
             );
             $this->editTaxDepreciationAction->__invoke($depreciation, $request);
             $form->getPresenter()->flashMessage('Odpis byl úspěšně upraven. Neprovedené odpisy následujících let byly přepočítány.', FlashMessageType::SUCCESS);
+            $form->getPresenter()->redirect('this');
         };
 
         return $form;

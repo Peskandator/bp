@@ -161,8 +161,8 @@ class DepreciationAccounting implements Depreciation
         $this->depreciationAmount = $depreciationTax->getDepreciationAmount();
         $this->depreciatedAmount = $depreciationTax->getDepreciatedAmount();
         $this->residualPrice = $depreciationTax->getResidualPrice();
-        $this->executed = $depreciationTax->isExecuted();
-        $this->accounted = $depreciationTax->isAccounted();
+        $this->executed = false;
+        $this->accounted = false; // TODO ??
         $this->entryPrice = $depreciationTax->getEntryPrice();
         $this->increasedEntryPrice = $depreciationTax->getIncreasedEntryPrice();
         $this->depreciationYear = $depreciationTax->getDepreciationYear();

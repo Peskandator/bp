@@ -315,6 +315,38 @@ class AccountingEntity
         return $matched;
     }
 
+    public function getExecutedTaxDepreciationsForYear(int $year): array
+    {
+        $result = [];
+        $depreciations = $this->getTaxDepreciationsForYear($year);
+        /**
+         * @var DepreciationTax $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            if ($depreciation->isExecuted()) {
+                $result[] = $depreciation;
+            }
+        }
+
+        return $result;
+    }
+
+    public function getExecutedAccountingDepreciationsForYear(int $year): array
+    {
+        $result = [];
+        $depreciations = $this->getAccountingDepreciationsForYear($year);
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            if ($depreciation->isExecuted()) {
+                $result[] = $depreciation;
+            }
+        }
+
+        return $result;
+    }
+
     public function getAvailableYears(): array
     {
         $availableYears = [];

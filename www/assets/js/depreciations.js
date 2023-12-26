@@ -155,4 +155,13 @@ export default function() {
     $(`.js-modal-execute-depreciations-confirm`).click(function () {
         $(`.js-execute-depreciations-form`).submit();
     });
+
+    $(`.js-cancel-execution-button`).click(function () {
+        let year = parseInt($(this).attr('data-execute-year'));
+        $(`.js-modal-year`).text(year);
+    });
+
+    $(`.js-modal-cancel-execution-confirm`).click(function () {
+        $(`.js-cancel-execution-form`).submit();
+    });
 };

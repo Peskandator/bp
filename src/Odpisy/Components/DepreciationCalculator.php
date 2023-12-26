@@ -225,6 +225,11 @@ class DepreciationCalculator
          * @var DepreciationTax $depreciationTax
          */
         foreach ($taxDepreciations as $depreciationTax) {
+            $year = $depreciationTax->getYear();
+            $existingDepreciation = $asset->getAccountingDepreciationForYear($year);
+            if ($existingDepreciation !== null) {
+                continue;
+            }
             $depreciationAccounting = new DepreciationAccounting();
             $this->entityManager->persist($depreciationAccounting);
             $asset->addAccountingDepreciation($depreciationAccounting);
