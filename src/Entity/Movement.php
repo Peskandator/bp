@@ -36,6 +36,10 @@ class Movement
      */
     private DateTimeInterface $date;
     /**
+     * @ORM\Column(name="operation_date", type="date", nullable=false)
+     */
+    private DateTimeInterface $operationDate;
+    /**
      * @ORM\Column(name="account_credited", type="string", nullable=true)
      */
     private ?string $accountCredited;
@@ -71,10 +75,12 @@ class Movement
         $this->type = $request->type;
         $this->value = $request->value;
         $this->residualPrice = $request->residualPrice;
-        $this->date = new \DateTimeImmutable();
+        $this->date = $request->executionDate;
+        $this->operationDate = new \DateTimeImmutable();
         $this->accountCredited = $request->accountCredited;
         $this->accountDebited = $request->accountDebited;
         $this->description = $request->description;
+
     }
 
     public function getId(): int
@@ -115,6 +121,11 @@ class Movement
     public function getDate(): DateTimeInterface
     {
         return $this->date;
+    }
+
+    public function getOperationDate(): DateTimeInterface
+    {
+        return $this->operationDate;
     }
 
     public function getAccountCredited(): string

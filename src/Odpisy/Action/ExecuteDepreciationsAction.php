@@ -21,7 +21,7 @@ class ExecuteDepreciationsAction
         $this->entityManager = $entityManager;
     }
 
-    public function __invoke(AccountingEntity $entity, array $data): void
+    public function __invoke(AccountingEntity $entity, array $data, \DateTimeInterface $executionDate): void
     {
         foreach ($data as $assetId => $content) {
             /**
@@ -35,19 +35,19 @@ class ExecuteDepreciationsAction
 
             if ($depreciationTax) {
                 $depreciationTax->setExecuted(true);
-                $movement = $this->createMovementFromDepreciation($depreciationTax, false);
+                $movement = $this->createMovementFromDepreciation($depreciationTax, false, $executionDate);
                 $movement->setTaxDepreciation($depreciationTax);
             }
             if ($depreciationAccounting) {
                 $depreciationAccounting->setExecuted(true);
-                $movement = $this->createMovementFromDepreciation($depreciationAccounting, true);
+                $movement = $this->createMovementFromDepreciation($depreciationAccounting, true, $executionDate);
                 $movement->setAccountingDepreciation($depreciationAccounting);
             }
         }
         $this->entityManager->flush();
     }
 
-    protected function createMovementFromDepreciation(Depreciation $depreciation, bool $isAccounting): Movement
+    protected function createMovementFromDepreciation(Depreciation $depreciation, bool $isAccounting, \DateTimeInterface $executionDate): Movement
     {
         $asset = $depreciation->getAsset();
         $type = $isAccounting ? MovementType::DEPRECIATION_ACCOUNTING : MovementType::DEPRECIATION_TAX;
@@ -61,6 +61,7 @@ class ExecuteDepreciationsAction
             "",
             $category->getAccountDepreciation(),
             $category->getAccountRepairs(),
+            $executionDate,
         );
 
         $movement = new Movement($request);

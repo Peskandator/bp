@@ -24,12 +24,26 @@ class ExecuteDepreciationsFormFactory
 
         $form->addSubmit('send');
 
+        $form
+            ->addText('execution_date', 'Datum zvýšení VC')
+            ->setNullable()
+        ;
+
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $data) {
-            $this->executeDepreciationsAction->__invoke($currentEntity, $data);
+            $this->executeDepreciationsAction->__invoke($currentEntity, $data, $this->changeToDateFormat($values->execution_date));
             $form->getPresenter()->flashMessage('Odpisy byly provedeny. Pohyby byly vytvořeny.', FlashMessageType::SUCCESS);
             $form->getPresenter()->redirect('this');
         };
 
         return $form;
+    }
+
+    protected function changeToDateFormat(?string $dateTime): ?\DateTimeInterface
+    {
+        if ($dateTime === null) {
+            return new \DateTimeImmutable();
+        }
+
+        return new \DateTimeImmutable($dateTime);
     }
 }

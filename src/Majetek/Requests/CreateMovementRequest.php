@@ -14,6 +14,7 @@ class CreateMovementRequest
         public string $description,
         public string $accountDebited,
         public string $accountCredited,
+        public \DateTimeInterface $executionDate
     ) {
     }
 }

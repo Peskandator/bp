@@ -323,7 +323,7 @@ class DepreciationCalculator
     protected function getDepreciationRate(RecalculateDepreciationsRequest $request): ?float
     {
         $rate = $request->group->getRate();
-        if ($this->isIncreased($request->increaseDate, $request->year)) {
+        if ($this->isIncreased($request)) {
             $rate = $request->group->getRateIncreasedPrice();
         }
         if ($request->depreciationYear === 1) {
@@ -348,11 +348,15 @@ class DepreciationCalculator
         return ($residualPrice * 2) / ($coefficient - $depreciationYear + 1);
     }
 
-    protected function isIncreased(?\DateTimeInterface $increaseDate, $year): bool
+    protected function isIncreased(RecalculateDepreciationsRequest $request): bool
     {
-        if ($increaseDate) {
-            $increaseYear = (int)$increaseDate->format('Y');
-            if ($increaseYear >= $year) {
+        if ($request->entryPrice >= $request->correctEntryPrice) {
+            return false;
+        }
+
+        if ($request->increaseDate) {
+            $increaseYear = (int)$request->increaseDate->format('Y');
+            if ($increaseYear >= $request->year) {
                 return true;
             }
         }

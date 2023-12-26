@@ -41,16 +41,6 @@
     <div class="js-page-depreciations">
         <h1>Odpisy k provedení</h1>
 
-        <form n:name="executeDepreciationsForm" class="js-execute-depreciations-form">
-            <div class="form-errors" n:ifcontent>
-                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
-            </div>
-        </form>
-        <form n:name="cancelExecutedDepreciationsForm" class="js-cancel-execution-form">
-            <div class="form-errors" n:ifcontent>
-                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
-            </div>
-        </form>
         <div class="row">
             <div class="col-12">
                 <div class="row">
@@ -107,11 +97,41 @@
             </div>
         </div>
 
+
+        <form n:name="cancelExecutedDepreciationsForm" class="js-cancel-execution-form">
+            <div class="form-errors" n:ifcontent>
+                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+            </div>
+        </form>
+
+        <form n:name="executeDepreciationsForm" class="js-execute-depreciations-form">
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="main-card card">
+                        <div class="card-body">
+
+                            <div class="form-errors" n:ifcontent>
+                                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="executionDate">Provedeno k </label>
+                                <input n:name="execution_date" type="date" class="form-control" id="executionDate">
+                                <small class="form-error" n:ifcontent>{inputError execution_date}</small>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>K provedení</h5>
+                        <h5>K provedení za rok <b>{$selectedYear}</b></h5>
                     </div>
                     <div class="card-body ">
                         <div class="table-responsive px-3">
@@ -184,8 +204,9 @@
                                     </tr>
                                 {/foreach}
                                 <tr>
-                                    <td colspan="9"></td>
-                                    <td>{$totalDifference}</td>
+                                    <td colspan="7"></td>
+                                    <th colspan="2" style="text-align: right">Celkem rozdíl:</th>
+                                    <td class="bg-secondary">{$totalDifference}</td>
                                 </tr>
                                 </tbody>
                             </table>
