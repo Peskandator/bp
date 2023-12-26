@@ -32,7 +32,9 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
         }
 
         $this->template->assets = $this->getAssetsById();
-        $this->template->executableDepreciations = $this->getExecutableDepreciationsByAssetForYear($year);
+        $executableDepreciations = $this->getExecutableDepreciationsByAssetForYear($year);
+        $this->template->executableDepreciations = $executableDepreciations;
+        $this->template->totalDifference = $this->getTotalDifference($executableDepreciations);
         $this->template->availableYears = $this->currentEntity->getAvailableYears();
         $this->template->selectedYear = $year;
     }
@@ -58,6 +60,16 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
         return $result;
     }
 
+    protected function getTotalDifference(array $executingDepreciations): float
+    {
+        $totalDifference = 0;
+        foreach ($executingDepreciations as $assetId => $content) {
+            $totalDifference += $content["diff"];
+        }
+
+        return $totalDifference;
+    }
+
     protected function getExecutableDepreciationsByAssetForYear(int $year): array
     {
         $result = [];
@@ -68,12 +80,18 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
         foreach ($assets as $asset) {
             $depreciationTax = $asset->getTaxDepreciationForYear($year);
             $depreciationAccounting = $asset->getAccountingDepreciationForYear($year);
+            $difference = 0;
 
             if ($depreciationTax && $this->isTaxDepreciationExecutable($depreciationTax)) {
+                $difference += $depreciationTax->getDepreciationAmount();
                 $result[$asset->getId()]["tax"] = $depreciationTax;
             }
             if ($depreciationAccounting && $this->isAccountingDepreciationExecutable($depreciationAccounting)) {
+                $difference -= $depreciationAccounting->getDepreciationAmount();
                 $result[$asset->getId()]["accounting"] = $depreciationAccounting;
+            }
+            if ($difference !== 0) {
+                $result[$asset->getId()]["diff"] = $difference;
             }
         }
 
