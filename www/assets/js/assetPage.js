@@ -195,7 +195,6 @@ export default function() {
             calculateResidualPriceTax();
         });
 
-
         function calculateResidualPriceTax() {
             let entryPrice = entryPriceInput.val();
             let increasedPrice = increasedPriceInput.val();
@@ -205,14 +204,7 @@ export default function() {
             let isIncreasedPriceNumeric = $.isNumeric(increasedPrice);
 
             if (isEntryPriceNumeric || isIncreasedPriceNumeric && $.isNumeric(depreciatedAmount)) {
-                let firstValue = 0;
-                if (isEntryPriceNumeric) {
-                    firstValue = entryPrice;
-                }
-                if (isIncreasedPriceNumeric) {
-                    firstValue = increasedPrice;
-                }
-                let residualPrice = firstValue - depreciatedAmount;
+                let residualPrice = getResidualPrice(isEntryPriceNumeric, isIncreasedPriceNumeric, entryPrice, increasedPrice, depreciatedAmount);
                 $('#assetLeftAmountTax').val(residualPrice);
             }
         }
@@ -231,17 +223,46 @@ export default function() {
             let isIncreasedPriceNumeric = $.isNumeric(increasedPrice);
 
             if (isEntryPriceNumeric || isIncreasedPriceNumeric && $.isNumeric(depreciatedAmount)) {
-                let firstValue = 0;
-                if (isEntryPriceNumeric) {
-                    firstValue = entryPrice;
-                }
-                if (isIncreasedPriceNumeric) {
-                    firstValue = increasedPrice;
-                }
-                let residualPrice = firstValue - depreciatedAmount;
+                let residualPrice = getResidualPrice(isEntryPriceNumeric, isIncreasedPriceNumeric, entryPrice, increasedPrice, depreciatedAmount);
                 $('#assetLeftAmountAccounting').val(residualPrice);
             }
         }
+
+        function getResidualPrice(isEntryPriceNumeric, isIncreasedPriceNumeric, entryPrice, increasedPrice, depreciatedAmount) {
+            let firstValue = 0;
+
+            if (isEntryPriceNumeric) {
+                firstValue = entryPrice;
+            }
+            if (isIncreasedPriceNumeric) {
+                firstValue = increasedPrice;
+            }
+            return firstValue - depreciatedAmount;
+        }
+
+        setInterval(function () {
+            if ($(`#assetEntryPrice`).is(':focus')) {
+                calculateResidualPriceTax();
+                calculateResidualPriceAccounting();
+            }
+        }, 200)
+        setInterval(function () {
+            if ($(`#assetIncreasedPrice`).is(':focus')) {
+                calculateResidualPriceTax();
+                calculateResidualPriceAccounting();
+            }
+        }, 200)
+        setInterval(function () {
+            if ($(`#assetDepreciatedAmountTax`).is(':focus')) {
+                calculateResidualPriceTax();
+            }
+        }, 200)
+        setInterval(function () {
+            if ($(`#assetDepreciatedAmountAccounting`).is(':focus')) {
+                calculateResidualPriceAccounting();
+            }
+        }, 200)
+
 
         let typeSelect = $('#assetTypeSelect');
         const assetTypeCodesJson = typeSelect.attr('data-codes-json');
@@ -301,6 +322,9 @@ export default function() {
 
             if (currentYear >= year) {
                 let depreciationYear = currentYear - year + 1;
+                if (depreciationYear > 100) {
+                    depreciationYear = 1;
+                }
                 $('#assetDepreciationYear').val(depreciationYear);
                 $('#assetDepreciationYearAccounting').val(depreciationYear);
             }

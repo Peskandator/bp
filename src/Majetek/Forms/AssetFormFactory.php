@@ -156,8 +156,6 @@ class AssetFormFactory
             ->setNullable()
         ;
 
-
-
         // Daňový box
         $depreciationGroupsTax =  $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
