@@ -71,16 +71,20 @@ class Movement
     public function __construct(
         CreateMovementRequest $request
     ){
+        $this->update($request);
+        $this->operationDate = new \DateTimeImmutable();
+    }
+
+    public function update(CreateMovementRequest $request): void
+    {
         $this->asset = $request->asset;
         $this->type = $request->type;
         $this->value = $request->value;
         $this->residualPrice = $request->residualPrice;
         $this->date = $request->executionDate;
-        $this->operationDate = new \DateTimeImmutable();
         $this->accountCredited = $request->accountCredited;
         $this->accountDebited = $request->accountDebited;
         $this->description = $request->description;
-
     }
 
     public function getId(): int

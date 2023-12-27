@@ -129,7 +129,7 @@ class AssetFormFactory
             ->addCheckbox('has_tax_depreciations')
             ->setDefaultValue(true)
         ;
-        $form
+        $isIncluded = $form
             ->addCheckbox('is_included')
             ->setDefaultValue(true)
         ;
@@ -164,16 +164,18 @@ class AssetFormFactory
             ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
             ->setRequired(true)
         ;
-        $form
+        $depreciatedAmountTax = $form
             ->addText('depreciated_amount_tax', 'Oprávky daňové')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
         ;
-        $form
+        $depreciationYearTax = $form
             ->addInteger('depreciation_year_tax', 'Pořadové číslo roku odpisu')
             ->addRule($form::MIN, 'Pořadové číslo roku odpisu musí být minimálně 0', 0)
             ->addRule($form::MAX, 'Pořadové číslo roku odpisu může být maximálně 100', 100)
+        ;
+        $depreciationYearTax
             ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
             ->setRequired(true)
         ;
@@ -184,17 +186,26 @@ class AssetFormFactory
         $form
             ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsAccountingSelect)
         ;
-        $form
+        $depreciatedAmountAccounting = $form
             ->addText('depreciated_amount_accounting', 'Oprávky účetní')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Oprávky musí být minimálně 0', 0)
         ;
-        $form
+        $depreciationYearAccounting = $form
             ->addInteger('depreciation_year_accounting', 'Pořadové číslo roku odpisu')
             ->addRule($form::MIN, 'Pořadové číslo roku odpisu musí být minimálně 0', 0)
             ->setNullable()
         ;
+
+        $existingExecutedDepreciations = ($editing && $asset && ($asset->getExecutedTaxDepreciations()->count() > 0 || $asset->getExecutedAccountingDepreciations()->count() > 0));
+        if ($existingExecutedDepreciations) {
+            $isIncluded->setDisabled(true);
+            $depreciatedAmountTax->setDisabled(true);
+            $depreciatedAmountAccounting->setDisabled(true);
+            $depreciationYearTax->setDisabled(true);
+            $depreciationYearAccounting->setDisabled(true);
+        }
 
         // Konec boxu
 
@@ -247,7 +258,21 @@ class AssetFormFactory
             }
         };
 
-        $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $editing, $asset) {
+        $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $editing, $asset, $existingExecutedDepreciations) {
+            if ($editing) {
+                if (!$asset) {
+                    $form->getPresenter()->flashMessage('Editovaný majetek neexistuje', FlashMessageType::ERROR);
+                    $form->getPresenter()->redirect(':Admin:Assets:default');
+                }
+            }
+            if ($existingExecutedDepreciations) {
+                $values->is_included = $asset->isIncluded();
+                $values->depreciated_amount_tax = $asset->getBaseDepreciatedAmountTax();
+                $values->depreciated_amount_accounting = $asset->getBaseDepreciatedAmountAccounting();
+                $values->depreciation_year_tax = $asset->getDepreciationYearTax();
+                $values->depreciation_year_accounting = $asset->getDepreciationYearAccounting();
+            }
+
             $type = $this->assetTypeRepository->find($values->type);
             $category = $this->categoryRepository->find($values->category);
             $groupTax = $this->depreciationGroupRepository->find($values->group_tax);
@@ -264,9 +289,13 @@ class AssetFormFactory
 
             if ($values->depreciated_amount_accounting === null) {
                 $values->depreciated_amount_accounting = 0;
+            } else if ($editing) {
+                $values->depreciated_amount_accounting -= $asset->getExecutedAccountingDepreciationsAmount();
             }
             if ($values->depreciated_amount_tax === null) {
                 $values->depreciated_amount_tax = 0;
+            } else if ($editing) {
+                $values->depreciated_amount_tax -= $asset->getExecutedTaxDepreciationsAmount();
             }
 
             $entryPrice = $values->entry_price;
@@ -309,7 +338,7 @@ class AssetFormFactory
                     $form->addError('Prosím vyberte daňovou odpisovou skupinu');
                 }
                 $depreciatedAmountValidationTax = $entryPrice > $values->depreciated_amount_tax;
-                if (!$depreciatedAmountValidationTax && $increasedPrice) {
+                if (!$depreciatedAmountValidationTax && $increasedPrice && $values->depreciation_year_tax > 1) {
                     $depreciatedAmountValidationTax = $increasedPrice > $values->depreciated_amount_tax;
                 }
                 if (!$depreciatedAmountValidationTax) {
@@ -327,7 +356,7 @@ class AssetFormFactory
                 }
 
                 $depreciatedAmountValidationAccounting = $entryPrice > $values->depreciated_amount_accounting;
-                if (!$depreciatedAmountValidationAccounting && $increasedPrice) {
+                if (!$depreciatedAmountValidationAccounting && $increasedPrice  && $values->depreciation_year_accounting > 1) {
                     $depreciatedAmountValidationAccounting = $increasedPrice > $values->depreciated_amount_accounting;
                 }
                 if (!$depreciatedAmountValidationAccounting) {
@@ -387,10 +416,6 @@ class AssetFormFactory
             );
 
             if ($editing) {
-                if (!$asset) {
-                    $form->getPresenter()->flashMessage('Editovaný majetek neexistuje', FlashMessageType::ERROR);
-                    $form->getPresenter()->redirect(':Admin:Assets:default');
-                }
                 $this->editAssetAction->__invoke($currentEntity, $asset, $request);
                 $form->getPresenter()->flashMessage('Majetek byl úspěšně upraven.', FlashMessageType::SUCCESS);
             } else {

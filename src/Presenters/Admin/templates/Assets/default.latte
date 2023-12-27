@@ -85,11 +85,11 @@
                             <th>Inv. číslo</th>
                             <th>Název</th>
                             <th>Dat. zařazení</th>
-                            <th>Odp. sk.</th>
                             <th>Vstupní cena</th>
+                            <th>Zvýš. VC</th>
+                            <th>Odp. sk.</th>
                             <th>Oprávky</th>
                             <th>ZC</th>
-                            <th>Vstupní cena</th>
                             <th>Oprávky</th>
                             <th>ZC</th>
                             <th>Vyřazeno</th>
@@ -112,21 +112,21 @@
                                 {$asset->getEntryDate()->format(('j.n.Y'))}
                             </td>
                             <td>
+                                {$asset->getEntryPrice()}
+                            </td>
+                            <td>
+                                {$asset->getIncreasedEntryPrice()}
+                            </td>
+                            <td>
                                 {if $asset->getDepreciationGroupTax() !== null}
                                     {$asset->getDepreciationGroupTax()->getFullName()}
                                 {/if}
-                            </td>
-                            <td>
-                                {$asset->getEntryPrice()}
                             </td>
                             <td>
                                 {$asset->getDepreciatedAmountTax()}
                             </td>
                             <td>
                                 {$asset->getAmortisedPriceTax()}
-                            </td>
-                            <td>
-                                {$asset->getEntryPrice()}
                             </td>
                             <td>
                                 {$asset->getDepreciatedAmountAccounting()}
@@ -136,7 +136,7 @@
                             </td>
                             <td>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" disabled {if $asset->isDisposed()}checked=""{/if} style="margin-top: 10px">
+                                    <input class="form-check-input" type="checkbox" disabled {if $asset->isDisposed()}checked=""{/if}>
                                 </div>
                             </td>
                             <td>

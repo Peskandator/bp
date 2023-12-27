@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Entity\Asset;
+use App\Entity\Movement;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Odpisy\Components\EditDepreciationCalculator;
@@ -59,7 +61,8 @@ final class AssetPresenter extends BaseAdminPresenter
         $asset = $this->findAssetById($assetId);
         $this->template->asset = $asset;
         $this->template->activeTab = 2;
-        $this->template->movements = $asset->getMovements();
+        $this->template->movements = $this->getSortedMovements($asset);
+
     }
 
     public function actionDepreciations(int $assetId): void
@@ -92,5 +95,22 @@ final class AssetPresenter extends BaseAdminPresenter
     {
         $form = $this->editAccountingDepreciationFormFactory->create($this->currentEntity);
         return $form;
+    }
+
+    protected function getSortedMovements(Asset $asset): array
+    {
+        $movements = $asset->getMovements()->toArray();
+
+        usort($movements, function(Movement $a, Movement $b) {
+            if ($a->getDate() > $b->getDate()) {
+                return 1;
+            }
+            if ($a->getDate() < $b->getDate()) {
+                return -1;
+            }
+                return 0;
+        });
+
+        return $movements;
     }
 }

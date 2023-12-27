@@ -437,12 +437,12 @@ class Asset
 
     public function getAmortisedPriceTax(): ?float
     {
-        return $this->getEntryPrice() - $this->getDepreciatedAmountTax();
+        return $this->getCorrectEntryPrice() - $this->getDepreciatedAmountTax();
     }
 
     public function getAmortisedPriceAccounting(): ?float
     {
-        return $this->getEntryPrice() - $this->getDepreciatedAmountAccounting();
+        return $this->getCorrectEntryPrice() - $this->getDepreciatedAmountAccounting();
     }
 
     public function getUnits(): ?int
@@ -506,6 +506,26 @@ class Asset
         }
 
         return $resultArr;
+    }
+
+    public function getInclusionMovement(): ?Movement
+    {
+        $movements = $this->getMovementsWithType(MovementType::INCLUSION);
+        if (isset($movements[0])) {
+            return $movements[0];
+        }
+
+        return null;
+    }
+
+    public function getDisposalMovement(): ?Movement
+    {
+        $movements = $this->getMovementsWithType(MovementType::DISPOSAL);
+        if (isset($movements[0])) {
+            return $movements[0];
+        }
+
+        return null;
     }
 
     public function getDepreciationTaxExecutionMovement(DepreciationTax $depreciationTax): ?Movement
