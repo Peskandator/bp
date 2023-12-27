@@ -108,8 +108,8 @@ class DepreciationTax implements Depreciation
         $this->residualPrice = $request->residualPrice;
         $this->executed = false;
         $this->accounted = false;
-        $this->entryPrice = $request->asset->getEntryPriceTax();
-        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPriceTax();
+        $this->entryPrice = $request->asset->getEntryPrice();
+        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPrice();
         $this->depreciationYear = $request->depreciationYear;
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->year = $request->year;
@@ -140,8 +140,8 @@ class DepreciationTax implements Depreciation
         $this->depreciatedAmount = $depreciatedAmount;
         $this->residualPrice = $residualPrice;
         $this->executed = false;
-        $this->entryPrice = $asset->getEntryPriceTax();
-        $this->increasedEntryPrice = $asset->getIncreasedEntryPriceTax();
+        $this->entryPrice = $asset->getEntryPrice();
+        $this->increasedEntryPrice = $asset->getIncreasedEntryPrice();
         $this->depreciationYear = $depreciationYear;
         $this->depreciatedAmount = $depreciatedAmount;
         $this->year = $year;

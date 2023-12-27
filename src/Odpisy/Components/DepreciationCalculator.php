@@ -56,12 +56,12 @@ class DepreciationCalculator
             $asset->getDisposalYear(),
             $this->getTotalDepreciationYears($group),
             $group->getMonths(),
-            $asset->getEntryPriceTax(),
-            $asset->getCorrectEntryPriceTax(),
-            $asset->getEntryPriceTax() - $asset->getBaseDepreciatedAmountTax(),
+            $asset->getEntryPrice(),
+            $asset->getCorrectEntryPrice(),
+            $asset->getEntryPrice() - $asset->getBaseDepreciatedAmountTax(),
             $asset->getBaseDepreciatedAmountTax(),
             $group->getRateFormat(),
-            $asset->getIncreaseDateTax()
+            $asset->getIncreaseDate()
         );
     }
 
@@ -77,12 +77,12 @@ class DepreciationCalculator
             $asset->getDisposalYear(),
             $this->getTotalDepreciationYears($group),
             $group->getMonths(),
-            $asset->getEntryPriceAccounting(),
-            $asset->getCorrectEntryPriceAccounting(),
-            $asset->getEntryPriceAccounting() - $asset->getBaseDepreciatedAmountAccounting(),
+            $asset->getEntryPrice(),
+            $asset->getCorrectEntryPrice(),
+            $asset->getEntryPrice() - $asset->getBaseDepreciatedAmountAccounting(),
             $asset->getBaseDepreciatedAmountAccounting(),
             $group->getRateFormat(),
-            $asset->getIncreaseDateAccounting()
+            $asset->getIncreaseDate()
         );
     }
 

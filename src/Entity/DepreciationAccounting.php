@@ -109,8 +109,8 @@ class DepreciationAccounting implements Depreciation
         $this->residualPrice = $request->residualPrice;
         $this->executed = false;
         $this->accounted = false;
-        $this->entryPrice = $request->asset->getEntryPriceAccounting();
-        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPriceAccounting();
+        $this->entryPrice = $request->asset->getEntryPrice();
+        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPrice();
         $this->depreciationYear = $request->depreciationYear;
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->year = $request->year;
@@ -141,8 +141,8 @@ class DepreciationAccounting implements Depreciation
         $this->residualPrice = $residualPrice;
         $this->executed = false;
         $this->accounted = false;
-        $this->entryPrice = $asset->getEntryPriceAccounting();
-        $this->increasedEntryPrice = $asset->getIncreasedEntryPriceAccounting();
+        $this->entryPrice = $asset->getEntryPrice();
+        $this->increasedEntryPrice = $asset->getIncreasedEntryPrice();
         $this->depreciationYear = $depreciationYear;
         $this->depreciatedAmount = $depreciatedAmount;
         $this->year = $year;

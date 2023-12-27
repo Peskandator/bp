@@ -138,24 +138,15 @@ class AssetFormFactory
         $accountingAllowedTypes = [$assetTypesIds[AssetTypesCodes::DEPRECIABLE], $assetTypesIds[AssetTypesCodes::SMALL]];
         $taxAllowedType = $assetTypesIds[AssetTypesCodes::DEPRECIABLE];
 
-        // Daňový box
-        $depreciationGroupsTax =  $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
-        $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
         $form
-            ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsTaxSelect)
-            ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
-            ->setRequired(true)
-        ;
-        $form
-            ->addText('entry_price_tax', 'Daňová vstupní cena')
+            ->addText('entry_price', 'Vstupní cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
             ->setRequired(true)
         ;
         $form
-            ->addText('increased_price_tax', 'Zvýšená daňová vstupní cena')
+            ->addText('increased_price', 'Zvýšená vstupní cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
             ->setNullable()
@@ -163,6 +154,17 @@ class AssetFormFactory
         $form
             ->addText('increase_date', 'Datum zvýšení VC')
             ->setNullable()
+        ;
+
+
+
+        // Daňový box
+        $depreciationGroupsTax =  $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
+        $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
+        $form
+            ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsTaxSelect)
+            ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
+            ->setRequired(true)
         ;
         $form
             ->addText('depreciated_amount_tax', 'Oprávky daňové')
@@ -183,23 +185,6 @@ class AssetFormFactory
         $depreciationGroupsAccountingSelect = $this->getDepreciationGroupForSelect($depreciationGroupsAccounting);
         $form
             ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsAccountingSelect)
-        ;
-        $form
-            ->addText('entry_price_accounting', 'Účetní pořizovací cena')
-            ->addRule($form::FLOAT, 'Zadejte číslo')
-            ->setNullable()
-            ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->setNullable()
-        ;
-        $form
-            ->addText('increased_price_accounting', 'Zvýšená účetní pořizovací cena')
-            ->addRule($form::FLOAT, 'Zadejte číslo')
-            ->addRule($form::MIN, 'Cena musí být nejméně 0', 0)
-            ->setNullable()
-        ;
-        $form
-            ->addText('increase_date_accounting', 'Datum zvýšení VC')
-            ->setNullable()
         ;
         $form
             ->addText('depreciated_amount_accounting', 'Oprávky účetní')
@@ -257,10 +242,6 @@ class AssetFormFactory
                     $form['group_accounting']->addError('Toto pole je povinné');
                     $form->addError('Odpisovou skupinu u účetních odpisů je nutné vyplnit');
                 }
-                if (!$values->entry_price_accounting) {
-                    $form['entry_price_accounting']->addError('Toto pole je povinné');
-                    $form->addError('Vstupní cenu u účetních odpisů je nutné vyplnit');
-                }
                 if (!$values->depreciation_year_accounting) {
                     $form['depreciation_year_accounting']->addError('Toto pole je povinné');
                     $form->addError('Pořadové číslo roku odpisu je nutné vyplnit');
@@ -279,7 +260,6 @@ class AssetFormFactory
             $disposal = $this->disposalRepository->find($values->disposal);
 
             $values->increase_date = $this->changeToDateFormat($values->increase_date);
-            $values->increase_date_accounting = $this->changeToDateFormat($values->increase_date_accounting);
             $values->entry_date = $this->changeToDateFormat($values->entry_date);
             $values->disposal_date = $this->changeToDateFormat($values->disposal_date);
             $today = new \DateTimeImmutable('today');
@@ -289,6 +269,28 @@ class AssetFormFactory
             }
             if ($values->depreciated_amount_tax === null) {
                 $values->depreciated_amount_tax = 0;
+            }
+
+            $entryPrice = $values->entry_price;
+            $increasedPrice = $values->increased_price;
+            if ($increasedPrice) {
+                if (!$values->increase_date) {
+                    $form['increase_date']->addError('Je nutné vyplnit.');
+                    $form->addError('Datum zvýšení vstupní ceny je v případě vyplnění zvýšené VC nutné vyplnit');
+                } else {
+                    if ($values->entry_date > $values->increase_date) {
+                        $form['increase_date']->addError('Nemůže být dříve než datum zařazení');
+                        $form->addError('Datum zvýšení vstupní ceny nemůže být před datumem zařazení');
+                    }
+                    if ($values->increase_date > $today) {
+                        $form['increase_date']->addError('Datum nemůže být v budoucnosti.');
+                        $form->addError('Datum zvýšení vstupní ceny nemůže být v budoucnosti.');
+                    }
+                }
+            }
+            if ($values->increase_date && !$increasedPrice) {
+                $form['increased_price']->addError('Je nutné vyplnit.');
+                $form->addError('Zvýšenou vstupní cenu je v případě vyplnění datumu zvýšení nutné vyplnit');
             }
 
             if (!$this->isInventoryNumberAvailable($currentEntity, $values->inventory_number) && !$editing){
@@ -302,41 +304,19 @@ class AssetFormFactory
             }
             $typeCode = $type->getCode();
             //tax box validation
+
             if ($typeCode === 1 && $values->has_tax_depreciations) {
                 if ($groupTax === null || $groupTax->getEntity()->getId() !== $currentEntity->getId() || $groupTax->getMethod() === DepreciationMethod::ACCOUNTING) {
                     $form['group_tax']->addError('Prosím vyberte odp. skupinu');
                     $form->addError('Prosím vyberte daňovou odpisovou skupinu');
                 }
-
-                $entryPriceTax = $values->entry_price_tax;
-                $increasedPriceTax = $values->increased_price_tax;
-                $depreciatedAmountValidationTax = $entryPriceTax > $values->depreciated_amount_tax;
-                if (!$depreciatedAmountValidationTax && $increasedPriceTax) {
-                    $depreciatedAmountValidationTax = $increasedPriceTax > $values->depreciated_amount_tax;
+                $depreciatedAmountValidationTax = $entryPrice > $values->depreciated_amount_tax;
+                if (!$depreciatedAmountValidationTax && $increasedPrice) {
+                    $depreciatedAmountValidationTax = $increasedPrice > $values->depreciated_amount_tax;
                 }
                 if (!$depreciatedAmountValidationTax) {
                     $form['depreciated_amount_tax']->addError('Oprávky musí být nižší než vstupní cena.');
                     $form->addError('Oprávky musí být vyšší než vstupní cena.');
-                }
-
-                if ($increasedPriceTax) {
-                    if (!$values->increase_date) {
-                        $form['increase_date']->addError('Je nutné vyplnit.');
-                        $form->addError('Datum zvýšení vstupní ceny je v případě vyplnění zvýšené VC nutné vyplnit');
-                    } else {
-                        if ($values->entry_date > $values->increase_date) {
-                            $form['increase_date']->addError('Nemůže být dříve než datum zařazení');
-                            $form->addError('Datum zvýšení vstupní ceny nemůže být před datumem zařazení');
-                        }
-                        if ($values->increase_date > $today) {
-                            $form['increase_date']->addError('Datum nemůže být v budoucnosti.');
-                            $form->addError('Datum zvýšení vstupní ceny nemůže být v budoucnosti.');
-                        }
-                    }
-                }
-                if ($values->increase_date && !$increasedPriceTax) {
-                    $form['increased_price_tax']->addError('Je nutné vyplnit.');
-                    $form->addError('Zvýšenou vstupní cenu je v případě vyplnění datumu zvýšení nutné vyplnit');
                 }
             }
 
@@ -348,35 +328,13 @@ class AssetFormFactory
                     $form->addError('Prosím vyberte účetní odp. skupinu');
                 }
 
-                $entryPriceAccounting = $values->entry_price_accounting;
-                $increasedPriceAccounting = $values->increased_price_accounting;
-                $depreciatedAmountValidationAccounting = $entryPriceAccounting > $values->depreciated_amount_accounting;
-                if (!$depreciatedAmountValidationAccounting && $increasedPriceAccounting) {
-                    $depreciatedAmountValidationAccounting = $increasedPriceAccounting > $values->depreciated_amount_accounting;
+                $depreciatedAmountValidationAccounting = $entryPrice > $values->depreciated_amount_accounting;
+                if (!$depreciatedAmountValidationAccounting && $increasedPrice) {
+                    $depreciatedAmountValidationAccounting = $increasedPrice > $values->depreciated_amount_accounting;
                 }
                 if (!$depreciatedAmountValidationAccounting) {
                     $form['depreciated_amount_accounting']->addError('Oprávky musí být nižší než vstupní cena.');
-                    $form->addError('Oprávky musí být vyšší než vstupní cena.');
-                }
-
-                if ($increasedPriceAccounting) {
-                    if (!$values->increase_date_accounting) {
-                        $form['increase_date_accounting']->addError('Je nutné vyplnit.');
-                        $form->addError('Datum zvýšení vstupní ceny je v případě vyplnění zvýšené VC nutné vyplnit');
-                    } else {
-                        if ($values->entry_date > $values->increase_date_accounting) {
-                            $form['increase_date_accounting']->addError('Nemůže být dříve než datum zařazení');
-                            $form->addError('Datum zvýšení vstupní ceny nemůže být před datumem zařazení');
-                        }
-                        if ($values->increase_date > $today) {
-                            $form['increase_date_accounting']->addError('Datum nemůže být v budoucnosti.');
-                            $form->addError('Datum zvýšení vstupní ceny nemůže být v budoucnosti.');
-                        }
-                    }
-                }
-                if (($values->increase_date_accounting) && !$increasedPriceAccounting) {
-                    $form['increased_price_accounting']->addError('Je nutné vyplnit.');
-                    $form->addError('Zvýšenou vstupní cenu je v případě vyplnění datumu zvýšení nutné vyplnit');
+                    $form->addError('Oprávky musí být nižší než vstupní cena.');
                 }
             }
 
@@ -414,15 +372,12 @@ class AssetFormFactory
                 $values->only_tax,
                 $values->has_tax_depreciations,
                 $groupTax,
-                $values->entry_price_tax,
-                $values->increased_price_tax,
+                $values->entry_price,
+                $values->increased_price,
                 $values->increase_date,
                 $values->depreciated_amount_tax,
                 $values->depreciation_year_tax,
                 $groupAccounting,
-                $values->entry_price_accounting,
-                $values->increased_price_accounting,
-                $values->increase_date_accounting,
                 $values->depreciated_amount_accounting,
                 $values->depreciation_year_accounting,
                 $values->invoice_number,
@@ -460,14 +415,11 @@ class AssetFormFactory
             'only_tax' => $asset->isOnlyTax(),
             'has_tax_depreciations' => $asset->hasTaxDepreciations(),
             'is_included' => $asset->isIncluded(),
-            'entry_price_tax' => $asset->getEntryPriceTax(),
-            'increased_price_tax' => $asset->getIncreasedEntryPriceTax(),
-            'increase_date' => $this->getDefaultDateValue($asset->getIncreaseDateTax()),
+            'entry_price' => $asset->getEntryPrice(),
+            'increased_price' => $asset->getIncreasedEntryPrice(),
+            'increase_date' => $this->getDefaultDateValue($asset->getIncreaseDate()),
             'depreciated_amount_tax' => $asset->getDepreciatedAmountTax(),
             'depreciation_year_tax' => $asset->getDepreciationYearTax(),
-            'entry_price_accounting' => $asset->getEntryPriceAccounting(),
-            'increased_price_accounting' => $asset->getIncreasedEntryPriceAccounting(),
-            'increase_date_accounting' => $this->getDefaultDateValue($asset->getIncreaseDateAccounting()),
             'depreciated_amount_accounting' => $asset->getDepreciatedAmountAccounting(),
             'depreciation_year_accounting' => $asset->getDepreciationYearAccounting(),
             'invoice_number' => $asset->getInvoiceNumber(),

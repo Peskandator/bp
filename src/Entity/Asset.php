@@ -37,13 +37,13 @@ class Asset
      */
     private \DateTimeInterface $acquisitionDate;
     /**
-     * @ORM\Column(name="entry_price_tax", type="float", nullable=true)
+     * @ORM\Column(name="entry_price", type="float", nullable=true)
      */
-    private ?float $entryPriceTax;
+    private ?float $entryPrice;
     /**
-     * @ORM\Column(name="increased_entry_price_tax", type="float", nullable=true)
+     * @ORM\Column(name="increased_entry_price", type="float", nullable=true)
      */
-    private ?float $increasedEntryPriceTax;
+    private ?float $increasedEntryPrice;
     /**
      * @ORM\Column(name="increase_date", type="date", nullable=true)
      */
@@ -52,18 +52,6 @@ class Asset
      * @ORM\Column(name="depreciated_amount_tax", type="float", nullable=true)
      */
     private ?float $depreciatedAmountTax;
-    /**
-     * @ORM\Column(name="entry_price_accounting", type="float", nullable=true)
-     */
-    private ?float $entryPriceAccounting;
-    /**
-     * @ORM\Column(name="increased_entry_price_accounting", type="float", nullable=true)
-     */
-    private ?float $increasedEntryPriceAccounting;
-    /**
-     * @ORM\Column(name="increase_date_accounting", type="date", nullable=true)
-     */
-    private ?\DateTimeInterface $increaseDateAccounting;
     /**
      * @ORM\Column(name="depreciated_amount_accounting", type="float", nullable=true)
      */
@@ -171,7 +159,7 @@ class Asset
 
     public function __construct(
         AccountingEntity $entity,
-        CreateAssetRequest $request
+        CreateAssetRequest $request,
     )
     {
         $this->updateFromRequest($request);
@@ -206,15 +194,12 @@ class Asset
         $this->hasTaxDepreciations = $request->hasTaxDepreciations;
         $this->isIncluded = $request->isIncluded;
         $this->depreciationGroupTax = $request->depreciationGroupTax;
-        $this->entryPriceTax = $request->entryPriceTax;
-        $this->increasedEntryPriceTax = $request->increasedPriceTax;
+        $this->entryPrice = $request->entryPrice;
+        $this->increasedEntryPrice = $request->increasedEntryPrice;
         $this->increaseDate = $request->increaseDate;
         $this->depreciatedAmountTax = $request->depreciatedAmountTax;
         $this->depreciationYearTax = $request->depreciationYearTax;
         $this->depreciationGroupAccounting = $request->depreciationGroupAccounting;
-        $this->entryPriceAccounting = $request->entryPriceAccounting;
-        $this->increasedEntryPriceAccounting = $request->increasedPriceAccounting;
-        $this->increaseDateAccounting = $request->increaseDateAccounting;
         $this->depreciatedAmountAccounting = $request->depreciatedAmountAccounting;
         $this->depreciationYearAccounting = $request->depreciationYearAccounting;
         $this->invoiceNumber = $request->invoiceNumber;
@@ -265,20 +250,20 @@ class Asset
         return (int)$acquisitionDate->format('m');
     }
 
-    public function getEntryPriceTax(): ?float
+    public function getEntryPrice(): ?float
     {
-        return $this->entryPriceTax;
+        return $this->entryPrice;
     }
 
-    public function getIncreasedEntryPriceTax(): ?float
+    public function getIncreasedEntryPrice(): ?float
     {
-        return $this->increasedEntryPriceTax;
+        return $this->increasedEntryPrice;
     }
 
-    public function getCorrectEntryPriceTax(): ?float
+    public function getCorrectEntryPrice(): ?float
     {
-        $increasedPrice = $this->increasedEntryPriceTax;
-        $entryPrice = $this->entryPriceTax;
+        $increasedPrice = $this->getIncreasedEntryPrice();
+        $entryPrice = $this->getEntryPrice();
         if ($increasedPrice !== null) {
             return $increasedPrice;
         }
@@ -286,7 +271,7 @@ class Asset
         return $entryPrice;
     }
 
-    public function getIncreaseDateTax(): ?\DateTimeInterface
+    public function getIncreaseDate(): ?\DateTimeInterface
     {
         return $this->increaseDate;
     }
@@ -309,32 +294,6 @@ class Asset
     public function getDepreciatedAmountAccounting(): ?float
     {
         return $this->depreciatedAmountAccounting + $this->getExecutedAccountingDepreciationsAmount();
-    }
-
-    public function getEntryPriceAccounting(): ?float
-    {
-        return $this->entryPriceAccounting;
-    }
-
-    public function getIncreasedEntryPriceAccounting(): ?float
-    {
-        return $this->increasedEntryPriceAccounting;
-    }
-
-    public function getCorrectEntryPriceAccounting(): ?float
-    {
-        $increasedPrice = $this->increasedEntryPriceAccounting;
-        $entryPrice = $this->entryPriceAccounting;
-        if ($increasedPrice !== null) {
-            return $increasedPrice;
-        }
-
-        return $entryPrice;
-    }
-
-    public function getIncreaseDateAccounting(): ?\DateTimeInterface
-    {
-        return $this->increaseDateAccounting;
     }
 
     public function isDisposed(): bool
@@ -478,12 +437,12 @@ class Asset
 
     public function getAmortisedPriceTax(): ?float
     {
-        return $this->getEntryPriceTax() - $this->getDepreciatedAmountTax();
+        return $this->getEntryPrice() - $this->getDepreciatedAmountTax();
     }
 
     public function getAmortisedPriceAccounting(): ?float
     {
-        return $this->getEntryPriceAccounting() - $this->getDepreciatedAmountAccounting();
+        return $this->getEntryPrice() - $this->getDepreciatedAmountAccounting();
     }
 
     public function getUnits(): ?int

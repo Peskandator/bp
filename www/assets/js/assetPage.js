@@ -179,27 +179,26 @@ export default function() {
             $('#assetGroupAccounting3').val(rateIncreasedPrice);
         }
 
-        let entryPriceTaxInput = $('#assetEntryPriceTax');
-        let increasedPriceTaxInput = $('#assetIncreasedPriceTax');
+        let entryPriceInput = $('#assetEntryPrice');
+        let increasedPriceInput = $('#assetIncreasedPrice');
         let depreciatedAmountTaxInput = $('#assetDepreciatedAmountTax');
 
-        entryPriceTaxInput.change(function(){
+        entryPriceInput.change(function(){
             calculateResidualPriceTax();
+            calculateResidualPriceAccounting();
         });
-        increasedPriceTaxInput.change(function(){
+        increasedPriceInput.change(function(){
             calculateResidualPriceTax();
+            calculateResidualPriceAccounting();
         });
         depreciatedAmountTaxInput.change(function(){
             calculateResidualPriceTax();
         });
 
-        if (entryPriceTaxInput.length > 0) {
-            calculateResidualPriceTax();
-        }
 
         function calculateResidualPriceTax() {
-            let entryPrice = entryPriceTaxInput.val();
-            let increasedPrice = increasedPriceTaxInput.val();
+            let entryPrice = entryPriceInput.val();
+            let increasedPrice = increasedPriceInput.val();
             let depreciatedAmount = depreciatedAmountTaxInput.val();
 
             let isEntryPriceNumeric = $.isNumeric(entryPrice);
@@ -218,26 +217,14 @@ export default function() {
             }
         }
 
-        let entryPriceAccountingInput = $('#assetEntryPriceAccounting');
-        let increasedPriceAccountingInput = $('#assetIncreasedPriceAccounting');
         let depreciatedAmountAccountingInput = $('#assetDepreciatedAmountAccounting');
-
-        entryPriceAccountingInput.change(function(){
-            calculateResidualPriceAccounting();
-        });
-        increasedPriceAccountingInput.change(function(){
-            calculateResidualPriceAccounting();
-        });
         depreciatedAmountAccountingInput.change(function(){
             calculateResidualPriceAccounting();
         });
 
-        if (entryPriceAccountingInput.length > 0) {
-            calculateResidualPriceAccounting();
-        }
         function calculateResidualPriceAccounting() {
-            let entryPrice = entryPriceAccountingInput.val();
-            let increasedPrice = increasedPriceAccountingInput.val();
+            let entryPrice = entryPriceInput.val();
+            let increasedPrice = increasedPriceInput.val();
             let depreciatedAmount = depreciatedAmountAccountingInput.val();
 
             let isEntryPriceNumeric = $.isNumeric(entryPrice);
@@ -369,6 +356,8 @@ export default function() {
             changeDepreciationGroupTax();
             changeDepreciationGroupAccounting();
             changeAcquisition();
+            calculateResidualPriceTax();
+            calculateResidualPriceAccounting();
         }
     }
 };
