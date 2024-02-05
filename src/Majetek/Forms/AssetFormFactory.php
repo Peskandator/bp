@@ -228,9 +228,9 @@ class AssetFormFactory
             ->setNullable()
         ;
 
-        $submitText = 'Přidat majetek';
+        $submitText = 'Create';
         if ($editing) {
-            $submitText = 'Uložit změny';
+            $submitText = 'Save';
         }
 
         $form->addSubmit('send', $submitText);
@@ -481,7 +481,7 @@ class AssetFormFactory
     protected function getCollectionForSelectArray(array $array): array
     {
         $items = [];
-        $items[0] = 'Vyberte ...';
+        $items[0] = 'Select ...';
         foreach ($array as $item) {
             $items[$item->getId()] = $item->getCode() . ' ' . $item->getName();
         }
@@ -492,7 +492,7 @@ class AssetFormFactory
     protected function getCollectionForSelect(Collection $collection): array
     {
         $items = [];
-        $items[0] = 'Vyberte ...';
+        $items[0] = 'Select ...';
         foreach ($collection as $item) {
                 $items[$item->getId()] = $this->createSelectOptionFromItem($item);
         }
@@ -532,7 +532,7 @@ class AssetFormFactory
     protected function getDepreciationGroupForSelect(array $collection): array
     {
         $items = [];
-        $items[0] = 'Vyberte ...';
+        $items[0] = 'Select ...';
 
         /**
          * @var DepreciationGroup $item

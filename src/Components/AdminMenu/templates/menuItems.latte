@@ -30,16 +30,16 @@
         <li class="mb-1">
             <div class="menu-signout d-flex flex-column">
                 <div class="">
-                    <a href="{$profileLink}" class="link-dark d-inline-flex text-decoration-none rounded{if $isProfileLinkActive === true} item-active{/if}">Profil</a>
+                    <a href="{$profileLink}" class="link-dark d-inline-flex text-decoration-none rounded{if $isProfileLinkActive === true} item-active{/if}">Profile</a>
                 </div>
                 <div class="">
-                    <a href="{$entitiesLink[0]}" class="link-dark d-inline-flex text-decoration-none rounded{if $entitiesLink[1] === true} item-active{/if}">Účetní jednotky</a>
+                    <a href="{$entitiesLink[0]}" class="link-dark d-inline-flex text-decoration-none rounded{if $entitiesLink[1] === true} item-active{/if}">Entities</a>
                 </div>
             </div>
         </li>
         <li class="border-bottom my-3"></li>
     </ul>
     <div class="menu-signout links">
-        <a href="{$signOutLink}" class="link-dark d-inline-flex text-decoration-none rounded">Odhlásit se</a>
+        <a href="{$signOutLink}" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a>
     </div>
 {/define}

@@ -3,7 +3,7 @@
 {block content}
 
 <div class="js-page-depreciations">
-    <h1>Odpisy majetku inv. č. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
+    <h1>Depreciation of assets inv. no. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
 
     {include assetTabs from 'assetTabs.latte'}
 
@@ -19,9 +19,9 @@
         </div>
         <div class="form-errors d-block" n:ifcontent>
             <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
-            <div n:foreach="$form['amount']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpis -</b> {$error}</div>
-            <div n:foreach="$form['percentage']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Procento -</b> {$error}</div>
-            <div n:foreach="$form['executable']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Provést -</b> {$error}</div>
+            <div n:foreach="$form['amount']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Depreciation -</b> {$error}</div>
+            <div n:foreach="$form['percentage']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Percentage -</b> {$error}</div>
+            <div n:foreach="$form['executable']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Execute -</b> {$error}</div>
         </div>
     </form>
 
@@ -37,9 +37,9 @@
         </div>
         <div class="form-errors d-block" n:ifcontent>
             <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
-            <div n:foreach="$form['amount']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Odpis -</b> {$error}</div>
-            <div n:foreach="$form['percentage']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Procento -</b> {$error}</div>
-            <div n:foreach="$form['executable']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Provést -</b> {$error}</div>
+            <div n:foreach="$form['amount']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Depreciation -</b> {$error}</div>
+            <div n:foreach="$form['percentage']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Percentage -</b> {$error}</div>
+            <div n:foreach="$form['executable']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Execute -</b> {$error}</div>
         </div>
     </form>
 
@@ -48,31 +48,31 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Daňové odpisy</h5>
+                    <h5>Tax depreciations</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive px-3 card-body">
                         {var $taxGroup = $asset->getDepreciationGroupTax()}
                         <div class="d-flex">
-                            <div style="font-size: 18px">Odpisová skupina a způsob: </div>
+                            <div style="font-size: 18px">Depreciation group and method: </div>
                             <div style="font-size: 18px; font-weight: bold; margin-left: 13px">{if $taxGroup !== null}{$taxGroup->getFullName()}{/if}</div>
                         </div>
                         <table class="table table-bordered mt-3">
                             <thead>
                                 <tr>
-                                    <th>Rok</th>
-                                    <th>Rok odp.</th>
-                                    <th>VC</th>
-                                    <th>Zvýš.VC</th>
-                                    <th>Sazba</th>
+                                    <th>Year</th>
+                                    <th>Depr. year</th>
+                                    <th>Entry pr.</th>
+                                    <th>Increased pr.</th>
+                                    <th>Rate</th>
                                     <th>%</th>
-                                    <th>Odpis</th>
-                                    <th>Oprávky</th>
-                                    <th>ZC</th>
-                                    <th>Provést</th>
-                                    <th>Provedeno</th>
-                                    <th>Zaúčt.</th>
-                                    <th>Akce</th>
+                                    <th>Depr.</th>
+                                    <th>Accumulated d.</th>
+                                    <th>Residual pr.</th>
+                                    <th>Execute</th>
+                                    <th>Executed</th>
+                                    <th>Accountable</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

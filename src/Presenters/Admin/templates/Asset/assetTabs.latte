@@ -3,13 +3,13 @@
         <div class="col-12">
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a class="nav-link {if $activeTab === 1}active{/if}" n:href=":Admin:Asset:default, $asset->getId()">Základní údaje</a>
+                    <a class="nav-link {if $activeTab === 1}active{/if}" n:href=":Admin:Asset:default, $asset->getId()">Basic information</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {if $activeTab === 2}active{/if}" n:href=":Admin:Asset:movements, $asset->getId()">Pohyby</a>
+                    <a class="nav-link {if $activeTab === 2}active{/if}" n:href=":Admin:Asset:movements, $asset->getId()">Movements</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {if $activeTab === 3}active{/if}" n:href=":Admin:Asset:depreciations, $asset->getId()">Odpisy</a>
+                    <a class="nav-link {if $activeTab === 3}active{/if}" n:href=":Admin:Asset:depreciations, $asset->getId()">Depreciations</a>
                 </li>
             </ul>
         </div>

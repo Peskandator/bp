@@ -2,9 +2,9 @@
 
 {block content}
 
-    <h1>Účetní jednotky</h1>
+    <h1>Reporting entities</h1>
 
-    <a class="btn btn-primary" n:href=":Admin:EntitiesOverview:createNew">Nová účetní jednotka</a>
+    <a class="btn btn-primary" n:href=":Admin:EntitiesOverview:createNew">Create entity</a>
 
     <div class="row mt-4">
         {foreach $entities as $entity}
@@ -15,18 +15,18 @@
                         <p class="card-text">{$entity->getAddress()}</p>
 
                         {if $entity->getId() !== $currentEntityId}
-                            <a n:href=":Admin:EntitiesOverview:default, currentEntityId: $entity->getId()" class="btn btn-primary ml-2">Vstup</a>
+                            <a n:href=":Admin:EntitiesOverview:default, currentEntityId: $entity->getId()" class="btn btn-primary ml-2">Select</a>
                         {/if}
 
                         {if $entity->getId() === $currentEntityId}
                             {if $signedUser->isEntityAdmin($entity)}
-                                <a n:href=":Admin:EntitiesOverview:edit, entityId: $entity->getId()" class="btn btn-info justify-content-center ml-2">Upravit</a>
+                                <a n:href=":Admin:EntitiesOverview:edit, entityId: $entity->getId()" class="btn btn-info justify-content-center ml-2">Edit</a>
                             {/if}
                             <a n:href=":Admin:EntitiesOverview:manageUsers, entityId: $entity->getId()" class="btn btn-secondary float-end mr-2">
                                 {if $signedUser->isEntityAdmin($entity)}
-                                    Správa uživatelů
+                                    Manage users
                                 {else}
-                                    Uživatelé
+                                    Users
                                 {/if}
                             </a>
                         {/if}

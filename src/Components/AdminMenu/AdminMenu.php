@@ -52,19 +52,19 @@ class AdminMenu extends Control
 
         $assetsItems = $this->buildAssetsItems();
         $menuItems[] = $this->createMenuSection(
-            'Majetek',
+            'Assets',
             $assetsItems
         );
 
         $depreciationsItems = $this->buildDepreciationsItems();
         $menuItems[] = $this->createMenuSection(
-            'Odpisy',
+            'Depreciations',
             $depreciationsItems
         );
 
         $dialsItems = $this->buildDialsItems();
         $menuItems[] = $this->createMenuSection(
-            'Číselníky',
+            'Enums',
             $dialsItems
         );
 
@@ -74,7 +74,7 @@ class AdminMenu extends Control
     private function buildAssetsItems(): array
     {
         $items[] = $this->createMenuItem(
-            'Přehled',
+            'Overview',
             $this->getPresenter()->lazyLink(':Admin:Assets:default'),
             [],
             $this->getCurrentLinkCallable()
@@ -86,13 +86,13 @@ class AdminMenu extends Control
     private function buildDepreciationsItems(): array
     {
         $items[] = $this->createMenuItem(
-            'Odpisy',
+            'Depreciations',
             $this->getPresenter()->lazyLink(':Admin:Depreciations:default'),
             [],
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Provést odpisy',
+            'Execute depreciations',
             $this->getPresenter()->lazyLink(':Admin:ExecuteDepreciations:default'),
             [],
             $this->getCurrentLinkCallable()
@@ -104,37 +104,37 @@ class AdminMenu extends Control
     private function buildDialsItems(): array
     {
         $items[] = $this->createMenuItem(
-            'Druhy majetku',
+            'Asset types',
             $this->getPresenter()->lazyLink(':Admin:Dials:assetTypes'),
             [],
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Kategorie',
+            'Categories',
             $this->getPresenter()->lazyLink(':Admin:Dials:categories'),
             [],
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Odpisové skupiny',
+            'Depreciation groups',
             $this->getPresenter()->lazyLink(':Admin:Dials:depreciationGroups'),
             [],
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Střediska',
+            'Locations',
             $this->getPresenter()->lazyLink(':Admin:Dials:locations'),
             [],
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Míst',
+            'Places',
             $this->getPresenter()->lazyLink(':Admin:Dials:places'),
             [],
             $this->getCurrentLinkCallable()
         );
         $items[] = $this->createMenuItem(
-            'Způsoby pořízení/vyřazení',
+            'Acquisition/disposal methods',
             $this->getPresenter()->lazyLink(':Admin:Dials:acquisitions'),
             [],
             $this->getCurrentLinkCallable()

@@ -1,0 +1,314 @@
+
+getAmortisedPriceTax - počítání vstupní cena, měla by tam být asi zvýšená
+
+
+
+Když bude majetek zařazený, tak zachovat formulář, ale udělat všechno disabled - podobně jako už jsem to dělal
+ale povolit zbytečné údaje a vstupní cenu - podle ní generovat pohyby zvýšení a snížení VC
+
+
+udělat funkci jako getEntryPriceForDate(date $date)
+a podle toho počítat odpisy - může být x zvýšení X snížení
+
+umožnit smazání pohybů - pokud se smaže zařazení - což je potřeba opodmínkovat, jestli tam nejsou provedené odpisy
+                        - pokud se smaže provedení odpis - opodmínkovat stejně jako u provádění - další roky neprovedené a
+                               zrušit i u odpisu
+                        - pokud se smaže vyřazení - tak vyresetovat datum vyřazení
+                        - pokud se smaže zvýšení nebo snížení VC, tak přepočítat odpisy a přepočítat zvýšenou VC
+
+
+        ty zvýšení a snížení asi ukládat jen jako hodnotu (např. +30000 = zvýšení o 30000) - a možná k nim VC předtím a potom
+
+
+Mazat i provedné odpisy pokud je majetek nebude mít
+
+
+
+zrušení provedení a provedení odpisů individuálně
+
+
+CELÝ TY OPRÁVKY JSOU ZKURVENÝ - nějak to validovat na vstupu s rokem
+NÉÉÉÉ VOLE - NIC TAKOVÝHO
+PROSTĚ: POKUD BUDE CHECKBOX ZAŘAZENO FALSE, TAK OPRÁVKY BUDOU DISABLED, NAZDAR!!!!!!!!
+
+
+vyřazení - pohyb - udělat simulaci dopředu kolik se odepíše? - a pak to nějak přepočítávat? - asi jen z provedených odpisů
+- takže to je v podstatě to get amortised, ale jsou tam různý ty zvýšení
+
+zvýšení nemůže být po vyřazení - podmínka
+
+
+
+
+
+
+
+Aby se nedalo ze zařazeno udělat vyřadit - když už budou provedené odpisy, nebo je to jedno??
+
+Může se datum pohybu odpisu lišit od roku odpisu??
+
+
+
+Nebrat sníženou jako zvýšenou ? u kalkulace
+
+Pohyby - tabulka pohybů, seřazené podle data
+
+
+Pohyby - pokud je zařazeno, tak při odeslání assetFormu vytvořit pohyb zařazeno
+        to samé při vyřazení - ale datum se dá datum vyřazení
+
+Pohyby - Zrušit provedené odpisy
+
+
+
+pak udělat dva js formuláře -
+
+
+
+
+
+
+
+
+
+
+
+
+
+POZDĚJI:
+TODO: residual price updating zvýšená???
+
+
+přidat check na is_included - jestli už neexistují odpisy náhodou - hlavně provedené
+
+možná přidat jinou funkci na zobrazování odpisů - ještě podmínka jestli nějaké executed neexistují?
+
+executed povolit jen jestli je předchozí rok taky executed (nebo neprovádět)
+
+
+
+
+
+
+
+
+
+
+VYŘAZOVACÍ ROK PODBARVIT - PODSVÍTIT - ABY SI TAM MOHLI DÁT 50% SAZBU
+A DÁT K TOMU POZNÁMKU, ŽE JE TO VYŘAZENÝ
+
+
+POHYBY
+- jsou některý pohyby, které se objeví na kartě
+    - např. změnilo se středisko
+
+účetní pohyby -
+
+vyřazení
+
+pohyb není dopsání espézetky k autu
+
+a pak tlačítkem zařazeno
+
+
+
+
+
+
+k tabulce odpisů dát sazba %/koef.
+
+
+- podbarvit provedené odpisy nějak (červeně)
+
+- odpisy půjdou mazat i přidávat tlačítkem
+    přidávání na samostatnou stránku
+    nesmí být 2x ten samý rok odpisu ani rok
+    všechno tam půjde zadat, co je v tabulce
+    jediný co nepůjde je provedeno a zaúčtováno
+
+
+- desetinnou čárku místo desetinný tečky
+- responzivní menu
+- udělat breadcrumb
+
+
+
+TODO: schvalování odpisů v sekci odpisu, editace - přegenerovávání budoucích
+
+TODO: aby nešlo smazat číselníky, které mají k sobě přiřazený majetek
+
+TODO: při prováděni odpisů upozornit na nulové odpisy
+
+TODO: interval na oprávky na editaci majetku
+
+
+
+
+Zeptat se:
+
+Co se vše může editovat u odpisů
+
+
+PETÍNO - přesnost procent - u odpisů v depreciations, když se je base 20000 a zaokrouhluje se v js na 4 desetinná, tak se to sralo.
+
+
+
+
+
+Až zbyde čas:
+
+TODO: možná u číselníku u odpisové skupiny skrýt měsíce, když se vyplní roky a naopak
+
+TODO: import číselníků
+
+TODO nelze smazat středisko, ke kterému je přiřazené místo
+
+
+
+mazání majetku i s odpisama
+
+
+
+Odpisy:
+    k odpisum:
+
+    způsob odpisu:
+    -   rovnoměrný
+    -   zrychlený
+    -   mimořádný
+    -   neodpisovat
+
+    datum pořízení - k daňovým
+
+
+    karta pohybů
+
+    ODPISY - účetní a daňové
+
+    volba, předvolit, že účetní = daňové
+
+
+
+Číselníky:
+
+
+Majetek:
+
+ - když se dá druh majetku Neodpisovaný, tak už se nebude zadávat odpisová skupina a bůhvíco ještě
+ - způsob pořízení - vlastní číselník, ale přednastavené hodnoty, když koupě, tak další okýnko a tam číslo faktury a variabilní symbol
+ - typ majetku - náš číselník - Hmotný majetek (HM), drobný hmotný majetek (DHM), Leasing majetek = neodpisovat
+ - inv. číslo - jaký chceš
+ - název - text
+ - výrobní číslo - číslo
+ - výrobce/prodejce - text
+ - neni nutný zadávat:
+ - středisko - vlastní číselník - 101,102,103 (číslo - název)
+ - místo = provoz - vlastní číselník - (středisko, název)
+ - zakázka a činnost ne!
+
+Odpisové skupiny:
+    - číslo odpisové skupiny je 1-6 - hotovo
+    - počet let nebo počet roků ne oboje, jen jedno min max 1 - hotovo
+    - přidat prefix za číslo, primární klíč - podmínka způsob, nemůže být číslo, jen 1 znak - malé písmeno, nepovinné
+        pokud tam bude, tak se bude propisovat do selectů jako 1a např. a-z
+    - způsob vymazat neodpisovat (na to bude jinej enum jen k majetku) - hotovo
+
+Druh majetku:
+
+Kategorie:
+
+
+    TODO: PŘIDAT VALIDACI NA DELETE A ASI I EDIT!!! - TO NEPŮJDE, KDYŽ K TOMU BUDE PŘIŘAZENÝ MAJETEK
+
+
+Navíc:
+ - Funkcionalita - načíst číselníky z jiné firmy - není klíčová funkcionalita
+ - entrem se tam něco dělá
+
+
+
+
+
+
+PŘEHLED MAJETKU:
+
+
+- BEZ VÝROBCE, ZPŮSOBU POŘÍZENÍ, DAŇ. POŘIZOVACÍ CENA - hotovo
+- JEN ÚČETNÍ POŘIZOVACÍ CENA, OPRÁVKY, ZŮSTATKOVÁ POŘIZOVACÍ CENA, ODPISOVÁ SKUPINA
+
+
+
+AKCI DÁT VŠUDE ŠEDOU do pozadí - lightgray
+
+
+
+
+
+
+Přidání majetku::
+
+
+
+    přidat kusy
+
+    boxíky :
+        1. základní údaje
+            řádka (typ), (inv. číslo), (kategorie, hned nato skupina), řádka (název),
+
+
+
+            řádka (datum zařazení, datum vyřazení), ,
+            řádka (kusy)
+
+            pak středisko, místo, výrobce, ...
+
+    2 boxy - účetní hodnoty a daňové hodnoty: vstupní cena, celkové oprávky (součet odpisů za všechny roky),
+    zůstatková cena se bude počítat (zadávat se bude jen vstup a oprávky)
+
+
+    2. řádek : Datum zařazení, vyřazení,
+
+    checkbox účetní jako daňové
+
+    kategorie - nebudou tam odpisové skupiny vůbec, budou se zadávat samostatně
+
+    odpisová skupina bude v majetku 2x - jednou u účetních a podruhé u daňových, (pokud nebude checkbox only_|tax)
+
+    první box bude daňové a u toho bude checkbox účetní = daňové
+
+    všechny inputy zúžit
+
+
+    DŮLEŽIT ZVÝRAZNIT - MODROU - INV. číslo, název
+    základní údaje - evidenční - zp. pořízení apod, co nejsou účetní světlonkou modrou,
+    když se zaškrtne boxik, tak skrýt účetní,
+
+    všechno, co se týče odpisů - vstup. cena, zůstatková, CENY ŽLUTĚ, a evidenční věci k odpisum - odpisová skupina zeleně,
+    z odpisový skupiny se vypíše koeficient,
+
+    nedůležitý věci šedě nebo světle modře
+
+
+    všechny sazby - šedě
+
+
+
+    softbit.cz/images/2021/06/30/KARTADM.PNG
+
+
+    3. kategorie
+    4. disabled odpisová skupina
+
+    způsob pořízení, vyřazení, nedůležitý
+    a pak doklady
+
+
+    zrušit datum pořízení - nebo zatím se s tím nic dělat nebude, místo toho bude u odpisu rok (něčeho)
+
+    u kategorie bude odpisová skupina nepovinná, pak se bude u majetku po výběru předvyplňovat u daňových odpisů
+    ale u účetních se předvyplňovat nebude
+
+
+    jezeksoftware - rok odpisu u daňových (u majetku), a ze zvýšené ceny (rok)
+
+

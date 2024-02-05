@@ -46,7 +46,7 @@ final class DepreciationMethod
     {
         $names = self::NAMES;
         $selectArr = [];
-        $selectArr[0] = 'Vyberte...';
+        $selectArr[0] = 'Select...';
 
         $selectArr[1] = $names[1];
         $selectArr[2] = $names[2];
