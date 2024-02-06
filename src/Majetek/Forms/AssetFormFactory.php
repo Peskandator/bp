@@ -86,7 +86,7 @@ class AssetFormFactory
         ;
         $categories = $currentEntity->getCategories();
         $categoriesSelect = $this->getCollectionForSelect($categories);
-        $form
+        $categorySelect = $form
             ->addSelect('category', 'Kategorie', $categoriesSelect)
             ->setRequired(true)
         ;
@@ -121,11 +121,11 @@ class AssetFormFactory
             ->addRule($form::MIN, 'Počet kusů musí být minimálně 1', 1)
             ->setDefaultValue(1)
         ;
-        $form
+        $onlyTaxCheckbox = $form
             ->addCheckbox('only_tax')
             ->setDefaultValue(true)
         ;
-        $form
+        $hasTaxDepreciationsCheckbox = $form
             ->addCheckbox('has_tax_depreciations')
             ->setDefaultValue(true)
         ;
@@ -159,11 +159,13 @@ class AssetFormFactory
         // Daňový box
         $depreciationGroupsTax =  $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $depreciationGroupsTaxSelect = $this->getDepreciationGroupForSelect($depreciationGroupsTax);
-        $form
+        $taxGroupInput = $form
             ->addSelect('group_tax', 'Odpisová skupina', $depreciationGroupsTaxSelect)
-            ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
-            ->setRequired(true)
         ;
+        $taxGroupInput
+            ->addConditionOn($typeSelect, $form::EQUAL, $taxAllowedType)
+            ->setRequired(true);
+
         $depreciatedAmountTax = $form
             ->addText('depreciated_amount_tax', 'Oprávky daňové')
             ->addRule($form::FLOAT, 'Zadejte číslo')
@@ -183,7 +185,7 @@ class AssetFormFactory
         // Účetní box
         $depreciationGroupsAccounting = $this->enumerableSorter->sortGroupsByMethodAndNumber($currentEntity->getDepreciationGroups()->toArray());
         $depreciationGroupsAccountingSelect = $this->getDepreciationGroupForSelect($depreciationGroupsAccounting);
-        $form
+        $accountingGroupInput = $form
             ->addSelect('group_accounting', 'Odpisová skupina', $depreciationGroupsAccountingSelect)
         ;
         $depreciatedAmountAccounting = $form
@@ -199,8 +201,16 @@ class AssetFormFactory
         ;
 
         $existingExecutedDepreciations = ($editing && $asset && ($asset->getExecutedTaxDepreciations()->count() > 0 || $asset->getExecutedAccountingDepreciations()->count() > 0));
-        if ($existingExecutedDepreciations) {
+        $isAssetIncluded = $editing && $asset && $asset->isIncluded();
+
+        if ($isAssetIncluded) {
+            $typeSelect->setDisabled(true);
             $isIncluded->setDisabled(true);
+            $onlyTaxCheckbox->setDisabled(true);
+            $taxGroupInput->setDisabled(true);
+            $categorySelect->setDisabled(true);
+            $accountingGroupInput->setDisabled(true);
+            $hasTaxDepreciationsCheckbox->setDisabled(true);
             $depreciatedAmountTax->setDisabled(true);
             $depreciatedAmountAccounting->setDisabled(true);
             $depreciationYearTax->setDisabled(true);
@@ -235,7 +245,11 @@ class AssetFormFactory
 
         $form->addSubmit('send', $submitText);
 
-        $form->onValidate[] = function (Form $form, \stdClass $values) use ($accountingAllowedTypes) {
+        $form->onValidate[] = function (Form $form, \stdClass $values) use ($accountingAllowedTypes, $isAssetIncluded, $asset) {
+            if ($isAssetIncluded) {
+                $values = $this->addMissingValuesFromIncludedAsset($values, $asset);
+            }
+
             if ($values->type === 0) {
                 $form['type']->addError('Toto pole je povinné');
                 $form->addError('Typ majetku je nutné vyplnit.');
@@ -258,19 +272,15 @@ class AssetFormFactory
             }
         };
 
-        $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $editing, $asset, $existingExecutedDepreciations) {
+        $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $editing, $asset, $isAssetIncluded) {
             if ($editing) {
                 if (!$asset) {
                     $form->getPresenter()->flashMessage('Editovaný majetek neexistuje', FlashMessageType::ERROR);
                     $form->getPresenter()->redirect(':Admin:Assets:default');
                 }
             }
-            if ($existingExecutedDepreciations) {
-                $values->is_included = $asset->isIncluded();
-                $values->depreciated_amount_tax = $asset->getBaseDepreciatedAmountTax();
-                $values->depreciated_amount_accounting = $asset->getBaseDepreciatedAmountAccounting();
-                $values->depreciation_year_tax = $asset->getDepreciationYearTax();
-                $values->depreciation_year_accounting = $asset->getDepreciationYearAccounting();
+            if ($isAssetIncluded) {
+                $values = $this->addMissingValuesFromIncludedAsset($values, $asset);
             }
 
             $type = $this->assetTypeRepository->find($values->type);
@@ -556,5 +566,22 @@ class AssetFormFactory
             }
         }
         return true;
+    }
+
+    protected function addMissingValuesFromIncludedAsset(\stdClass $values, Asset $asset): \stdClass
+    {
+        $values->type = $asset->getAssetType()->getId();
+        $values->is_included = $asset->isIncluded();
+        $values->only_tax = $asset->isOnlyTax();
+        $values->has_tax_depreciations = $asset->hasTaxDepreciations();
+        $values->group_tax = $asset->getDepreciationGroupTax() ? $asset->getDepreciationGroupTax()->getId() : 0;
+        $values->group_accounting = $asset->getDepreciationGroupAccounting() ? $asset->getDepreciationGroupAccounting()->getId() : 0;
+        $values->category = $asset->getCategory()->getId() ?? 0;
+        $values->depreciated_amount_tax = $asset->getBaseDepreciatedAmountTax();
+        $values->depreciated_amount_accounting = $asset->getBaseDepreciatedAmountAccounting();
+        $values->depreciation_year_tax = $asset->getDepreciationYearTax();
+        $values->depreciation_year_accounting = $asset->getDepreciationYearAccounting();
+
+        return $values;
     }
 }

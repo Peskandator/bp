@@ -1,5 +1,27 @@
 {layout $adminlayoutPath}
 
+
+{block modals}
+    <div class="modal fade" id="deleteMovementModal" tabindex="-1" aria-labelledby="deleteMovementLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteMovementLabel">Smazat pohyb</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Chcete opravdu odstranit pohyb <b class="js-modal-record-name"></b>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger js-modal-delete-confirm">Odstranit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+
 {block content}
 
     <h1>Pohyby majetku inv. č. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
@@ -12,6 +34,14 @@
                 <div class="card-header">
                     <h5>Pohyby</h5>
                 </div>
+
+                <form n:name="deleteMovementForm" class="js-delete-form">
+                    <div class="form-errors" n:ifcontent>
+                        <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                    </div>
+                    <input n:name="id" class="js-delete-record-id">
+                </form>
+
                 <div class="card-body">
                     <div class="table-responsive px-3 card-body">
                         <table class="table table-bordered mt-3">
@@ -24,6 +54,7 @@
                                 <th>Popis</th>
                                 <th>Účet MD</th>
                                 <th>Účet DAL</th>
+                                <th>Akce</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -49,6 +80,17 @@
                                     </td>
                                     <td>
                                         {$movement->getAccountCredited()}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text align-self-center"
+                                               title="Odstranit"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#deleteMovementModal"
+                                               data-record-name="{$asset->getName()} ({$movement->getDate()->format('j. n. Y')})"
+                                               data-record-id="{$asset->getId()}"
+                                            ></i>
+                                        </div>
                                     </td>
                                 </tr>
                             {/foreach}

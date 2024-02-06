@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Entity\Asset;
 use App\Entity\Movement;
+use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Majetek\ORM\MovementRepository;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAdminPresenter;
 use App\Utils\EnumerableSorter;
+use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
 final class AssetPresenter extends BaseAdminPresenter
@@ -22,6 +25,8 @@ final class AssetPresenter extends BaseAdminPresenter
     private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
     private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;
     private EditDepreciationCalculator $editDepreciationCalculator;
+    private DeleteMovementAction $deleteMovementAction;
+    private MovementRepository $movementRepository;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
@@ -30,6 +35,8 @@ final class AssetPresenter extends BaseAdminPresenter
         EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
         EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
         EditDepreciationCalculator $editDepreciationCalculator,
+        DeleteMovementAction $deleteMovementAction,
+        MovementRepository $movementRepository,
     )
     {
         parent::__construct();
@@ -39,6 +46,8 @@ final class AssetPresenter extends BaseAdminPresenter
         $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
         $this->editDepreciationCalculator = $editDepreciationCalculator;
+        $this->deleteMovementAction = $deleteMovementAction;
+        $this->movementRepository = $movementRepository;
     }
 
     public function actionDefault(int $assetId): void
@@ -94,6 +103,37 @@ final class AssetPresenter extends BaseAdminPresenter
     protected function createComponentEditAccountingDepreciationForm(): Form
     {
         $form = $this->editAccountingDepreciationFormFactory->create($this->currentEntity);
+        return $form;
+    }
+
+    protected function createComponentDeleteMovementForm(): Form
+    {
+        $form = new Form;
+
+        $form
+            ->addHidden('id')
+            ->setRequired(true)
+        ;
+        $form->addSubmit('send');
+
+        $form->onValidate[] = function (Form $form, \stdClass $values) {
+            $movement = $this->movementRepository->find((int)$values->id);
+            if (!$movement) {
+                $form->addError('Pohyb nebyl nalezen.');
+                $this->flashMessage('Pohyb nebyl nalezen.', FlashMessageType::ERROR);
+                return;
+            }
+            $entity = $movement->getEntity();
+            $form = $this->checkAccessToElementsEntity($form, $entity);
+        };
+
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $movement = $this->movementRepository->find((int)$values->id);
+            $this->deleteMovementAction->__invoke($movement);
+            $this->flashMessage('Pohyb byl smazán.', FlashMessageType::SUCCESS);
+            $this->redirect('this');
+        };
+
         return $form;
     }
 
