@@ -3,7 +3,6 @@
 namespace App\Majetek\Action;
 
 use App\Entity\AccountingEntity;
-use App\Entity\Acquisition;
 use App\Entity\Category;
 use App\Majetek\Requests\CreateCategoryRequest;
 use Doctrine\ORM\EntityManagerInterface;
