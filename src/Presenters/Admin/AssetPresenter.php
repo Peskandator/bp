@@ -125,6 +125,12 @@ final class AssetPresenter extends BaseAdminPresenter
             }
             $entity = $movement->getEntity();
             $form = $this->checkAccessToElementsEntity($form, $entity);
+
+            if (!$movement->isDeletable()) {
+                $errMsg = 'Pohyb nelze smazat kvůli již provedeným odpisům.';
+                $form->addError($errMsg);
+                $this->flashMessage($errMsg, FlashMessageType::ERROR);
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {

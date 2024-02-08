@@ -75,21 +75,22 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th colspan="3" style="font-size: 20px">Daňové</th>
                             <th colspan="3" style="font-size: 20px">Účetní</th>
-                            <th></th>
                             <th></th>
                         </tr>
                         <tr>
                             <th>Typ</th>
-                            <th>Inv. číslo</th>
+                            <th>Inv. č.</th>
                             <th>Název</th>
-                            <th>Dat. zařazení</th>
+                            <th>Dat. zař.</th>
                             <th>Vstupní cena</th>
                             <th>Zvýš. VC</th>
                             <th>Odp. sk.</th>
                             <th>Oprávky</th>
                             <th>ZC</th>
+                            <th>Odp. sk.</th>
                             <th>Oprávky</th>
                             <th>ZC</th>
                             <th>Vyřazeno</th>
@@ -127,6 +128,14 @@
                             </td>
                             <td>
                                 {$asset->getAmortisedPriceTax()}
+                            </td>
+                            <td>
+                                {if $asset->getDepreciationGroupAccounting() !== null && !$asset->isOnlyTax()}
+                                    {$asset->getDepreciationGroupAccounting()->getFullName()}
+                                {/if}
+                                {if $asset->isOnlyTax() && $asset->getDepreciationGroupTax() !== null}
+                                    {$asset->getDepreciationGroupTax()->getFullName()}
+                                {/if}
                             </td>
                             <td>
                                 {$asset->getDepreciatedAmountAccounting()}

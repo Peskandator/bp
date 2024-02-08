@@ -30,18 +30,17 @@
 
     <div class="row mb-4">
         <div class="col-12">
+            <form n:name="deleteMovementForm" class="js-delete-form">
+                <div class="form-errors" n:ifcontent>
+                    <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                </div>
+                <input n:name="id" class="js-delete-record-id">
+            </form>
+
             <div class="card">
                 <div class="card-header">
                     <h5>Pohyby</h5>
                 </div>
-
-                <form n:name="deleteMovementForm" class="js-delete-form">
-                    <div class="form-errors" n:ifcontent>
-                        <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
-                    </div>
-                    <input n:name="id" class="js-delete-record-id">
-                </form>
-
                 <div class="card-body">
                     <div class="table-responsive px-3 card-body">
                         <table class="table table-bordered mt-3">
@@ -82,15 +81,17 @@
                                         {$movement->getAccountCredited()}
                                     </td>
                                     <td>
-                                        <div class="d-flex">
-                                            <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text align-self-center"
-                                               title="Odstranit"
-                                               data-bs-toggle="modal"
-                                               data-bs-target="#deleteMovementModal"
-                                               data-record-name="{$asset->getName()} ({$movement->getDate()->format('j. n. Y')})"
-                                               data-record-id="{$asset->getId()}"
-                                            ></i>
-                                        </div>
+                                        {if $movement->isDeletable()}
+                                            <div class="d-flex">
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text align-self-center"
+                                                   title="Odstranit"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#deleteMovementModal"
+                                                   data-record-name="{$movement->getTypeName()} ({$movement->getDate()->format('j. n. Y')})"
+                                                   data-record-id="{$movement->getId()}"
+                                                ></i>
+                                            </div>
+                                        {/if}
                                     </td>
                                 </tr>
                             {/foreach}

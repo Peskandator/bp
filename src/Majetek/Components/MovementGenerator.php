@@ -31,8 +31,6 @@ class MovementGenerator
 
     protected function createInclusionMovementRequest(Asset $asset): CreateMovementRequest
     {
-        $category = $asset->getCategory();
-
         return new CreateMovementRequest(
             $asset,
             MovementType::INCLUSION,

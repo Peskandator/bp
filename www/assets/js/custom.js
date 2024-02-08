@@ -29,7 +29,10 @@ $(document).ready(function(){
             e.preventDefault();
             let index = $(this).attr('data-tab-index');
             index++;
-            $('*[data-tab-index='+ index + ']').focus();
+            let newFocusedInput = $('*[data-tab-index='+ index + ']');
+            if (!newFocusedInput.is(":disabled")) {
+                newFocusedInput.focus();
+            }
         }
     });
 
@@ -38,7 +41,10 @@ $(document).ready(function(){
             e.preventDefault();
             let index = $(this).attr('data-tab-index-1');
             index++;
-            $('*[data-tab-index-1='+ index + ']').focus();
+            let newFocusedInput = $('*[data-tab-index-1='+ index + ']');
+            if (!newFocusedInput.is(":disabled")) {
+                newFocusedInput.focus();
+            }
         }
     });
 });

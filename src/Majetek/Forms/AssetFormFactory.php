@@ -200,9 +200,7 @@ class AssetFormFactory
             ->setNullable()
         ;
 
-        $existingExecutedDepreciations = ($editing && $asset && ($asset->getExecutedTaxDepreciations()->count() > 0 || $asset->getExecutedAccountingDepreciations()->count() > 0));
         $isAssetIncluded = $editing && $asset && $asset->isIncluded();
-
         if ($isAssetIncluded) {
             $typeSelect->setDisabled(true);
             $isIncluded->setDisabled(true);
@@ -299,13 +297,9 @@ class AssetFormFactory
 
             if ($values->depreciated_amount_accounting === null) {
                 $values->depreciated_amount_accounting = 0;
-            } else if ($editing) {
-                $values->depreciated_amount_accounting -= $asset->getExecutedAccountingDepreciationsAmount();
             }
             if ($values->depreciated_amount_tax === null) {
                 $values->depreciated_amount_tax = 0;
-            } else if ($editing) {
-                $values->depreciated_amount_tax -= $asset->getExecutedTaxDepreciationsAmount();
             }
 
             $entryPrice = $values->entry_price;

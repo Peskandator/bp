@@ -271,9 +271,28 @@ class Asset
         return $entryPrice;
     }
 
+    public function recalculateIncreasedEntryPrice(): void
+    {
+        $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
+        $entryPrice = $this->getEntryPrice();
+
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            $entryPrice += $movement->getValue();
+        }
+        $this->entryPrice = $entryPrice;
+    }
+
     public function getIncreaseDate(): ?\DateTimeInterface
     {
         return $this->increaseDate;
+    }
+
+    public function setIncreaseDate(\DateTimeInterface $date): void
+    {
+         $this->increaseDate = $date;
     }
 
     public function getBaseDepreciatedAmountTax(): ?float
@@ -352,6 +371,16 @@ class Asset
     public function isIncluded(): bool
     {
         return $this->isIncluded;
+    }
+
+    public function setIsIncluded(bool $isIncluded): void
+    {
+        $this->isIncluded = $isIncluded;
+    }
+
+    public function setDisposalDate(?\DateTimeInterface $disposalDate): void
+    {
+        $this->disposalDate = $disposalDate;
     }
 
     public function getDisposalDate(): ?\DateTimeInterface
@@ -601,6 +630,14 @@ class Asset
             }
         }
         return $executedDepreciations;
+    }
+
+    public function hasExecutedDepreciations(): bool
+    {
+        if ($this->getExecutedTaxDepreciations()->count() > 0 || $this->getExecutedAccountingDepreciations()->count() > 0) {
+            return true;
+        }
+        return false;
     }
 
     public function addTaxDepreciation(DepreciationTax $depreciation): void
