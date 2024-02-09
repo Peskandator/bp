@@ -27,6 +27,8 @@ class EditAssetAction
 
     public function __invoke(AccountingEntity $entity, Asset $asset, CreateAssetRequest $request): void
     {
+        $this->movementGenerator->generateEntryPriceChangeMovement($asset, $request);
+        $this->movementGenerator->generateInfoChangeMovements($asset, $request);
         $asset->update($request);
         $this->movementGenerator->regenerateMovementsAfterAssetEdit($asset);
         $this->editDepreciationCalculator->updateDepreciationPlan($asset);

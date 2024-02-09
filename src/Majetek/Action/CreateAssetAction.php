@@ -38,6 +38,9 @@ class CreateAssetAction
         if ($asset->getDisposalDate()) {
             $this->movementGenerator->createDisposalMovement($asset);
         }
+        if ($request->increasedEntryPrice !== $request->entryPrice) {
+            $this->movementGenerator->createEntryPriceChangeMovement($asset, $request, false);
+        }
 
         $this->entityManager->flush();
     }
