@@ -3,11 +3,15 @@ services:
     - App\Majetek\Components\MovementGenerator
 
     - App\Majetek\Forms\AssetFormFactory
+    - App\Majetek\Forms\EditMovementFormFactory
 
     - App\Majetek\Action\CreateAssetAction
     - App\Majetek\Action\EditAssetAction
+    - App\Majetek\Action\DeleteAssetAction
+    - App\Majetek\Action\EditMovementAction
+    - App\Majetek\Action\DeleteMovementAction
 
     - App\Majetek\ORM\AssetTypeRepository
     - App\Majetek\ORM\AssetRepository
+    - App\Majetek\ORM\MovementRepository
 
-    - App\Majetek\Action\DeleteAssetAction

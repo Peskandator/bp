@@ -3,11 +3,13 @@
 import depreciations from './depreciations.js';
 import assetForm from './assetPage.js';
 import dials from './dials.js';
+import movement from './movements';
 
 $(document).ready(function(){
     depreciations();
     assetForm();
     dials();
+    movement();
 
     setTimeout(flashMessage, 4200);
     function flashMessage() {

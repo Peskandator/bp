@@ -31,6 +31,7 @@ class EditAssetAction
         $this->movementGenerator->generateInfoChangeMovements($asset, $request);
         $asset->update($request);
         $this->movementGenerator->regenerateMovementsAfterAssetEdit($asset);
+        $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
         $this->editDepreciationCalculator->updateDepreciationPlan($asset);
         $this->entityManager->flush();
     }

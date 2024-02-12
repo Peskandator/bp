@@ -52,10 +52,11 @@ class MovementGenerator
     {
         $category = $asset->getCategory();
 
+        $amortisedPrice = $asset->getAmortisedPriceAccounting() ? $asset->getAmortisedPriceAccounting() : 0;
         return new CreateMovementRequest(
             $asset,
             MovementType::DISPOSAL,
-            $asset->getAmortisedPriceAccounting(),
+            $amortisedPrice,
             0,
             "Vyřazení majetku",
             $category->getAccountDepreciation(),
@@ -173,19 +174,35 @@ class MovementGenerator
             return;
         }
         if ($inclusionMovement) {
-            $inclusionMovement->update($this->createInclusionMovementRequest($asset));
+            $inclusionMovement->updateInclusionOrDisposal($asset->getEntryPrice(), $asset->getEntryPrice(), $asset->getEntryDate());
         } else  {
             $this->createInclusionMovement($asset);
         }
         if ($asset->getDisposalDate()) {
             if ($disposalMovement) {
-                $disposalMovement->update($this->createDisposalMovementRequest($asset));
+                $amortisedPrice = $asset->getAmortisedPriceAccounting();
+                $disposalMovement->updateInclusionOrDisposal($amortisedPrice, 0, $asset->getDisposalDate());
                 return;
             }
             $this->createDisposalMovement($asset);
             return;
         }
         $this->removeMovement($disposalMovement);
+    }
+
+    public function regenerateResidualPricesForPriceChangeMovements(Asset $asset): void
+    {
+        $baseIncreasedEntryPrice = $asset->getIncreasedEntryPrice();
+        $changeMovements = $this->getSortedMovements($asset->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE));
+        /**
+         * @var Movement $movement
+         */
+        $residualPrice = $baseIncreasedEntryPrice;
+        foreach ($changeMovements as $movement) {
+            $value = $movement->getValue();
+            $movement->setResidualPrice($residualPrice);
+            $residualPrice -= $value;
+        }
     }
 
     public function generateEntryPriceChangeMovement(Asset $asset, CreateAssetRequest $request): void
@@ -245,5 +262,20 @@ class MovementGenerator
         if ($movement) {
             $this->entityManager->remove($movement);
         }
+    }
+
+    protected function getSortedMovements(array $movements): array
+    {
+        usort($movements, function(Movement $a, Movement $b) {
+            if ($a->getDate() > $b->getDate()) {
+                return 1;
+            }
+            if ($a->getDate() < $b->getDate()) {
+                return -1;
+            }
+            return 0;
+        });
+
+        return array_reverse($movements);
     }
 }

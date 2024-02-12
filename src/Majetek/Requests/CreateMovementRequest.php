@@ -10,7 +10,7 @@ class CreateMovementRequest
         public Asset $asset,
         public int $type,
         public float $value,
-        public float $residualPrice,
+        public ?float $residualPrice,
         public string $description,
         public string $accountDebited,
         public string $accountCredited,

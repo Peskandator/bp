@@ -87,6 +87,20 @@ class Movement
         $this->description = $request->description;
     }
 
+    public function updateInclusionOrDisposal($value, $residualPrice, $date): void
+    {
+        $this->value = $value;
+        $this->residualPrice = $residualPrice;
+        $this->date = $date;
+    }
+
+    public function edit(string $description, ?DateTimeInterface $date, string $accDebited, string $accCredited) {
+        $this->description = $description;
+        $this->date = $date;
+        $this->accountDebited = $accDebited;
+        $this->accountCredited = $accCredited;
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -120,6 +134,11 @@ class Movement
     public function getResidualPrice(): ?float
     {
         return $this->residualPrice;
+    }
+
+    public function setResidualPrice(?float $price): void
+    {
+        $this->residualPrice = $price;
     }
 
     public function getDate(): DateTimeInterface

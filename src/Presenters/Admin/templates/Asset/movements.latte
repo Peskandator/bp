@@ -23,7 +23,7 @@
 
 
 {block content}
-
+<div class="js-page-movements">
     <h1>Pohyby majetku inv. č. {$asset->getInventoryNumber()} - {$asset->getName()}</h1>
 
     {include assetTabs from 'assetTabs.latte'}
@@ -35,6 +35,25 @@
                     <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                 </div>
                 <input n:name="id" class="js-delete-record-id">
+            </form>
+
+            <form n:name="editMovementForm" class="edit-movement-form">
+                <div class="form-errors d-block" n:ifcontent>
+                    <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+                </div>
+                <div class="d-none">
+                    <input n:name="id" class="form-movement-id">
+                    <input n:name="description" class="form-movement-description">
+                    <input n:name="date" class="form-movement-date">
+                    <input n:name="acc_debited" class="form-movement-accDebited">
+                    <input n:name="acc_credited" class="form-movement-accCredited">
+                </div>
+                <div class="form-errors d-block" n:ifcontent>
+                    <div n:foreach="$form['description']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Popis -</b> {$error}</div>
+                    <div n:foreach="$form['date']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Datum -</b> {$error}</div>
+                    <div n:foreach="$form['acc_debited']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Účet MD -</b> {$error}</div>
+                    <div n:foreach="$form['acc_credited']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Účet DAL -</b> {$error}</div>
+                </div>
             </form>
 
             <div class="card">
@@ -58,12 +77,22 @@
                             </thead>
                             <tbody>
                             {foreach $movements as $movement}
+                                {var $movementId = $movement->getId()}
                                 <tr>
                                     <td>
                                         {$movement->getTypeName()}
                                     </td>
                                     <td>
-                                        {$movement->getDate()->format('j. n. Y')}
+                                        <span class="movement-date-text-{$movementId} js-edit-text js-text-{$movementId}">{$movement->getDate()->format('j. n. Y')}</span>
+                                        <div class="form-group">
+                                            <input
+                                                type="date"
+                                                class="movement-date-{$movementId} form-control js-edit-input js-input-{$movementId}"
+                                                value="{$movement->getDate()->format('Y-m-d')}"
+                                                data-tab-index="1"
+                                                style="display: none; min-width: 70px"
+                                            >
+                                        </div>
                                     </td>
                                     <td>
                                         {$movement->getValue()}
@@ -72,26 +101,60 @@
                                         {$movement->getResidualPrice()}
                                     </td>
                                     <td>
-                                        {$movement->getDescription()}
+                                        <span class="movement-description-text-{$movementId} js-edit-text js-text-{$movementId}">{$movement->getDescription()}</span>
+                                        <div class="form-group">
+                                            <input
+                                                type="text"
+                                                class="movement-description-{$movementId} form-control js-edit-input js-input-{$movementId}"
+                                                style="display: none; min-width: 70px"
+                                                value="{$movement->getDescription()}"
+                                                data-tab-index="2"
+                                            >
+                                        </div>
                                     </td>
                                     <td>
-                                        {$movement->getAccountDebited()}
+                                        <span class="movement-accDebited-text-{$movementId} js-edit-text js-text-{$movementId}">{$movement->getAccountDebited()}</span>
+                                        <div class="form-group">
+                                            <input
+                                                type="text"
+                                                class="movement-accDebited-{$movementId} form-control js-edit-input js-input-{$movementId}"
+                                                style="display: none; min-width: 70px"
+                                                value="{$movement->getAccountDebited()}"
+                                                data-tab-index="3"
+                                            >
+                                        </div>
                                     </td>
                                     <td>
-                                        {$movement->getAccountCredited()}
+                                        <span class="movement-accCredited-text-{$movementId} js-edit-text js-text-{$movementId}">{$movement->getAccountCredited()}</span>
+                                        <div class="form-group">
+                                            <input
+                                                type="text"
+                                                class="movement-accCredited-{$movementId} form-control js-edit-input js-input-{$movementId}"
+                                                style="display: none; min-width: 70px"
+                                                value="{$movement->getAccountCredited()}"
+                                                data-tab-index="4"
+                                            >
+                                        </div>
                                     </td>
                                     <td>
-                                        {if $movement->isDeletable()}
-                                            <div class="d-flex">
-                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text align-self-center"
+                                        <div class="d-flex">
+
+                                        <button class="edit-movement-button btn-primary btn btn-sm js-edit-input" style="display: none" data-movement-id="{$movement->getId()}">OK</button>
+                                        <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start"
+                                           title="Upravit"
+                                           data-record-id="{$movement->getId()}"
+                                           data-movement-type="{$movement->getType()}">
+                                        </i>
+                                            {if $movement->isDeletable()}
+                                                <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text align-self-center icon-left"
                                                    title="Odstranit"
                                                    data-bs-toggle="modal"
                                                    data-bs-target="#deleteMovementModal"
                                                    data-record-name="{$movement->getTypeName()} ({$movement->getDate()->format('j. n. Y')})"
                                                    data-record-id="{$movement->getId()}"
                                                 ></i>
-                                            </div>
-                                        {/if}
+                                            {/if}
+                                        </div>
                                     </td>
                                 </tr>
                             {/foreach}
@@ -102,4 +165,5 @@
             </div>
         </div>
     </div>
+</div>
 {/block}

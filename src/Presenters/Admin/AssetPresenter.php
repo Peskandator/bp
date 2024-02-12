@@ -8,6 +8,7 @@ use App\Entity\Movement;
 use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Majetek\Forms\EditMovementFormFactory;
 use App\Majetek\ORM\MovementRepository;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
@@ -27,6 +28,7 @@ final class AssetPresenter extends BaseAdminPresenter
     private EditDepreciationCalculator $editDepreciationCalculator;
     private DeleteMovementAction $deleteMovementAction;
     private MovementRepository $movementRepository;
+    private EditMovementFormFactory $editMovementFormFactory;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
@@ -34,6 +36,7 @@ final class AssetPresenter extends BaseAdminPresenter
         AssetFormJsonGenerator $jsonGenerator,
         EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
         EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
+        EditMovementFormFactory $editMovementFormFactory,
         EditDepreciationCalculator $editDepreciationCalculator,
         DeleteMovementAction $deleteMovementAction,
         MovementRepository $movementRepository,
@@ -48,6 +51,7 @@ final class AssetPresenter extends BaseAdminPresenter
         $this->editDepreciationCalculator = $editDepreciationCalculator;
         $this->deleteMovementAction = $deleteMovementAction;
         $this->movementRepository = $movementRepository;
+        $this->editMovementFormFactory = $editMovementFormFactory;
     }
 
     public function actionDefault(int $assetId): void
@@ -106,6 +110,12 @@ final class AssetPresenter extends BaseAdminPresenter
         return $form;
     }
 
+    protected function createComponentEditMovementForm(): Form
+    {
+        $form = $this->editMovementFormFactory->create($this->currentEntity);
+        return $form;
+    }
+
     protected function createComponentDeleteMovementForm(): Form
     {
         $form = new Form;
@@ -154,7 +164,7 @@ final class AssetPresenter extends BaseAdminPresenter
             if ($a->getDate() < $b->getDate()) {
                 return -1;
             }
-                return 0;
+            return 0;
         });
 
         return $movements;

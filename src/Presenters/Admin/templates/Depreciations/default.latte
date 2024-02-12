@@ -142,7 +142,7 @@
                                                 <div class="form-group">
                                                     <input type="number"
                                                            class="depreciationTax-percentage-{$depreciationId} form-control js-edit-input-tax js-input-tax-{$depreciationId} js-percentage-input-tax"
-                                                           style="display: none"
+                                                           style="display: none; min-width: 70px"
                                                            value="{$depreciation->getPercentage()}"
                                                            data-depreciation-id="{$depreciationId}"
                                                            data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
@@ -155,7 +155,7 @@
                                                 <div class="form-group">
                                                     <input type="number"
                                                            class="depreciationTax-amount-{$depreciationId} form-control js-edit-input-tax js-input-tax-{$depreciationId} js-amount-input-tax"
-                                                           style="display: none"
+                                                           style="display: none; min-width: 100px"
                                                            value="{$depreciation->getDepreciationAmount()}"
                                                            data-depreciation-id="{$depreciationId}"
                                                            data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
@@ -273,7 +273,7 @@
                                             <div class="form-group">
                                                 <input type="number"
                                                        class="depreciationAccounting-percentage-{$depreciationId} form-control js-edit-input-accounting js-input-accounting-{$depreciationId} js-percentage-input-accounting"
-                                                       style="display: none"
+                                                       style="display: none; min-width: 70px"
                                                        value="{$depreciation->getPercentage()}"
                                                        data-depreciation-id="{$depreciationId}"
                                                        data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"
@@ -286,7 +286,7 @@
                                             <div class="form-group">
                                                 <input type="number"
                                                        class="depreciationAccounting-amount-{$depreciationId} form-control js-edit-input-accounting js-input-accounting-{$depreciationId} js-amount-input-accounting"
-                                                       style="display: none"
+                                                       style="display: none; min-width: 100px"
                                                        value="{$depreciation->getDepreciationAmount()}"
                                                        data-depreciation-id="{$depreciationId}"
                                                        data-base-amount="{round($depreciation->getBaseDepreciationAmount($editDepreciationCalculator))}"

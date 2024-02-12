@@ -233,6 +233,11 @@ class Asset
         return $this->entryDate;
     }
 
+    public function setEntryDate(?\DateTimeInterface $date): void
+    {
+        $this->entryDate = $date;
+    }
+
     public function getAcquisitionDate(): ?\DateTimeInterface
     {
         return $this->acquisitionDate;
