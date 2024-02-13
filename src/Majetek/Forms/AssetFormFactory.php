@@ -343,6 +343,7 @@ class AssetFormFactory
                                     $baseEntryPrice += $increasedPriceDiff;
                                     if ($baseEntryPrice < 0) {
                                         $form['increased_price']->addError($errMsg);
+                                        $form->addError($errMsg);
                                         break;
                                     }
                                     $increased = true;
@@ -351,6 +352,7 @@ class AssetFormFactory
                                 if ($baseEntryPrice < 0) {
                                     $errMsg = 'Cena majetku musí být vždy vyšší než 0.';
                                     $form['increased_price']->addError($errMsg);
+                                    $form->addError($errMsg);
                                     break;
                                 }
                             }
@@ -422,8 +424,31 @@ class AssetFormFactory
                 }
             }
 
-            if ($form->hasErrors()) {
-                return;
+            if ($isAssetIncluded) {
+                $movements = $asset->getMovements();
+
+                /**
+                 * @var Movement $movement
+                 */
+                foreach ($movements as $movement) {
+                    // TODO: remove?
+                    $movementType = $movement->getType();
+                    if ($movementType === MovementType::DEPRECIATION_TAX || $movementType === MovementType::DEPRECIATION_ACCOUNTING) {
+                        continue;
+                    }
+                    //
+
+                    if ($movementType !== MovementType::INCLUSION && $movement->getDate() < $values->entry_date) {
+                        $errMsg = 'Datumy pohybů nemohou být dříve než datum zařazení.';
+                        $form['entry_date']->addError($errMsg);
+                        $form->addError($errMsg);
+                    }
+                    if ($values->disposal_date && $movementType !== MovementType::DISPOSAL && $movement->getDate() > $values->disposal_date) {
+                        $errMsg = 'Datumy pohybů nemohou být později než datum zařazení.';
+                        $form['entry_date']->addError($errMsg);
+                        $form->addError($errMsg);
+                    }
+                }
             }
 
             $units = $values->units;
@@ -431,6 +456,9 @@ class AssetFormFactory
                 $units = 1;
             }
 
+            if ($form->hasErrors()) {
+                return;
+            }
             $request = new CreateAssetRequest(
                 $type,
                 $values->name,

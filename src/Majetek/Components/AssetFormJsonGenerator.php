@@ -11,12 +11,16 @@ use App\Entity\AssetType;
 use App\Entity\Category;
 use App\Entity\DepreciationGroup;
 use App\Entity\Place;
+use App\Utils\AcquisitionsProvider;
 
 class AssetFormJsonGenerator
 {
+    private AcquisitionsProvider $acquisitionsProvider;
 
     public function __construct(
+        AcquisitionsProvider $acquisitionsProvider
     ) {
+        $this->acquisitionsProvider = $acquisitionsProvider;
     }
 
     public function createCategoriesGroupsJson(AccountingEntity $entity): string
@@ -119,7 +123,7 @@ class AssetFormJsonGenerator
     public function getAcquisitionCodesJson(AccountingEntity $entity): string
     {
         $codes = [];
-        $acquisitions = $entity->getAcquisitions();
+        $acquisitions = $this->acquisitionsProvider->provideAcquisitions($entity);
 
         /**
          * @var Acquisition $acquisition

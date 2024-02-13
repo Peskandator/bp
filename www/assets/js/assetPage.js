@@ -38,17 +38,19 @@ export default function() {
         const acquisitionSelect = $('#assetAcquisitionSelect');
         const acquisitionCodeJson = acquisitionSelect.attr('data-codes-json');
         const acquisitionCodes = jQuery.parseJSON(acquisitionCodeJson);
+        const invoiceContent = $(`.js-invoice-content`);
+
         acquisitionSelect.change(function(){
             changeAcquisition();
         });
 
         function changeAcquisition(){
             let acquisitionId = parseInt(acquisitionSelect.find(':selected').val());
-            let code = acquisitionCodes[acquisitionId];
+            let code = parseInt(acquisitionCodes[acquisitionId]);
             if (code === 1) {
-                $(`.js-invoice-content`).show();
+                invoiceContent.show();
             } else {
-                $(`.js-invoice-content`).hide();
+                invoiceContent.hide();
             }
         }
 

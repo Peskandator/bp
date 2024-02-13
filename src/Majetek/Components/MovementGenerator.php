@@ -30,13 +30,14 @@ class MovementGenerator
 
     protected function createInclusionMovementRequest(Asset $asset): CreateMovementRequest
     {
+        $category = $asset->getCategory();
         return new CreateMovementRequest(
             $asset,
             MovementType::INCLUSION,
             $asset->getEntryPrice(),
             $asset->getEntryPrice(),
             "Zařazení majetku",
-            "účet MD zařazení",
+            $category->getAccountAsset(),
             "321000",
             $asset->getEntryDate(),
         );
@@ -51,7 +52,6 @@ class MovementGenerator
     protected function createDisposalMovementRequest(Asset $asset): CreateMovementRequest
     {
         $category = $asset->getCategory();
-
         $amortisedPrice = $asset->getAmortisedPriceAccounting() ? $asset->getAmortisedPriceAccounting() : 0;
         return new CreateMovementRequest(
             $asset,

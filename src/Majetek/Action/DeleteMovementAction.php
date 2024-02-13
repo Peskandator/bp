@@ -49,7 +49,9 @@ class DeleteMovementAction
                     $dateOfLastChange = $dateOfChange;
                 }
             }
-            $asset->setIncreaseDate($dateOfLastChange);
+            if ($dateOfLastChange !== null) {
+                $asset->setIncreaseDate($dateOfLastChange);
+            }
             $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
         }
         $this->editDepreciationCalculator->updateDepreciationPlan($asset);
