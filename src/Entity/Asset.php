@@ -267,32 +267,7 @@ class Asset
 
     public function isPriceChangeMovementsRegeneratingNeeded(): bool
     {
-        $price = $this->getEntryPrice();
-        $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
-
-        /**
-         * @var Movement $movement
-         */
-        foreach ($movements as $movement) {
-            $value = $movement->getValue();
-            $price += $value;
-        }
-
-        if ($price !== $this->getIncreasedEntryPrice()) {
-            return true;
-        }
-        return false;
-    }
-
-    public function getCorrectEntryPrice(): ?float
-    {
-        $increasedPrice = $this->getIncreasedEntryPrice();
-        $entryPrice = $this->getEntryPrice();
-        if ($increasedPrice !== null) {
-            return $increasedPrice;
-        }
-
-        return $entryPrice;
+        return $this->getIncreasedEntryPriceByMovements() !== $this->getIncreasedEntryPrice();
     }
 
     public function getIncreasedEntryPriceByMovements(): ?float
@@ -344,7 +319,7 @@ class Asset
         return $this->increaseDate;
     }
 
-    public function setIncreaseDate(\DateTimeInterface $date): void
+    public function setIncreaseDate(?\DateTimeInterface $date): void
     {
          $this->increaseDate = $date;
     }
@@ -520,12 +495,12 @@ class Asset
 
     public function getAmortisedPriceTax(): ?float
     {
-        return $this->getCorrectEntryPrice() - $this->getDepreciatedAmountTax();
+        return $this->getIncreasedEntryPriceByMovements() - $this->getDepreciatedAmountTax();
     }
 
     public function getAmortisedPriceAccounting(): ?float
     {
-        return $this->getCorrectEntryPrice() - $this->getDepreciatedAmountAccounting();
+        return $this->getIncreasedEntryPriceByMovements() - $this->getDepreciatedAmountAccounting();
     }
 
     public function getUnits(): ?int
@@ -574,6 +549,31 @@ class Asset
     public function getMovements(): Collection
     {
         return $this->movements;
+    }
+
+    public function getSortedMovements(): array
+    {
+        return $this->sortMovementsByDate($this->getMovements()->toArray());
+    }
+
+    public function getSortedPriceChangeMovements(): array
+    {
+        return $this->sortMovementsByDate($this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE));
+    }
+
+    protected function sortMovementsByDate(array $movements): array
+    {
+        usort($movements, function(Movement $a, Movement $b) {
+            if ($a->getDate() > $b->getDate()) {
+                return 1;
+            }
+            if ($a->getDate() < $b->getDate()) {
+                return -1;
+            }
+            return 0;
+        });
+
+        return $movements;
     }
 
     public function getMovementsWithType(int $type): array

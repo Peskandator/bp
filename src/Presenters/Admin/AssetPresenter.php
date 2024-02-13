@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
-use App\Entity\Asset;
 use App\Entity\Movement;
 use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
+use App\Majetek\Enums\MovementType;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Majetek\Forms\EditMovementFormFactory;
 use App\Majetek\ORM\MovementRepository;
@@ -74,7 +74,7 @@ final class AssetPresenter extends BaseAdminPresenter
         $asset = $this->findAssetById($assetId);
         $this->template->asset = $asset;
         $this->template->activeTab = 2;
-        $this->template->movements = $this->getSortedMovements($asset);
+        $this->template->movements = $asset->getSortedMovements();
 
     }
 
@@ -141,6 +141,26 @@ final class AssetPresenter extends BaseAdminPresenter
                 $form->addError($errMsg);
                 $this->flashMessage($errMsg, FlashMessageType::ERROR);
             }
+            if ($movement->getType() === MovementType::ENTRY_PRICE_CHANGE && $movement->getValue() > 0) {
+                $asset = $movement->getAsset();
+                $priceChanges = $asset->getSortedMovements();
+                $price = $asset->getEntryPrice();
+                /**
+                 * @var Movement $change
+                 */
+                foreach ($priceChanges as $change) {
+                    if ($change->getId() === $movement->getId()) {
+                        continue;
+                    }
+                    $price += $change->getValue();
+                    if ($price < 0) {
+                        $errMsg = 'Cena majetku musí být vždy vyšší než 0.';
+                        $form->addError($errMsg);
+                        $this->flashMessage($errMsg, FlashMessageType::ERROR);
+                        return;
+                    }
+                }
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -151,22 +171,5 @@ final class AssetPresenter extends BaseAdminPresenter
         };
 
         return $form;
-    }
-
-    protected function getSortedMovements(Asset $asset): array
-    {
-        $movements = $asset->getMovements()->toArray();
-
-        usort($movements, function(Movement $a, Movement $b) {
-            if ($a->getDate() > $b->getDate()) {
-                return 1;
-            }
-            if ($a->getDate() < $b->getDate()) {
-                return -1;
-            }
-            return 0;
-        });
-
-        return $movements;
     }
 }

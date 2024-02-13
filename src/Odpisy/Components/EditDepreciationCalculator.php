@@ -27,7 +27,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
         $asset = $depreciation->getAsset();
 
         $depreciatedAmount = $asset->getBaseDepreciatedAmountTax();
-        $correctEntryPrice = $asset->getCorrectEntryPrice();
+        $correctEntryPrice = $asset->getPriceForYear($depreciation->getYear());
         $entryPrice = $asset->getEntryPrice();
         if ($depreciation->isAccountingDepreciation() && !$asset->isOnlyTax()) {
             $depreciatedAmount = $asset->getBaseDepreciatedAmountAccounting();
@@ -83,7 +83,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $this->getTotalDepreciationYears($group),
             $group->getMonths(),
             $asset->getEntryPrice(),
-            $asset->getCorrectEntryPrice(),
+            $asset->getPriceForYear($year),
             0,
             $depreciatedAmount,
             $editedDepreciation->getRateFormat(),
@@ -113,7 +113,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $this->getTotalDepreciationYears($group),
             $group->getMonths(),
             $asset->getEntryPrice(),
-            $asset->getCorrectEntryPrice(),
+            $asset->getPriceForYear($year),
             0,
             $depreciatedAmount,
             $editedDepreciation->getRateFormat(),

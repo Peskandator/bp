@@ -190,16 +190,15 @@ class MovementGenerator
 
     public function regenerateResidualPricesForPriceChangeMovements(Asset $asset): void
     {
-        $baseIncreasedEntryPrice = $asset->getIncreasedEntryPrice();
-        $changeMovements = $this->getSortedMovements($asset->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE));
+        $residualPrice = $asset->getEntryPrice();
+        $changeMovements = $asset->getSortedPriceChangeMovements();
         /**
          * @var Movement $movement
          */
-        $residualPrice = $baseIncreasedEntryPrice;
         foreach ($changeMovements as $movement) {
             $value = $movement->getValue();
+            $residualPrice += $value;
             $movement->setResidualPrice($residualPrice);
-            $residualPrice -= $value;
         }
     }
 
@@ -260,20 +259,5 @@ class MovementGenerator
         if ($movement) {
             $this->entityManager->remove($movement);
         }
-    }
-
-    protected function getSortedMovements(array $movements): array
-    {
-        usort($movements, function(Movement $a, Movement $b) {
-            if ($a->getDate() > $b->getDate()) {
-                return 1;
-            }
-            if ($a->getDate() < $b->getDate()) {
-                return -1;
-            }
-            return 0;
-        });
-
-        return array_reverse($movements);
     }
 }

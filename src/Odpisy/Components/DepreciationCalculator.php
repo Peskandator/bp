@@ -354,18 +354,7 @@ class DepreciationCalculator
 
     protected function isIncreased(RecalculateDepreciationsRequest $request): bool
     {
-        if ($request->entryPrice >= $request->correctEntryPrice) {
-            return false;
-        }
-
-        if ($request->increaseDate) {
-            $increaseYear = (int)$request->increaseDate->format('Y');
-            if ($increaseYear >= $request->year) {
-                return true;
-            }
-        }
-
-        return false;
+        return $request->correctEntryPrice > $request->entryPrice;
     }
 
     protected function checkGenerationForYear(RecalculateDepreciationsRequest $request): bool

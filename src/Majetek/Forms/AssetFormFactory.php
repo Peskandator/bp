@@ -8,10 +8,12 @@ use App\Entity\AccountingEntity;
 use App\Entity\Asset;
 use App\Entity\AssetType;
 use App\Entity\DepreciationGroup;
+use App\Entity\Movement;
 use App\Majetek\Action\CreateAssetAction;
 use App\Majetek\Action\EditAssetAction;
 use App\Majetek\Enums\AssetTypesCodes;
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Enums\MovementType;
 use App\Majetek\ORM\AcquisitionRepository;
 use App\Majetek\ORM\AssetTypeRepository;
 use App\Majetek\ORM\CategoryRepository;
@@ -319,7 +321,40 @@ class AssetFormFactory
 //                        $form['increase_date']->addError('Datum nemůže být v budoucnosti.');
 //                        $form->addError('Datum zvýšení vstupní ceny nemůže být v budoucnosti.');
 //                    }
+
+                    if ($isAssetIncluded) {
+                        $increasedPriceDiff = $increasedPrice - $asset->getIncreasedEntryPriceByMovements();
+                        if ($increasedPriceDiff < 0) {
+                            $baseEntryPrice = $entryPrice;
+                            $priceChangeMovements = $asset->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
+
+                            $increased = false;
+                            /**
+                             * @var Movement $movement
+                             */
+                            foreach ($priceChangeMovements as $movement) {
+                                $errMsg = 'Cena majetku musí být vždy vyšší než 0.';
+                                if (!$increased && $values->increase_date < $movement->getDate()) {
+                                    $baseEntryPrice += $increasedPriceDiff;
+                                    if ($baseEntryPrice < 0) {
+                                        $form['increased_price']->addError($errMsg);
+                                        break;
+                                    }
+                                    $increased = true;
+                                }
+                                $baseEntryPrice += $movement->getValue();
+                                if ($baseEntryPrice < 0) {
+                                    $errMsg = 'Cena majetku musí být vždy vyšší než 0.';
+                                    $form['increased_price']->addError($errMsg);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
+            } else if ($isAssetIncluded && count($asset->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE)) > 0) {
+                $errMsg = 'Zvýšená cena majetku musí být zadána, pokud existují pohyby změn vstupní ceny.';
+                $form['increased_price']->addError($errMsg);
             }
             if ($values->increase_date && !$increasedPrice) {
                 $form['increased_price']->addError('Je nutné vyplnit.');
@@ -329,7 +364,6 @@ class AssetFormFactory
             if (!$this->isInventoryNumberAvailable($currentEntity, $values->inventory_number) && !$editing){
                 $form['inventory_number']->addError('Majetek s tímto inventárním číslem již existuje');
                 $form->addError('Majetek se zadaným inventárním číslem již existuje');
-                return;
             }
             if (!$type || $type->getEntity()->getId() !== $currentEntity->getId()) {
                 $form['type']->addError('Tento typ neexistuje');
