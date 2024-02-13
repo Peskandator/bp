@@ -27,11 +27,20 @@ class EditAssetAction
 
     public function __invoke(AccountingEntity $entity, Asset $asset, CreateAssetRequest $request): void
     {
-        $this->movementGenerator->generateEntryPriceChangeMovement($asset, $request);
-        $this->movementGenerator->generateInfoChangeMovements($asset, $request);
-        $asset->update($request);
+        if (!$asset->isIncluded() && $request->isIncluded) {
+            if ($request->increasedEntryPrice !== $request->entryPrice) {
+                $this->movementGenerator->createEntryPriceChangeMovement($asset, $request, false);
+            }
+            $asset->update($request);
+        }
+
+        if ($asset->isIncluded()) {
+            $this->movementGenerator->generateEntryPriceChangeMovement($asset, $request);
+            $this->movementGenerator->generateInfoChangeMovements($asset, $request);
+            $asset->update($request);
+            $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
+        }
         $this->movementGenerator->regenerateMovementsAfterAssetEdit($asset);
-        $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
         $this->editDepreciationCalculator->updateDepreciationPlan($asset);
         $this->entityManager->flush();
     }

@@ -57,7 +57,7 @@ class DepreciationCalculator
             $this->getTotalDepreciationYears($group),
             $group->getMonths(),
             $asset->getEntryPrice(),
-            $asset->getCorrectEntryPrice(),
+            $asset->getEntryPrice(),
             $asset->getEntryPrice() - $asset->getBaseDepreciatedAmountTax(),
             $asset->getBaseDepreciatedAmountTax(),
             $group->getRateFormat(),
@@ -78,7 +78,7 @@ class DepreciationCalculator
             $this->getTotalDepreciationYears($group),
             $group->getMonths(),
             $asset->getEntryPrice(),
-            $asset->getCorrectEntryPrice(),
+            $asset->getEntryPrice(),
             $asset->getEntryPrice() - $asset->getBaseDepreciatedAmountAccounting(),
             $asset->getBaseDepreciatedAmountAccounting(),
             $group->getRateFormat(),
@@ -100,6 +100,7 @@ class DepreciationCalculator
                 $request->asset->getTaxDepreciations()->removeElement($depreciation);
                 $this->entityManager->remove($depreciation);
                 $request->year++;
+                $request->correctEntryPrice = $request->asset->getPriceForYear($request->year);
                 continue;
             }
 
@@ -110,6 +111,7 @@ class DepreciationCalculator
                 $request->depreciationYear++;
             }
             $request->year++;
+            $request->correctEntryPrice = $request->asset->getPriceForYear($request->year);
         }
         $this->entityManager->flush();
     }
@@ -128,6 +130,7 @@ class DepreciationCalculator
                 $request->asset->getAccountingDepreciations()->removeElement($depreciation);
                 $this->entityManager->remove($depreciation);
                 $request->year++;
+                $request->correctEntryPrice = $request->asset->getPriceForYear($request->year);
                 continue;
             }
 
@@ -138,6 +141,7 @@ class DepreciationCalculator
                 $request->depreciationYear++;
             }
             $request->year++;
+            $request->correctEntryPrice = $request->asset->getPriceForYear($request->year);
         }
         $this->entityManager->flush();
     }

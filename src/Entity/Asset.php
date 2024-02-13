@@ -265,6 +265,25 @@ class Asset
         return $this->increasedEntryPrice;
     }
 
+    public function isPriceChangeMovementsRegeneratingNeeded(): bool
+    {
+        $price = $this->getEntryPrice();
+        $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
+
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            $value = $movement->getValue();
+            $price += $value;
+        }
+
+        if ($price !== $this->getIncreasedEntryPrice()) {
+            return true;
+        }
+        return false;
+    }
+
     public function getCorrectEntryPrice(): ?float
     {
         $increasedPrice = $this->getIncreasedEntryPrice();
@@ -276,18 +295,48 @@ class Asset
         return $entryPrice;
     }
 
+    public function getIncreasedEntryPriceByMovements(): ?float
+    {
+        $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
+        $price = $this->getEntryPrice();
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            $price += $movement->getValue();
+        }
+
+        return $price;
+    }
+
+    public function getPriceForYear(int $year): ?float
+    {
+        $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
+        $price = $this->getEntryPrice();
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            if ((int)$movement->getDate()->format('Y') <= $year) {
+                $price += $movement->getValue();
+            }
+        }
+
+        return $price;
+    }
+
     public function recalculateIncreasedEntryPrice(): void
     {
         $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
-        $entryPrice = $this->getEntryPrice();
+        $price = $this->getEntryPrice();
 
         /**
          * @var Movement $movement
          */
         foreach ($movements as $movement) {
-            $entryPrice += $movement->getValue();
+            $price += $movement->getValue();
         }
-        $this->entryPrice = $entryPrice;
+        $this->increasedEntryPrice = $price;
     }
 
     public function getIncreaseDate(): ?\DateTimeInterface

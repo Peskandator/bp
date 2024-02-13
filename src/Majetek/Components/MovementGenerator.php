@@ -89,13 +89,16 @@ class MovementGenerator
     {
         $correctEntryPrice = $request->entryPrice;
         if ($editing) {
-            $correctEntryPrice = $asset->getCorrectEntryPrice();
+            $correctEntryPrice = $asset->getIncreasedEntryPriceByMovements();
         }
         $value = $request->increasedEntryPrice - $correctEntryPrice;
 
         $description = "Zvýšení vstupní ceny";
         if ($value < 0) {
             $description = "Snížení vstupní ceny";
+        }
+        if ($value === (float)0) {
+            return;
         }
 
         $movementRequest = new CreateMovementRequest(
@@ -164,15 +167,12 @@ class MovementGenerator
 
     public function regenerateMovementsAfterAssetEdit(Asset $asset): void
     {
+        if (!$asset->isIncluded()) {
+            return;
+        }
         $inclusionMovement = $asset->getInclusionMovement();
         $disposalMovement = $asset->getDisposalMovement();
 
-        // this code is partially not needed in current app state
-        if (!$asset->isIncluded()) {
-            $this->removeMovement($inclusionMovement);
-            $this->removeMovement($disposalMovement);
-            return;
-        }
         if ($inclusionMovement) {
             $inclusionMovement->updateInclusionOrDisposal($asset->getEntryPrice(), $asset->getEntryPrice(), $asset->getEntryDate());
         } else  {
@@ -185,9 +185,7 @@ class MovementGenerator
                 return;
             }
             $this->createDisposalMovement($asset);
-            return;
         }
-        $this->removeMovement($disposalMovement);
     }
 
     public function regenerateResidualPricesForPriceChangeMovements(Asset $asset): void
@@ -207,7 +205,7 @@ class MovementGenerator
 
     public function generateEntryPriceChangeMovement(Asset $asset, CreateAssetRequest $request): void
     {
-        if ($asset->getIncreasedEntryPrice() !== $request->increasedEntryPrice) {
+        if ($asset->getIncreasedEntryPrice() !== $request->increasedEntryPrice || $asset->isPriceChangeMovementsRegeneratingNeeded()) {
             $this->createEntryPriceChangeMovement($asset, $request, true);
         }
     }
