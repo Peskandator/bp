@@ -19,6 +19,7 @@ use App\Majetek\ORM\AssetTypeRepository;
 use App\Majetek\ORM\CategoryRepository;
 use App\Majetek\ORM\DepreciationGroupRepository;
 use App\Majetek\ORM\DisposalRepository;
+use App\Majetek\ORM\LocationRepository;
 use App\Majetek\ORM\PlaceRepository;
 use App\Majetek\Requests\CreateAssetRequest;
 use App\Utils\AcquisitionsProvider;
@@ -39,6 +40,7 @@ class AssetFormFactory
     private EnumerableSorter $enumerableSorter;
     private EditAssetAction $editAssetAction;
     private DisposalRepository $disposalRepository;
+    private LocationRepository $locationRepository;
 
     public function __construct(
         AcquisitionsProvider $acquisitionsProvider,
@@ -51,6 +53,7 @@ class AssetFormFactory
         EnumerableSorter $enumerableSorter,
         EditAssetAction $editAssetAction,
         DisposalRepository $disposalRepository,
+        LocationRepository $locationRepository,
     )
     {
         $this->acquisitionsProvider = $acquisitionsProvider;
@@ -63,6 +66,7 @@ class AssetFormFactory
         $this->enumerableSorter = $enumerableSorter;
         $this->editAssetAction = $editAssetAction;
         $this->disposalRepository = $disposalRepository;
+        $this->locationRepository = $locationRepository;
     }
     public function create(AccountingEntity $currentEntity, bool $editing, ?Asset $asset = null): Form
     {
@@ -287,6 +291,7 @@ class AssetFormFactory
             $category = $this->categoryRepository->find($values->category);
             $groupTax = $this->depreciationGroupRepository->find($values->group_tax);
             $groupAccounting = $this->depreciationGroupRepository->find($values->group_accounting);
+            $location = $this->locationRepository->find($values->location);
             $place = $this->placeRepository->find($values->place);
             $acquisition = $this->acquisitionRepository->find($values->acquisition);
 
@@ -434,6 +439,7 @@ class AssetFormFactory
                 $category,
                 $acquisition,
                 $disposal,
+                $location,
                 $place,
                 $units,
                 $values->only_tax,
@@ -492,7 +498,7 @@ class AssetFormFactory
             'note' => $asset->getNote(),
         ]);
 
-        $locationId = $asset->getLocation() ? $asset->getLocation()->getId() : null;
+        $locationId = $asset->getLocation()?->getId();
         $placeId = $asset->getPlace()?->getId();
         $acquisitionId = $asset->getAcquisition()?->getId();
         $disposalId = $asset->getDisposal()?->getId();

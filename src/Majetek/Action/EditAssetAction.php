@@ -32,6 +32,8 @@ class EditAssetAction
                 $this->movementGenerator->createEntryPriceChangeMovement($asset, $request, false);
             }
             $asset->update($request);
+        } else {
+            $asset->update($request);
         }
 
         if ($asset->isIncluded()) {

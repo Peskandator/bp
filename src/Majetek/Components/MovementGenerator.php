@@ -119,8 +119,7 @@ class MovementGenerator
         $desription = "Změna střediska z ";
         $name1 = $asset->getLocation() ? $asset->getLocation()->getName() : "žádného";
         $desription .= $name1;
-        // TODO vyzkoušet
-        $name2 = $request->place ? ($request->place->getLocation() ? $request->place->getLocation()->getName() : "žádné") : "žádné";
+        $name2 = $request->location ? $request->location->getName() : "žádné";
         $desription .= " na " . $name2;
 
         $movementRequest = new CreateMovementRequest(
@@ -221,16 +220,16 @@ class MovementGenerator
 
     protected function getLocationIdFromRequest(CreateAssetRequest $request): ?int
     {
-        if ($request->place === null) {
+        if ($request->location === null) {
             return null;
         }
-        return $request->place->getLocation()->getId();
+        return $request->location->getId();
     }
 
     protected function getLocationIdAsset(Asset $asset): ?int
     {
         $location = $asset->getLocation();
-        if ($asset->getLocation() === null) {
+        if ($location === null) {
             return null;
         }
         return $location->getId();

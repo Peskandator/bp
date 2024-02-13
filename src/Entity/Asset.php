@@ -130,6 +130,11 @@ class Asset
      */
     private ?Disposal $disposal;
     /**
+     * @ORM\ManyToOne(targetEntity="Location")
+     * @ORM\JoinColumn(name="location_id", referencedColumnName="id", nullable=true)
+     */
+    private ?Location $location;
+    /**
      * @ORM\ManyToOne(targetEntity="Place")
      * @ORM\JoinColumn(name="place_id", referencedColumnName="id", nullable=true)
      */
@@ -188,6 +193,7 @@ class Asset
         $this->category = $request->category;
         $this->acquisition = $request->acquisition;
         $this->disposal = $request->disposal;
+        $this->location = $request->location;
         $this->place = $request->place;
         $this->units = $request->units;
         $this->isOnlyTax = $request->onlyTax;
@@ -467,11 +473,7 @@ class Asset
 
     public function getLocation(): ?Location
     {
-        $place = $this->getPlace();
-        if ($place) {
-            return $place->getLocation();
-        }
-        return null;
+        return $this->location;
     }
 
     public function getAcquisition(): ?Acquisition
