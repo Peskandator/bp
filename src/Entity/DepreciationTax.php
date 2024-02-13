@@ -109,7 +109,7 @@ class DepreciationTax implements Depreciation
         $this->executed = false;
         $this->accounted = false;
         $this->entryPrice = $request->asset->getEntryPrice();
-        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPrice();
+        $this->increasedEntryPrice = $request->asset->getPriceForYear($request->year);
         $this->depreciationYear = $request->depreciationYear;
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->year = $request->year;
@@ -141,7 +141,7 @@ class DepreciationTax implements Depreciation
         $this->residualPrice = $residualPrice;
         $this->executed = false;
         $this->entryPrice = $asset->getEntryPrice();
-        $this->increasedEntryPrice = $asset->getIncreasedEntryPrice();
+        $this->increasedEntryPrice = $asset->getPriceForYear($year);
         $this->depreciationYear = $depreciationYear;
         $this->depreciatedAmount = $depreciatedAmount;
         $this->year = $year;
@@ -275,5 +275,17 @@ class DepreciationTax implements Depreciation
     public function getBaseDepreciationAmount(EditDepreciationCalculator $calculator): float
     {
         return $calculator->getBaseDepreciationAmountTax($this);
+    }
+
+    public function isExecutionCancelable(): bool
+    {
+        $asset = $this->getAsset();
+        $year = $this->getYear();
+        $nextYearDepreciation = $asset->getTaxDepreciationForYear($year + 1);
+        if ($nextYearDepreciation !== null && $nextYearDepreciation->isExecuted()) {
+            return false;
+        }
+
+        return true;
     }
 }

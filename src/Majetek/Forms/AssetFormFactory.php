@@ -313,10 +313,12 @@ class AssetFormFactory
                         $form['increase_date']->addError('Nemůže být dříve než datum zařazení');
                         $form->addError('Datum zvýšení vstupní ceny nemůže být před datumem zařazení');
                     }
-                    if ($values->increase_date > $today) {
-                        $form['increase_date']->addError('Datum nemůže být v budoucnosti.');
-                        $form->addError('Datum zvýšení vstupní ceny nemůže být v budoucnosti.');
-                    }
+
+                    // TODO: ONLY FOR TESTING REASONS!
+//                    if ($values->increase_date > $today) {
+//                        $form['increase_date']->addError('Datum nemůže být v budoucnosti.');
+//                        $form->addError('Datum zvýšení vstupní ceny nemůže být v budoucnosti.');
+//                    }
                 }
             }
             if ($values->increase_date && !$increasedPrice) {

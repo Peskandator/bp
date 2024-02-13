@@ -16,4 +16,5 @@ interface Depreciation
     public function isExecutable(): bool;
     public function getYear(): ?int;
     public function getDepreciationGroup(): DepreciationGroup;
+    public function isExecutionCancelable(): bool;
 }

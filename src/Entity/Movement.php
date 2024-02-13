@@ -190,30 +190,8 @@ class Movement
     public function isDeletable(): bool
     {
         $asset = $this->getAsset();
-
-        if ($this->getType() === MovementType::DEPRECIATION_TAX) {
-            $allMovements = $asset->getMovementsWithType(MovementType::DEPRECIATION_TAX);
-            /**
-             * @var Movement $movement
-             */
-            foreach ($allMovements as $movement) {
-                $isPreviousYear = (int)$movement->getDate()->format('Y') < (int)$this->getDate()->format('Y');
-                if ($isPreviousYear && $movement->getId() !== $this->getId()) {
-                    return false;
-                }
-            }
-        }
-        if ($this->getType() === MovementType::DEPRECIATION_ACCOUNTING) {
-            $allMovements = $asset->getMovementsWithType(MovementType::DEPRECIATION_ACCOUNTING);
-            /**
-             * @var Movement $movement
-             */
-            foreach ($allMovements as $movement) {
-                $isPreviousYear = (int)$movement->getDate()->format('Y') < (int)$this->getDate()->format('Y');
-                if ($isPreviousYear && $movement->getId() !== $this->getId()) {
-                    return false;
-                }
-            }
+        if ($this->getType() === MovementType::DEPRECIATION_TAX || $this->getType() === MovementType::DEPRECIATION_ACCOUNTING) {
+            return $this->getDepreciation()->isExecutionCancelable();
         }
         if ($this->getType() === MovementType::INCLUSION) {
             $movements = $asset->getMovements();

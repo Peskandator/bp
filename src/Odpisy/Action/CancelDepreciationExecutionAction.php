@@ -5,20 +5,16 @@ namespace App\Odpisy\Action;
 use App\Entity\AccountingEntity;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
-use App\Odpisy\Components\CancelDepreciationExecutionResolver;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CancelDepreciationExecutionAction
 {
     protected EntityManagerInterface $entityManager;
-    private CancelDepreciationExecutionResolver $cancelDepreciationExecutionResolver;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        CancelDepreciationExecutionResolver $cancelDepreciationExecutionResolver,
     ) {
         $this->entityManager = $entityManager;
-        $this->cancelDepreciationExecutionResolver = $cancelDepreciationExecutionResolver;
     }
 
     public function __invoke(AccountingEntity $entity, int $year): void
@@ -30,7 +26,7 @@ class CancelDepreciationExecutionAction
          * @var DepreciationTax $taxDepreciation
          */
         foreach ($taxDepreciations as $taxDepreciation) {
-            if (!$this->cancelDepreciationExecutionResolver->isTaxDepreciationCancelable($taxDepreciation)) {
+            if (!$taxDepreciation->isExecutionCancelable()) {
                 continue;
             }
             $asset = $taxDepreciation->getAsset();
@@ -42,7 +38,7 @@ class CancelDepreciationExecutionAction
          * @var DepreciationAccounting $accountingDepreciation
          */
         foreach ($accountingDepreciations as $accountingDepreciation) {
-            if (!$this->cancelDepreciationExecutionResolver->isAccountingDepreciationCancelable($accountingDepreciation)) {
+            if (!$accountingDepreciation->isExecutionCancelable()) {
                 continue;
             }
             $asset = $accountingDepreciation->getAsset();

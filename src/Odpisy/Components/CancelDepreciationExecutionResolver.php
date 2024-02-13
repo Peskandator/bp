@@ -14,31 +14,6 @@ class CancelDepreciationExecutionResolver
     {
     }
 
-
-    public function isTaxDepreciationCancelable(DepreciationTax $depreciationTax): bool
-    {
-        $asset = $depreciationTax->getAsset();
-        $year = $depreciationTax->getYear();
-        $nextYearDepreciation = $asset->getTaxDepreciationForYear($year + 1);
-        if ($nextYearDepreciation !== null && $nextYearDepreciation->isExecuted()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function isAccountingDepreciationCancelable(DepreciationAccounting $depreciationAccounting): bool
-    {
-        $asset = $depreciationAccounting->getAsset();
-        $year = $depreciationAccounting->getYear();
-        $nextYearDepreciation = $asset->getAccountingDepreciationForYear($year + 1);
-        if ($nextYearDepreciation !== null && $nextYearDepreciation->isExecuted()) {
-            return false;
-        }
-
-        return true;
-    }
-
     public function areCancellableExecutedDepreciationsForYearExisting(AccountingEntity $entity, int $year): bool
     {
         $taxDepreciations = $entity->getExecutedTaxDepreciationsForYear($year);
@@ -48,7 +23,7 @@ class CancelDepreciationExecutionResolver
          * @var DepreciationTax $taxDepreciation
          */
         foreach ($taxDepreciations as $taxDepreciation) {
-            if ($this->isTaxDepreciationCancelable($taxDepreciation)) {
+            if ($taxDepreciation->isExecutionCancelable()) {
                 return true;
             }
         }
@@ -56,7 +31,7 @@ class CancelDepreciationExecutionResolver
          * @var DepreciationAccounting $accountingDepreciation
          */
         foreach ($accountingDepreciations as $accountingDepreciation) {
-            if ($this->isAccountingDepreciationCancelable($accountingDepreciation)) {
+            if ($accountingDepreciation->isExecutionCancelable()) {
                 return true;
             }
         }

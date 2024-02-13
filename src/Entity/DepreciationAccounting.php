@@ -302,4 +302,16 @@ class DepreciationAccounting implements Depreciation
     {
         return $calculator->getBaseDepreciationAmountAccounting($this);
     }
+
+    public function isExecutionCancelable(): bool
+    {
+        $asset = $this->getAsset();
+        $year = $this->getYear();
+        $nextYearDepreciation = $asset->getAccountingDepreciationForYear($year + 1);
+        if ($nextYearDepreciation !== null && $nextYearDepreciation->isExecuted()) {
+            return false;
+        }
+
+        return true;
+    }
 }
