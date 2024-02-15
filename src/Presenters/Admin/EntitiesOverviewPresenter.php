@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\AccountingEntity;
 use App\Entity\EntityUser;
 use App\Entity\User;
@@ -54,6 +55,12 @@ final class EntitiesOverviewPresenter extends BaseAdminPresenter
 
     public function actionDefault(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Účetní jednotky',
+                null)
+        );
+
         $currentUser = $this->getCurrentUser();
         $this->template->entities = $this->getEntitiesForUser($currentUser);
         $currentEntityId = 0;
@@ -67,20 +74,57 @@ final class EntitiesOverviewPresenter extends BaseAdminPresenter
 
     public function actionCreateNew(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Účetní jednotky',
+                $this->lazyLink(':Admin:EntitiesOverview:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Nová účetní jednotka',
+                null)
+        );
     }
 
     public function actionEdit(int $entityId): void
     {
         $this->checkEntityAdmin();
-
         $editedEntity = $this->accountingEntityRepository->find($entityId);
+
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Účetní jednotky',
+                $this->lazyLink(':Admin:EntitiesOverview:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                $editedEntity->getName(),
+                null)
+        );
         $this->template->entity = $editedEntity;
     }
 
     public function actionManageUsers(int $entityId): void
     {
-        $currentUser = $this->getCurrentUser();
         $editedEntity = $this->accountingEntityRepository->find($entityId);
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Účetní jednotky',
+                $this->lazyLink(':Admin:EntitiesOverview:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                $editedEntity->getName(),
+                $this->lazyLink(':Admin:EntitiesOverview:edit', $editedEntity->getId()))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Správa uživatelů',
+                null)
+        );
+
+
+        $currentUser = $this->getCurrentUser();
         $this->template->entity = $editedEntity;
         $this->template->entityUsers = $editedEntity->getEntityUsers();
         $this->template->signedUser = $currentUser;

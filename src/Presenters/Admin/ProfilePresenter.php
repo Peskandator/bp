@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\User;
 use App\Presenters\BaseAdminPresenter;
 use App\User\Action\EditProfileAction;
@@ -26,6 +27,11 @@ final class ProfilePresenter extends BaseAdminPresenter
 
     public function actionDefault(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Profil',
+                null)
+        );
         $this->template->signedUser = $this->getCurrentUser();
     }
 

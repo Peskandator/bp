@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\Asset;
 use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
@@ -32,6 +33,17 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
 
     public function actionDefault(?int $yearArg = null): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Odpisy',
+                $this->lazyLink(':Admin:Depreciations:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Provedení',
+                null)
+        );
+
         $year = $yearArg;
         if (!$year) {
             $today = new \DateTimeImmutable('today');

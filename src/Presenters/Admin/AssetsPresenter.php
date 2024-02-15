@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\Asset;
 use App\Majetek\Action\DeleteAssetAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
@@ -39,6 +40,12 @@ final class AssetsPresenter extends BaseAdminPresenter
 
     public function actionDefault(?int $view = null): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Majetek',
+                null)
+        );
+
         $assets = $this->getFilteredAssets($view);
         $this->template->assets = $assets;
         $this->template->activeTab = $view;
@@ -46,6 +53,17 @@ final class AssetsPresenter extends BaseAdminPresenter
 
     public function actionCreate(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Majetek',
+                $this->lazyLink(':Admin:Assets:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Přidání majetku',
+                null)
+        );
+
         $this->template->categoriesGroupsJson = $this->jsonGenerator->createCategoriesGroupsJson($this->currentEntity);
         $this->template->placesLocationsJson = $this->jsonGenerator->createPlacesLocationsJson($this->currentEntity);
         $assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());

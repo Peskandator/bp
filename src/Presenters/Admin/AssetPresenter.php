@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Presenters\Admin;
+use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\Movement;
 use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
@@ -57,6 +58,23 @@ final class AssetPresenter extends BaseAdminPresenter
     public function actionDefault(int $assetId): void
     {
         $asset = $this->findAssetById($assetId);
+
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Majetek',
+                $this->lazyLink(':Admin:Assets:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                $asset->getName(),
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Základní údaje',
+                null)
+        );
+
         $this->template->asset = $asset;
         $this->template->categoriesGroupsJson = $this->jsonGenerator->createCategoriesGroupsJson($this->currentEntity);
         $this->template->placesLocationsJson = $this->jsonGenerator->createPlacesLocationsJson($this->currentEntity);
@@ -72,6 +90,22 @@ final class AssetPresenter extends BaseAdminPresenter
     public function actionMovements(int $assetId): void
     {
         $asset = $this->findAssetById($assetId);
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Majetek',
+                $this->lazyLink(':Admin:Assets:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                $asset->getName(),
+                $this->lazyLink(':Admin:Asset:default', $assetId))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Pohyby',
+                null)
+        );
+
         $this->template->asset = $asset;
         $this->template->activeTab = 2;
         $this->template->movements = $asset->getSortedMovements();
@@ -81,6 +115,21 @@ final class AssetPresenter extends BaseAdminPresenter
     public function actionDepreciations(int $assetId): void
     {
         $asset = $this->findAssetById($assetId);
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Majetek',
+                $this->lazyLink(':Admin:Assets:default'))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                $asset->getName(),
+                $this->lazyLink(':Admin:Asset:default', $assetId))
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Odpisy',
+                null)
+        );
 
         $this->template->asset = $asset;
         $this->template->taxDepreciations = $asset->getTaxDepreciations();

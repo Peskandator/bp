@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 
+use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\DepreciationGroup;
 use App\Entity\Location;
 use App\Majetek\Action\AddAcquisitionAction;
@@ -142,12 +143,34 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionLocations(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Číselníky',
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Střediska',
+                null)
+        );
+
         $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
         $this->template->deletabilityResolver = $this->deletabilityResolver;
     }
 
     public function actionPlaces(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Číselníky',
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Místa',
+                null)
+        );
+
         $this->template->locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
         $this->template->places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
         $this->template->deletabilityResolver = $this->deletabilityResolver;
@@ -155,6 +178,17 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionAcquisitions(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Číselníky',
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Způsoby pořízení/vyřazení',
+                null)
+        );
+
         $this->template->acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
         $this->template->disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
         $this->template->deletabilityResolver = $this->deletabilityResolver;
@@ -162,11 +196,33 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionAssetTypes(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Číselníky',
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Druhy majetku',
+                null)
+        );
+
         $this->template->assetTypes = $this->enumerableSorter->sortByCode($this->currentEntity->getAssetTypes());
     }
 
     public function actionCategories(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Číselníky',
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Kategorie',
+                null)
+        );
+
         $this->template->groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroupsWithoutAccounting()->toArray());
         $this->template->categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
         $this->template->deletabilityResolver = $this->deletabilityResolver;
@@ -174,6 +230,17 @@ final class DialsPresenter extends BaseAdminPresenter
 
     public function actionDepreciationGroups(): void
     {
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Číselníky',
+                null)
+        );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Odpisové skupiny',
+                null)
+        );
+
         $methodNames = DepreciationMethod::getNames();
         $methodIds = [1,2,3,4];
 
