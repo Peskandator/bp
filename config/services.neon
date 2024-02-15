@@ -14,6 +14,7 @@ services:
     - App\Utils\EnumerableSorter
     - App\Utils\DeletabilityResolver
     - App\Components\AdminMenu\AdminMenuFactoryInterface
+    - App\Components\Breadcrumb\BreadcrumbFactoryInterface
 
     - App\Majetek\ORM\AccountingEntityRepository
     - App\Majetek\ORM\EntityUserRepository

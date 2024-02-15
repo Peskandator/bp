@@ -1,0 +1,21 @@
+<nav class="" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{plink :Admin:Dashboard:default}">
+                <i aria-hidden="true" class="fa fa-home"></i>
+            </a>
+        </li>
+
+        {foreach $items as $item}
+            <li class="breadcrumb-item {if $iterator->last}active{/if}">
+                {if $iterator->last || $item->link === null}
+                    {$item->text}
+                {else}
+                    <a href="{$item->link}">
+                        {$item->text}
+                    </a>
+                {/if}
+            </li>
+        {/foreach}
+    </ol>
+</nav>

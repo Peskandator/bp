@@ -169,3 +169,12 @@ h6 {
 .scrollme {
     overflow-x: auto;
 }
+
+.breadcrumb-item a {
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+

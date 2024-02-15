@@ -4,6 +4,8 @@ namespace App\Presenters;
 
 use App\Components\AdminMenu\AdminMenu;
 use App\Components\AdminMenu\AdminMenuFactoryInterface;
+use App\Components\Breadcrumb\Breadcrumb;
+use App\Components\Breadcrumb\BreadcrumbFactoryInterface;
 use App\Entity\AccountingEntity;
 use App\Entity\Asset;
 use App\Entity\User;
@@ -23,6 +25,7 @@ abstract class BaseAdminPresenter extends Presenter
     private AccountingEntityRepository $entityRepository;
     public AccountingEntity $currentEntity;
     private AdminMenuFactoryInterface $adminMenuFactory;
+    private BreadcrumbFactoryInterface $breadcrumbFactory;
     private AssetRepository $assetRepository;
 
 
@@ -36,9 +39,11 @@ abstract class BaseAdminPresenter extends Presenter
 
     public function injectAdminMenuFactory(
         AdminMenuFactoryInterface $adminMenuFactory,
+        BreadcrumbFactoryInterface $breadcrumbFactory
     )
     {
         $this->adminMenuFactory = $adminMenuFactory;
+        $this->breadcrumbFactory = $breadcrumbFactory;
     }
 
     public function beforeRender()
@@ -61,6 +66,11 @@ abstract class BaseAdminPresenter extends Presenter
     protected function createComponentAdminMenu(): AdminMenu
     {
         return $this->adminMenuFactory->create();
+    }
+
+    protected function createComponentBreadcrumb(): Breadcrumb
+    {
+        return $this->breadcrumbFactory->create();
     }
 
     public function checkRequirements($element): void
