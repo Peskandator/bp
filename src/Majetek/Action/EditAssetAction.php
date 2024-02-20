@@ -33,14 +33,14 @@ class EditAssetAction
             }
             $asset->update($request);
         } else {
-            $asset->update($request);
-        }
-
-        if ($asset->isIncluded()) {
-            $this->movementGenerator->generateEntryPriceChangeMovement($asset, $request);
-            $this->movementGenerator->generateInfoChangeMovements($asset, $request);
-            $asset->update($request);
-            $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
+            if ($asset->isIncluded()) {
+                $this->movementGenerator->generateEntryPriceChangeMovement($asset, $request);
+                $this->movementGenerator->generateInfoChangeMovements($asset, $request);
+                $asset->update($request);
+                $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
+            } else {
+                $asset->update($request);
+            }
         }
         $this->movementGenerator->regenerateMovementsAfterAssetEdit($asset);
         $this->editDepreciationCalculator->updateDepreciationPlan($asset);
