@@ -50,7 +50,7 @@ services:
     - App\Majetek\Action\EditDepreciationGroupAction
     - App\Majetek\Action\EditCategoryAction
 
-
+    - App\Console\Command\RenameFilesCommand
 includes:
     - services/user.neon
     - services/majetek.neon

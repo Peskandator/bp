@@ -68,6 +68,13 @@ class AdminMenu extends Control
             $dialsItems
         );
 
+        $reportsItems = $this->buildReportsItems();
+        $menuItems[] = $this->createMenuSection(
+            'Sestavy',
+            $reportsItems
+        );
+
+
         return $menuItems;
     }
 
@@ -136,6 +143,24 @@ class AdminMenu extends Control
         $items[] = $this->createMenuItem(
             'Způsoby pořízení/vyřazení',
             $this->getPresenter()->lazyLink(':Admin:Dials:acquisitions'),
+            [],
+            $this->getCurrentLinkCallable()
+        );
+
+        return $items;
+    }
+
+    private function buildReportsItems(): array
+    {
+        $items[] = $this->createMenuItem(
+            'Sestavy majetku',
+            $this->getPresenter()->lazyLink(':Admin:AssetReports:default'),
+            [],
+            $this->getCurrentLinkCallable()
+        );
+        $items[] = $this->createMenuItem(
+            'Sestavy odpisů',
+            $this->getPresenter()->lazyLink(':Admin:DepreciationReports:default'),
             [],
             $this->getCurrentLinkCallable()
         );
