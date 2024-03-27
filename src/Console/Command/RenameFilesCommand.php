@@ -36,49 +36,37 @@ class RenameFilesCommand extends Command
     {
         $root = dirname(__DIR__) . '\\Command';
 
-        $this->renameFilesInFolder($root,
-            '2007 Slavné vily libereckého kraje',
-            9,
-            'Slavné vily lbc-kraje',
-            81,
-            173,
-            [99, 135]
-        );
-
-        $this->renameFilesInFolder($root,
-            '2008 Textilana',
-            11,
-            'Textilana',
-            674,
-            807,
+        $this->renameFilesInFolder(
+              $root,
+            '1654 BR 14 - Kraj Hradecký III',
+            1,
+            '1654 BR 14 - Kraj Hradecký',
             []
         );
 
-        $this->renameFilesInFolder($root,
-            '2011 Liberec urbanismus atd',
-            9,
-            'Liberec urb-arch-ind',
-            180,
-            267,
-            []
-        );
-
-        $this->renameFilesInFolder($root,
-            '2022 Kniha o Liberci',
-            5,
-            'Kniha o Liberci',
-            272,
-            665,
+        $this->renameFilesInFolder(
+            $root,
+            '1654 BR 15 - Kraj Hradecký IV',
+            1,
+            '1654 BR 15 - Kraj Hradecký',
             []
         );
 
         return 0;
     }
 
-    protected function renameFilesInFolder($rootFolder, $folderName, $namingCounterStart, $fileNaming, $currentStart, $currentEnd, array $missing): void
+    protected function renameFilesInFolder($rootFolder, $folderName, $namingCounterStart, $fileNaming, array $missing): void
     {
+        $path = $rootFolder . '\\' . $folderName;
+        $files = array_diff(scandir($path), array('.', '..'));
+
         $namingCounter = $namingCounterStart;
-        for ($i = $currentStart; $i <= $currentEnd; $i++) {
+        $first = true;
+        foreach ($files as $file) {
+            if ($first) {
+                $first = false;
+                continue;
+            }
             $pageNumber = $namingCounter;
             $fileName = $fileNaming . ' ';
             if ($pageNumber < 10) {
@@ -89,7 +77,7 @@ class RenameFilesCommand extends Command
             }
             $fileName .= $pageNumber . '.jpg';
 
-            $path = $rootFolder . '\\' . $folderName . '\\' . $i . '.jpg';
+            $path = $rootFolder . '\\' . $folderName . '\\' . $file;
             $finalPath = $rootFolder . '\\' . $folderName . '\\' . $fileName;
 
             if (file_exists($path)) {
@@ -97,12 +85,11 @@ class RenameFilesCommand extends Command
                 $namingCounter += 2;
                 var_dump($path);
                 var_dump($finalPath);
-            } else {
-//                var_dump('CHYBÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ');
             }
             if (in_array($namingCounter, $missing)) {
                 $namingCounter += 2;
             }
         }
+
     }
 }
