@@ -61,12 +61,6 @@
                 </div>
             </div>
             <div class="table-responsive px-3 card-body">
-        {*        <form n:name="deletePlaceForm" class="js-delete-form">*}
-        {*            <div class="form-errors" n:ifcontent>*}
-        {*                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>*}
-        {*            </div>*}
-        {*            <input n:name="id" class="js-delete-record-id">*}
-        {*        </form>*}
                 <table class="table table-bordered mt-3">
                     <thead>
                         <tr>
@@ -78,6 +72,7 @@
                             <th></th>
                             <th colspan="3" style="font-size: 20px">Daňové</th>
                             <th colspan="3" style="font-size: 20px">Účetní</th>
+                            <th></th>
                             <th></th>
                         </tr>
                         <tr>
@@ -165,6 +160,7 @@
                     </tbody>
                 </table>
             </div>
+        </div>
     </div>
 </div>
 {/block}

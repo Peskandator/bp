@@ -13,6 +13,7 @@ services:
     - App\Utils\DialsCodeValidator
     - App\Utils\EnumerableSorter
     - App\Utils\DeletabilityResolver
+    - App\Utils\DateTimeFormatter
     - App\Components\AdminMenu\AdminMenuFactoryInterface
     - App\Components\Breadcrumb\BreadcrumbFactoryInterface
 

@@ -7,10 +7,7 @@ use App\Entity\Movement;
 use App\Majetek\Action\EditMovementAction;
 use App\Majetek\Enums\MovementType;
 use App\Majetek\ORM\MovementRepository;
-use App\Odpisy\Action\EditAccountingDepreciationAction;
-use App\Odpisy\Components\EditDepreciationCalculator;
-use App\Odpisy\ORM\DepreciationAccountingRepository;
-use App\Odpisy\Requests\EditDepreciationRequest;
+use App\Utils\DateTimeFormatter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
@@ -18,14 +15,17 @@ class EditMovementFormFactory
 {
     private MovementRepository $movementRepository;
     private EditMovementAction $editMovementAction;
+    private DateTimeFormatter $dateTimeFormatter;
 
     public function __construct(
         MovementRepository $movementRepository,
         EditMovementAction $editMovementAction,
+        DateTimeFormatter $dateTimeFormatter,
     )
     {
         $this->movementRepository = $movementRepository;
         $this->editMovementAction = $editMovementAction;
+        $this->dateTimeFormatter = $dateTimeFormatter;
     }
 
     public function create(AccountingEntity $currentEntity): Form
@@ -68,7 +68,7 @@ class EditMovementFormFactory
             }
 
             $movementType = $movement->getType();
-            $date = $this->changeToDateFormat($values->date);
+            $date = $this->dateTimeFormatter->changeToDateFormat($values->date);
             $asset = $movement->getAsset();
             $assetEntryDate = $asset->getEntryDate();
             $assetDisposalDate = $asset->getDisposalDate();
@@ -130,21 +130,12 @@ class EditMovementFormFactory
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {
             $movement = $this->movementRepository->find($values->id);
-            $values->date = $this->changeToDateFormat($values->date);
+            $values->date = $this->dateTimeFormatter->changeToDateFormat($values->date);
             $this->editMovementAction->__invoke($movement, $values->description, $values->date, $values->acc_debited, $values->acc_credited);
             $form->getPresenter()->flashMessage('Pohyb byl úspěšně upraven.', FlashMessageType::SUCCESS);
             $form->getPresenter()->redirect('this');
         };
 
         return $form;
-    }
-
-    protected function changeToDateFormat(?string $dateTime): ?\DateTimeInterface
-    {
-        if ($dateTime === null) {
-            return null;
-        }
-
-        return new \DateTimeImmutable($dateTime);
     }
 }

@@ -23,6 +23,7 @@ use App\Majetek\ORM\LocationRepository;
 use App\Majetek\ORM\PlaceRepository;
 use App\Majetek\Requests\CreateAssetRequest;
 use App\Utils\AcquisitionsProvider;
+use App\Utils\DateTimeFormatter;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Doctrine\Common\Collections\Collection;
@@ -41,6 +42,7 @@ class AssetFormFactory
     private EditAssetAction $editAssetAction;
     private DisposalRepository $disposalRepository;
     private LocationRepository $locationRepository;
+    private DateTimeFormatter $dateTimeFormatter;
 
     public function __construct(
         AcquisitionsProvider $acquisitionsProvider,
@@ -54,6 +56,7 @@ class AssetFormFactory
         EditAssetAction $editAssetAction,
         DisposalRepository $disposalRepository,
         LocationRepository $locationRepository,
+        DateTimeFormatter $dateTimeFormatter,
     )
     {
         $this->acquisitionsProvider = $acquisitionsProvider;
@@ -67,6 +70,7 @@ class AssetFormFactory
         $this->editAssetAction = $editAssetAction;
         $this->disposalRepository = $disposalRepository;
         $this->locationRepository = $locationRepository;
+        $this->dateTimeFormatter = $dateTimeFormatter;
     }
     public function create(AccountingEntity $currentEntity, bool $editing, ?Asset $asset = null): Form
     {
@@ -297,9 +301,9 @@ class AssetFormFactory
 
             $disposal = $this->disposalRepository->find($values->disposal);
 
-            $values->increase_date = $this->changeToDateFormat($values->increase_date);
-            $values->entry_date = $this->changeToDateFormat($values->entry_date);
-            $values->disposal_date = $this->changeToDateFormat($values->disposal_date);
+            $values->increase_date = $this->dateTimeFormatter->changeToDateFormat($values->increase_date);
+            $values->entry_date = $this->dateTimeFormatter->changeToDateFormat($values->entry_date);
+            $values->disposal_date = $this->dateTimeFormatter->changeToDateFormat($values->disposal_date);
             $today = new \DateTimeImmutable('today');
 
             if ($values->depreciated_amount_accounting === null) {
@@ -577,15 +581,6 @@ class AssetFormFactory
     protected function createSelectOptionFromItem($item): string
     {
         return $item->getCode() . ' ' . $item->getName();
-    }
-
-    protected function changeToDateFormat(?string $dateTime): ?\DateTimeInterface
-    {
-        if ($dateTime === null) {
-            return null;
-        }
-
-        return new \DateTimeImmutable($dateTime);
     }
 
     protected function getAssetTypeIdsForCodes(AccountingEntity $currentEntity): array

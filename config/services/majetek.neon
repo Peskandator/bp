@@ -4,6 +4,7 @@ services:
 
     - App\Majetek\Forms\AssetFormFactory
     - App\Majetek\Forms\EditMovementFormFactory
+    - App\Reports\Forms\FilterAssetsForReportFormFactory
 
     - App\Majetek\Action\CreateAssetAction
     - App\Majetek\Action\EditAssetAction
