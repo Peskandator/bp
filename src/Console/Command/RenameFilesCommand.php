@@ -38,103 +38,28 @@ class RenameFilesCommand extends Command
 
 //        $this->renameFilesInFolder(
 //              $root,
-//            '1654 BR příprava\\1654 Berní rula 7 - Kraj Bechyňský III',
-//            871,
-//            '1654 BR 7 - Kraj Bechyňský',
+//            '1654 Berní rula 8-9 - Kraj Boleslavský',
+//            5,
+//            '1654 BR 8-9 - Kraj Boleslavský',
 //            []
 //        );
-
+//
 //        $this->renameFilesInFolder(
 //              $root,
-//            '1654 BR příprava\\1654 Berní rula 7 - Kraj Bechyňský III doplnění',
-//            1031,
-//            '1654 BR 7 - Kraj Bechyňský',
-//            []
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1654 Berní rula 24 - Kraj Plzeňský II',
-//            441,
-//            '1654 BR 24 - Kraj Plzeňský',
-//            []
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1654 Berní rula 25 - Kraj Plzeňský III',
-//            727,
-//            '1654 BR 25 - Kraj Plzeňský',
-//            [],
-//            true
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1654 Berní rula 26 - Kraj Podbrdský',
-//            1,
-//            '1654 BR 26 - Kraj Podbrdský',
-//            []
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1654 Berní rula 34 - Kladsko',
-//            1,
-//            '1654 BR 34 - Kladsko',
-//            []
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1915 Chytilův úplný adresář království českého\\2024_03_11_16_39_12',
+//            '1654 Berní rula 31 - Kraj Vltavský',
 //            7,
-//            '1915 Chytilův adresář',
-//            [49, 63, 129, 225, 321, 417, 513, 609, 705, 801, 897],
-//            true
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1915 Chytilův úplný adresář království českého\\2024_03_12_17_00_00',
-//            977,
-//            '1915 Chytilův adresář',
-//            [1025, 1121, 1217, 1281],
-//            true
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\1915 Chytilův úplný adresář království českého\\2024_03_13_15_51_55',
-//            1403,
-//            '1915 Chytilův adresář',
-//            [1409, 1537],
-//            true
-//        );
-
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\2001 30-ti letá válka',
-//            7,
-//            '2001 30-ti letá válka',
+//            '1654 BR 31 - Kraj Vltavský',
 //            []
 //        );
 
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\2001 Řepice 750 let',
-//            7,
-//            '2001 Řepice 750 let',
-//            [97, 99]
-//        );
+        $this->renameFilesInFolder(
+              $root,
+            '2001 Stalo se na severu Čech',
+            5,
+            'Stalo se na severu Čech',
+            []
+        );
 
-//        $this->renameFilesInFolder(
-//              $root,
-//            '1654 BR příprava\\2020 Sabath - Čech v americkém kongresu',
-//            9,
-//            '2020 Sabath Adolf',
-//            []
-//        );
 
 
         return 0;
