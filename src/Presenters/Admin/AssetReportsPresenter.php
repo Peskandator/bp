@@ -36,6 +36,11 @@ final class AssetReportsPresenter extends BaseAdminPresenter
                 'Sestavy majetku',
                 null)
         );
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Filtr',
+                null)
+        );
 
         $this->template->entity = $this->currentEntity;
     }
@@ -45,8 +50,14 @@ final class AssetReportsPresenter extends BaseAdminPresenter
         $this->getComponent('breadcrumb')->addItem(
             new BreadcrumbItem(
                 'Sestavy majetku',
+                null
+        ));
+        $this->getComponent('breadcrumb')->addItem(
+            new BreadcrumbItem(
+                'Filtr',
                 $this->lazyLink('AssetReports:default'))
         );
+
         $this->getComponent('breadcrumb')->addItem(
             new BreadcrumbItem(
                 'Výsledek',
@@ -68,17 +79,18 @@ final class AssetReportsPresenter extends BaseAdminPresenter
         return $form;
     }
 
-    protected function getFilteredResults(array $filter): array
+    protected function getFilteredResults(?array $filter): array
     {
         $assets = $this->assetRepository->findAll();
+
         $result = [];
 
-        $allowedTypes = $filter['entry_price_from'];
-        $allowedCategories = $filter['entry_price_from'];
-        $allowedPlaces = $filter['entry_price_from'];
-        $fromPrice = $filter['entry_price_from'];
-        $toPrice = $filter['entry_price_to'];
-        $withDisposed = $filter['disposed'];
+        $allowedTypes = $filter['entry_price_from'] ?? null;
+        $allowedCategories = $filter['entry_price_from'] ?? null;
+        $allowedPlaces = $filter['entry_price_from'] ?? null;
+        $fromPrice = $filter['entry_price_from'] ?? null;
+        $toPrice = $filter['entry_price_to'] ?? null;
+        $withDisposed = $filter['disposed'] ?? null;
 
         /**
          * @var Asset $asset
