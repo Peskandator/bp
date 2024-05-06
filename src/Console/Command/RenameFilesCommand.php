@@ -38,27 +38,46 @@ class RenameFilesCommand extends Command
 
 //        $this->renameFilesInFolder(
 //              $root,
-//            '1654 Berní rula 8-9 - Kraj Boleslavský',
-//            5,
-//            '1654 BR 8-9 - Kraj Boleslavský',
+//            '1654 Berní rula 4 - Kraj Bechyňský I',
+//            3,
+//            '1654 BR 4 - Kraj Bechyňský',
 //            []
 //        );
-//
 //        $this->renameFilesInFolder(
 //              $root,
-//            '1654 Berní rula 31 - Kraj Vltavský',
-//            7,
-//            '1654 BR 31 - Kraj Vltavský',
+//            '1654 Berní rula 5 - Kraj Bechyňský I',
+//            275,
+//            '1654 BR 5 - Kraj Bechyňský',
 //            []
 //        );
-
+//        $this->renameFilesInFolder(
+//              $root,
+//            '1654 Berní rula 6 - Kraj Bechyňský II',
+//            521,
+//            '1654 BR 6 - Kraj Bechyňský',
+//            []
+//        );
         $this->renameFilesInFolder(
               $root,
-            '2001 Stalo se na severu Čech',
-            5,
-            'Stalo se na severu Čech',
+            '1654 Berní rula 11 - Kraj Čáslavský II',
+            463,
+            '1654 BR 12 - Kraj Čáslavský',
             []
         );
+//        $this->renameFilesInFolder(
+//              $root,
+//            '1654 Berní rula 12 - Kraj Hradecký I',
+//            5,
+//            '1654 BR 12 - Kraj Hradecký',
+//            []
+//        );
+//        $this->renameFilesInFolder(
+//              $root,
+//            '1654 Berní rula 23 - Kraj Plzeňský I',
+//            5,
+//            '1654 BR 23 - Kraj Plzeňský',
+//            []
+//        );
 
 
 
@@ -68,7 +87,7 @@ class RenameFilesCommand extends Command
     protected function renameFilesInFolder($rootFolder, $folderName, $namingCounterStart, $fileNaming, array $missing, bool $fourZeros = false): void
     {
         $path = $rootFolder . '\\' . $folderName;
-        $files = array_diff(scandir($path), array('.', '..', 'nepř'));
+        $files = array_diff(scandir($path), array('.', '..', 'Nechat být'));
 
         //var_dump($files);
 
