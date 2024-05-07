@@ -145,8 +145,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $executable,
             $editedDepreciation->getRate()
         );
-
-        $editedDepreciation->updateFromRequest();
+        $editedDepreciation->updateFromRequest($updateRequest);
         if ($executable) {
             $request->depreciationYear++;
         }

@@ -12,6 +12,13 @@ export default function() {
         let accDebited = $(`.movement-accDebited-` + movementId).val();
         let accCredited = $(`.movement-accCredited-` + movementId).val();
 
+        let accountable = $(`.movement-accountable-` + movementId).is(':checked');
+        if (accountable === true) {
+            $(`.form-movement-accountable`).prop("checked", true)
+        } else {
+            $(`.form-movement-accountable`).prop("checked", false)
+        }
+
         $(`.form-movement-id`).val(movementId);
         $(`.form-movement-description`).val(description);
         $(`.form-movement-date`).val(date);

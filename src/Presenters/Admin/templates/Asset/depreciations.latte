@@ -126,11 +126,13 @@
                                             <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecutable()}checked=""{/if}>
                                         </div>
                                         <div class="form-check">
-                                            <input style="display: none;"
-                                                   class="form-check-input js-edit-executable-checkbox
-                                                        depreciationTax-executable-{$depreciationId} js-edit-input-tax js-input-tax-{$depreciationId}"
-                                                   type="checkbox" {if $depreciation->isExecutable()}checked{/if}
-                                                   data-depreciation-id="{$depreciationId}"
+                                            <input
+                                                style="display: none;"
+                                                class="form-check-input js-edit-executable-checkbox
+                                                       depreciationTax-executable-{$depreciationId} js-edit-input-tax js-input-tax-{$depreciationId}"
+                                                type="checkbox"
+                                                {if $depreciation->isExecutable()}checked{/if}
+                                                data-depreciation-id="{$depreciationId}"
                                             >
                                         </div>
                                     </td>
@@ -249,7 +251,8 @@
                                             <div class="form-check">
                                                 <input style="display: none;"
                                                        class="form-check-input js-edit-executable-checkbox
-                                                            depreciationAccounting-executable-{$depreciationId} js-edit-input-accounting js-input-accounting-{$depreciationId}"
+                                                              depreciationAccounting-executable-{$depreciationId}
+                                                              js-edit-input-accounting js-input-accounting-{$depreciationId}"
                                                        type="checkbox" {if $depreciation->isExecutable()}checked{/if}
                                                        data-depreciation-id="{$depreciationId}"
                                                 >

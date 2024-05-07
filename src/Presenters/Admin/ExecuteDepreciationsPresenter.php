@@ -56,7 +56,7 @@ final class ExecuteDepreciationsPresenter extends BaseAccountingEntityPresenter
         $this->template->totalDifference = $this->getTotalDifference($executableDepreciations);
         $this->template->availableYears = $this->currentEntity->getAvailableYears();
         $this->template->selectedYear = $selectedYear;
-        $this->template->isExecutionCancelAvailable = $this->cancelDepreciationExecutionResolver->areCancellableExecutedDepreciationsForYearExisting($this->currentEntity, $year);
+        $this->template->isExecutionCancelAvailable = $this->cancelDepreciationExecutionResolver->areCancellableExecutedDepreciationsForYearExisting($this->currentEntity, $selectedYear);
     }
 
     protected function createComponentExecuteDepreciationsForm(): Form

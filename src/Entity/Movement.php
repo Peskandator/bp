@@ -52,6 +52,10 @@ class Movement
      */
     private ?string $description;
     /**
+     * @ORM\Column(name="accountable", type="boolean")
+     */
+    private bool $accountable;
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Asset", inversedBy="movements")
      * @ORM\JoinColumn(name="asset_id", referencedColumnName="id", nullable=false)
      */
@@ -72,6 +76,7 @@ class Movement
         CreateMovementRequest $request
     ){
         $this->update($request);
+        $this->accountable = false;
         $this->operationDate = new \DateTimeImmutable();
     }
 
@@ -94,11 +99,12 @@ class Movement
         $this->date = $date;
     }
 
-    public function edit(string $description, ?DateTimeInterface $date, string $accDebited, string $accCredited) {
+    public function edit(string $description, ?DateTimeInterface $date, string $accDebited, string $accCredited, bool $accountable) {
         $this->description = $description;
         $this->date = $date;
         $this->accountDebited = $accDebited;
         $this->accountCredited = $accCredited;
+        $this->accountable = $accountable;
     }
 
     public function getId(): int
@@ -177,14 +183,21 @@ class Movement
         return null;
     }
 
+    public function isAccountable(): bool
+    {
+        return $this->accountable;
+    }
+
     public function setTaxDepreciation(DepreciationTax $depreciationTax): void
     {
         $this->depreciationTax = $depreciationTax;
+        $this->accountable = true;
     }
 
     public function setAccountingDepreciation(DepreciationAccounting $depreciationAccounting): void
     {
         $this->depreciationAccounting = $depreciationAccounting;
+        $this->accountable = true;
     }
 
     public function isDeletable(): bool

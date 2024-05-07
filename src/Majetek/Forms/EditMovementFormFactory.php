@@ -52,6 +52,9 @@ class EditMovementFormFactory
             ->addText('acc_credited', 'Účet DAL')
             ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
         ;
+        $form
+            ->addCheckbox('accountable', 'Účet DAL')
+        ;
 
         $form->onValidate[] = function (Form $form, \stdClass $values) use ($currentEntity) {
             $movement = $this->movementRepository->find($values->id);
@@ -131,7 +134,7 @@ class EditMovementFormFactory
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {
             $movement = $this->movementRepository->find($values->id);
             $values->date = $this->dateTimeFormatter->changeToDateFormat($values->date);
-            $this->editMovementAction->__invoke($movement, $values->description, $values->date, $values->acc_debited, $values->acc_credited);
+            $this->editMovementAction->__invoke($movement, $values->description, $values->date, $values->acc_debited, $values->acc_credited, $values->accountable);
             $form->getPresenter()->flashMessage('Pohyb byl úspěšně upraven.', FlashMessageType::SUCCESS);
             $form->getPresenter()->redirect('this');
         };

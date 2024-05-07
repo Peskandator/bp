@@ -22,7 +22,7 @@ class EditMovementAction
         $this->movementGenerator = $movementGenerator;
     }
 
-    public function __invoke(Movement $movement, string $description, ?\DateTimeInterface $date, string $accDebited, string $accCredited): void
+    public function __invoke(Movement $movement, string $description, ?\DateTimeInterface $date, string $accDebited, string $accCredited, bool $accountable): void
     {
         $asset = $movement->getAsset();
         if ($movement->getType() === MovementType::INCLUSION) {
@@ -32,7 +32,7 @@ class EditMovementAction
             $asset->setDisposalDate($date);
         }
 
-        $movement->edit($description, $date, $accDebited, $accCredited);
+        $movement->edit($description, $date, $accDebited, $accCredited, $accountable);
         $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
         $this->entityManager->flush();
     }

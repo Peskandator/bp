@@ -1,6 +1,5 @@
 {layout $adminlayoutPath}
 
-
 {block modals}
     <div class="modal fade" id="deleteMovementModal" tabindex="-1" aria-labelledby="deleteMovementLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -20,7 +19,6 @@
         </div>
     </div>
 {/block}
-
 
 {block content}
 <div class="js-page-movements">
@@ -47,6 +45,7 @@
                     <input n:name="date" class="form-movement-date">
                     <input n:name="acc_debited" class="form-movement-accDebited">
                     <input n:name="acc_credited" class="form-movement-accCredited">
+                    <input n:name="accountable" class="form-movement-accountable" type="checkbox" checked>
                 </div>
                 <div class="form-errors d-block" n:ifcontent>
                     <div n:foreach="$form['description']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Popis -</b> {$error}</div>
@@ -72,6 +71,7 @@
                                 <th>Popis</th>
                                 <th>Účet MD</th>
                                 <th>Účet DAL</th>
+                                <th>Zaúčtovat</th>
                                 <th>Akce</th>
                             </tr>
                             </thead>
@@ -137,14 +137,30 @@
                                         </div>
                                     </td>
                                     <td>
+                                        <div class="form-check">
+                                            <input
+                                                class="form-check-input movement-accountable-text-{$movementId} js-edit-text js-text-{$movementId}"
+                                                type="checkbox"
+                                                disabled
+                                                {if $movement->isAccountable()}checked=""{/if}
+                                            >
+                                            <input
+                                                style="display: none;"
+                                                class="form-check-input js-edit-executable-checkbox
+                                                       movement-accountable-{$movementId} js-edit-input js-input-{$movementId}"
+                                                type="checkbox" {if $movement->isAccountable()}checked{/if}
+                                                data-depreciation-id="{$movementId}"
+                                            >
+                                        </div>
+                                    </td>
+                                    <td>
                                         <div class="d-flex">
-
-                                        <button class="edit-movement-button btn-primary btn btn-sm js-edit-input" style="display: none" data-movement-id="{$movement->getId()}">OK</button>
-                                        <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start"
-                                           title="Upravit"
-                                           data-record-id="{$movement->getId()}"
-                                           data-movement-type="{$movement->getType()}">
-                                        </i>
+                                            <button class="edit-movement-button btn-primary btn btn-sm js-edit-input" style="display: none" data-movement-id="{$movement->getId()}">OK</button>
+                                            <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start"
+                                               title="Upravit"
+                                               data-record-id="{$movement->getId()}"
+                                               data-movement-type="{$movement->getType()}">
+                                            </i>
                                             {if $movement->isDeletable()}
                                                 <i class="fa-solid fa-trash text-danger icon js-delete-record-button js-edit-text align-self-center icon-left"
                                                    title="Odstranit"
