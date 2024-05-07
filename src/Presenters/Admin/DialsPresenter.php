@@ -36,7 +36,7 @@ use App\Majetek\ORM\LocationRepository;
 use App\Majetek\ORM\PlaceRepository;
 use App\Majetek\Requests\CreateCategoryRequest;
 use App\Majetek\Requests\CreateDepreciationGroupRequest;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\AcquisitionsProvider;
 use App\Utils\DeletabilityResolver;
 use App\Utils\DialsCodeValidator;
@@ -45,7 +45,7 @@ use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
 
-final class DialsPresenter extends BaseAdminPresenter
+final class DialsPresenter extends BaseAccountingEntityPresenter
 {
     private AddLocationAction $addLocationAction;
     private AddAcquisitionAction $addAcquisitionAction;

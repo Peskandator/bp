@@ -80,7 +80,7 @@ abstract class BaseAdminPresenter extends Presenter
             $this->redirect(':Home:default');
         }
         $currentUser = $this->getCurrentUser();
-        if (isset($this->currentEntityId)) {
+        if (isset($this->currentEntityId) && $this->currentEntityId) {
             $currentEntity = $this->entityRepository->find($this->currentEntityId);
 
             if ($currentEntity === null) {
@@ -162,5 +162,10 @@ abstract class BaseAdminPresenter extends Presenter
         }
 
         return $form;
+    }
+
+    public function findAccountingEntityById(): ?AccountingEntity
+    {
+        return $this->entityRepository->find($this->currentEntityId);
     }
 }

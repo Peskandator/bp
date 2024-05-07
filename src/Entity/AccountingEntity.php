@@ -347,7 +347,7 @@ class AccountingEntity
         return $result;
     }
 
-    public function getAvailableYears(): array
+       public function getAvailableYears(): array
     {
         $availableYears = [];
         $depreciationsTax = $this->getTaxDepreciations();
@@ -362,6 +362,24 @@ class AccountingEntity
                 $availableYears[] = $depreciationYear;
             }
         }
+        /**
+         * @var DepreciationAccounting $depreciation
+         */
+        foreach ($depreciationsAccounting as $depreciation) {
+            $depreciationYear = $depreciation->getYear();
+            if (!in_array($depreciationYear, $availableYears)) {
+                $availableYears[] = $depreciationYear;
+            }
+        }
+
+        return $availableYears;
+    }
+
+    public function getAvailableYearsAccounting(): array
+    {
+        $availableYears = [];
+        $depreciationsAccounting = $this->getTaxDepreciations();
+
         /**
          * @var DepreciationAccounting $depreciation
          */

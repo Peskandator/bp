@@ -6,12 +6,12 @@ namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\Asset;
 use App\Majetek\ORM\AssetRepository;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 use App\Reports\Forms\FilterAssetsForReportFormFactory;
 use App\Utils\DateTimeFormatter;
 use Nette\Application\UI\Form;
 
-final class AssetReportsPresenter extends BaseAdminPresenter
+final class AssetReportsPresenter extends BaseAccountingEntityPresenter
 {
     private FilterAssetsForReportFormFactory $filterAssetsForReportFormFactory;
     private AssetRepository $assetRepository;

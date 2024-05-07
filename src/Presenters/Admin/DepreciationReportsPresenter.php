@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Odpisy\ORM\DepreciationTaxRepository;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 
-final class DepreciationReportsPresenter extends BaseAdminPresenter
+final class DepreciationReportsPresenter extends BaseAccountingEntityPresenter
 {
     public function __construct(
         DepreciationTaxRepository $depreciationTaxRepository,

@@ -34,7 +34,12 @@ class ExecuteDepreciationsFormFactory
         ;
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity, $data) {
-            $this->executeDepreciationsAction->__invoke($currentEntity, $data, $this->dateTimeFormatter->changeToDateFormat($values->execution_date));
+
+            $executionDate = $this->dateTimeFormatter->changeToDateFormat($values->execution_date);
+            if (!$executionDate) {
+                $executionDate = new \DateTimeImmutable('now');
+            }
+            $this->executeDepreciationsAction->__invoke($currentEntity, $data, $executionDate);
             $form->getPresenter()->flashMessage('Odpisy byly provedeny. Pohyby byly vytvořeny.', FlashMessageType::SUCCESS);
             $form->getPresenter()->redirect('this');
         };

@@ -1,0 +1,51 @@
+{layout $adminlayoutPath}
+
+{block modals}
+
+{/block}
+
+{block content}
+
+<h1>Zaúčtování odpisů</h1>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="main-card card">
+                <div class="card-body">
+                    <div class="form-group d-flex mb-0" style="max-width: 300px; margin-right: 12px">
+                        <label for="yearSelect" style="font-size: 1.5rem; margin-right: 17px; margin-bottom: 0">Rok:</label>
+                        <select
+                                id="yearSelect"
+                                class="form-select"
+                                onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);"
+                                style="margin-top: 7px"
+                        >
+                            <option value="">{$selectedYear}</option>
+                            {foreach $availableYears as $year}
+                                {if $year !== $selectedYear}
+                                    <option value="{plink :depreciations, $year}">{$year}</option>
+                                {/if}
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+
+                </div>
+                <div class="table-responsive px-3 card-body">
+                    <table class="table table-bordered mt-3">
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{/block}

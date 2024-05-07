@@ -9,12 +9,12 @@ use App\Majetek\Action\DeleteAssetAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Majetek\ORM\AssetRepository;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
-final class AssetsPresenter extends BaseAdminPresenter
+final class AssetsPresenter extends BaseAccountingEntityPresenter
 {
     private EnumerableSorter $enumerableSorter;
     private AssetFormFactory $assetFormFactory;

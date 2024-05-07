@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
-use App\Entity\DepreciationAccounting;
-use App\Entity\DepreciationTax;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 use Nette\Application\UI\Form;
 
-final class DepreciationsPresenter extends BaseAdminPresenter
+final class DepreciationsPresenter extends BaseAccountingEntityPresenter
 {
     private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
     private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;

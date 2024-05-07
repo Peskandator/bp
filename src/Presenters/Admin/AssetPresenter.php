@@ -14,12 +14,12 @@ use App\Majetek\ORM\MovementRepository;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
 
-final class AssetPresenter extends BaseAdminPresenter
+final class AssetPresenter extends BaseAccountingEntityPresenter
 {
     private AssetFormFactory $assetFormFactory;
     private EnumerableSorter $enumerableSorter;

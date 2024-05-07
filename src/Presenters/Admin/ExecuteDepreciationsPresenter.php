@@ -10,10 +10,10 @@ use App\Entity\DepreciationTax;
 use App\Odpisy\Components\CancelDepreciationExecutionResolver;
 use App\Odpisy\Forms\CancelDepreciationExecutionFormFactory;
 use App\Odpisy\Forms\ExecuteDepreciationsFormFactory;
-use App\Presenters\BaseAdminPresenter;
+use App\Presenters\BaseAccountingEntityPresenter;
 use Nette\Application\UI\Form;
 
-final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
+final class ExecuteDepreciationsPresenter extends BaseAccountingEntityPresenter
 {
     private ExecuteDepreciationsFormFactory $executeDepreciationsFormFactory;
     private CancelDepreciationExecutionFormFactory $cancelDepreciationExecutionFormFactory;
@@ -31,7 +31,7 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
         $this->cancelDepreciationExecutionResolver = $cancelDepreciationExecutionResolver;
     }
 
-    public function actionDefault(?int $yearArg = null): void
+    public function actionDefault(?int $year = null): void
     {
         $this->getComponent('breadcrumb')->addItem(
             new BreadcrumbItem(
@@ -44,18 +44,18 @@ final class ExecuteDepreciationsPresenter extends BaseAdminPresenter
                 null)
         );
 
-        $year = $yearArg;
-        if (!$year) {
+        $selectedYear = $year;
+        if (!$selectedYear) {
             $today = new \DateTimeImmutable('today');
-            $year = (int)$today->format('Y');
+            $selectedYear = (int)$today->format('Y');
         }
 
         $this->template->assets = $this->getAssetsById();
-        $executableDepreciations = $this->getExecutableDepreciationsByAssetForYear($year);
+        $executableDepreciations = $this->getExecutableDepreciationsByAssetForYear($selectedYear);
         $this->template->executableDepreciations = $executableDepreciations;
         $this->template->totalDifference = $this->getTotalDifference($executableDepreciations);
         $this->template->availableYears = $this->currentEntity->getAvailableYears();
-        $this->template->selectedYear = $year;
+        $this->template->selectedYear = $selectedYear;
         $this->template->isExecutionCancelAvailable = $this->cancelDepreciationExecutionResolver->areCancellableExecutedDepreciationsForYearExisting($this->currentEntity, $year);
     }
 

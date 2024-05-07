@@ -74,6 +74,11 @@ class AdminMenu extends Control
             $reportsItems
         );
 
+        $accountingItems = $this->buildAccountingItems();
+        $menuItems[] = $this->createMenuSection(
+            'Zaúčtování',
+            $accountingItems
+        );
 
         return $menuItems;
     }
@@ -161,6 +166,18 @@ class AdminMenu extends Control
         $items[] = $this->createMenuItem(
             'Sestavy odpisů',
             $this->getPresenter()->lazyLink(':Admin:DepreciationReports:default'),
+            [],
+            $this->getCurrentLinkCallable()
+        );
+
+        return $items;
+    }
+
+    private function buildAccountingItems(): array
+    {
+        $items[] = $this->createMenuItem(
+            'Odpisů',
+            $this->getPresenter()->lazyLink(':Admin:Accounting:depreciations'),
             [],
             $this->getCurrentLinkCallable()
         );
