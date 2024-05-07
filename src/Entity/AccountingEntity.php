@@ -76,6 +76,11 @@ class AccountingEntity
      * @ORM\OneToMany(targetEntity="App\Entity\Asset", mappedBy="entity")
      */
     private Collection $assets;
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\DepreciationsAccountingData", mappedBy="entity")
+     */
+    private Collection $depreciationsAccountingData;
+
 
     public function __construct(
         CreateEntityRequest $request,
@@ -90,6 +95,7 @@ class AccountingEntity
         $this->assets = new ArrayCollection();
         $this->depreciationGroups = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->depreciationsAccountingData = new ArrayCollection();
     }
 
     public function update(CreateEntityRequest $request)
@@ -347,7 +353,7 @@ class AccountingEntity
         return $result;
     }
 
-       public function getAvailableYears(): array
+    public function getAvailableYears(): array
     {
         $availableYears = [];
         $depreciationsTax = $this->getTaxDepreciations();
@@ -391,5 +397,26 @@ class AccountingEntity
         }
 
         return $availableYears;
+    }
+
+    public function getDepreciationsAccountingData(): Collection
+    {
+        return $this->depreciationsAccountingData;
+    }
+
+    public function getDepreciationsAccountingDataForYear(int $year): ?DepreciationsAccountingData
+    {
+        $dataArr = $this->getDepreciationsAccountingData();
+
+        /**
+         * @var DepreciationsAccountingData $dataForYear
+         */
+        foreach ($dataArr as $dataForYear) {
+            if ($dataForYear->getYear() === $year) {
+                return $dataForYear;
+            }
+        }
+
+        return null;
     }
 }
