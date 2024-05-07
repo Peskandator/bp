@@ -87,31 +87,33 @@ class MovementGenerator
 
     public function createEntryPriceChangeMovement(?Asset $asset, CreateAssetRequest $request, bool $editing): void
     {
-        $correctEntryPrice = $request->entryPrice;
-        if ($editing) {
-            $correctEntryPrice = $asset->getIncreasedEntryPriceByMovements();
-        }
-        $value = $request->increasedEntryPrice - $correctEntryPrice;
+        if ($request->increasedEntryPrice !== null && $request->increasedEntryPrice !== $request->entryPrice) {
+            $correctEntryPrice = $request->entryPrice;
+            if ($editing) {
+                $correctEntryPrice = $asset->getIncreasedEntryPrice();
+            }
+            $value = $request->increasedEntryPrice - $correctEntryPrice;
 
-        $description = "Zvýšení vstupní ceny";
-        if ($value < 0) {
-            $description = "Snížení vstupní ceny";
-        }
-        if ($value === (float)0) {
-            return;
-        }
+            $description = "Zvýšení vstupní ceny";
+            if ($value < 0) {
+                $description = "Snížení vstupní ceny";
+            }
+            if ($value === (float)0) {
+                return;
+            }
 
-        $movementRequest = new CreateMovementRequest(
-            $asset,
-            MovementType::ENTRY_PRICE_CHANGE,
-            $value,
-            $correctEntryPrice,
-            $description,
-            "042000",
-            "321000",
-            $request->increaseDate,
-        );
-        $this->createMovement($asset, $movementRequest);
+            $movementRequest = new CreateMovementRequest(
+                $asset,
+                MovementType::ENTRY_PRICE_CHANGE,
+                $value,
+                $correctEntryPrice,
+                $description,
+                "042000",
+                "321000",
+                $request->increaseDate,
+            );
+            $this->createMovement($asset, $movementRequest);
+        }
     }
 
     protected function createLocationChangeMovement(Asset $asset, CreateAssetRequest $request): void
@@ -203,7 +205,7 @@ class MovementGenerator
 
     public function generateEntryPriceChangeMovement(Asset $asset, CreateAssetRequest $request): void
     {
-        if ($asset->getIncreasedEntryPrice() !== $request->increasedEntryPrice || $asset->isPriceChangeMovementsRegeneratingNeeded()) {
+        if ($asset->getIncreasedEntryPrice() !== $request->increasedEntryPrice) {
             $this->createEntryPriceChangeMovement($asset, $request, true);
         }
     }

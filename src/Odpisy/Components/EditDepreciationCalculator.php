@@ -9,6 +9,7 @@ use App\Entity\DepreciationAccounting;
 use App\Entity\DepreciationTax;
 use App\Odpisy\Requests\EditDepreciationRequest;
 use App\Odpisy\Requests\RecalculateDepreciationsRequest;
+use App\Odpisy\Requests\UpdateDepreciationRequest;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -87,7 +88,6 @@ class EditDepreciationCalculator extends DepreciationCalculator
             0,
             $depreciatedAmount,
             $editedDepreciation->getRateFormat(),
-            $asset->getIncreaseDate()
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
 
@@ -117,7 +117,6 @@ class EditDepreciationCalculator extends DepreciationCalculator
             0,
             $depreciatedAmount,
             $editedDepreciation->getRateFormat(),
-            $asset->getIncreaseDate()
         );
         $recalculateRequest = $this->updateEditedDepreciation($editedDepreciation, $recalculateEditedDepreciationRequest, $request);
         $this->calculateAccountingDepreciations($recalculateRequest);
@@ -133,8 +132,8 @@ class EditDepreciationCalculator extends DepreciationCalculator
         }
         $request->depreciatedAmount += $depreciationAmount;
         $residualPrice = $this->getResidualPrice($request->entryPrice, $request->correctEntryPrice, $request->depreciatedAmount, $request->depreciationYear);
-        $editedDepreciation->update
-        (
+
+        $updateRequest = new UpdateDepreciationRequest(
             $request->asset,
             $request->group,
             $request->year,
@@ -147,6 +146,7 @@ class EditDepreciationCalculator extends DepreciationCalculator
             $editedDepreciation->getRate()
         );
 
+        $editedDepreciation->updateFromRequest();
         if ($executable) {
             $request->depreciationYear++;
         }

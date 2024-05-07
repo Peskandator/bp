@@ -20,7 +20,6 @@ class RecalculateDepreciationsRequest
         public float $residualPrice,
         public float $depreciatedAmount,
         public int $rateFormat,
-        public ?\DateTimeInterface $increaseDate,
     ) {
     }
 }

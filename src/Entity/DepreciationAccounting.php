@@ -110,46 +110,13 @@ class DepreciationAccounting implements Depreciation
         $this->executed = false;
         $this->accounted = false;
         $this->entryPrice = $request->asset->getEntryPrice();
-        $this->increasedEntryPrice = $request->asset->getIncreasedEntryPrice();
+        $this->increasedEntryPrice = $request->asset->getPriceForYear($request->year);
         $this->depreciationYear = $request->depreciationYear;
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->year = $request->year;
         $this->method = $request->depreciationGroup->getMethod();
         $this->rateFormat = $request->depreciationGroup->getRateFormat();
         $this->rate = $request->rate;
-    }
-
-    public function update(
-        Asset $asset,
-        DepreciationGroup $depreciationGroup,
-        int $year,
-        int $depreciationYear,
-        float $depreciationAmount,
-        float $percentage,
-        float $depreciatedAmount,
-        float $residualPrice,
-        bool $executable,
-        ?float $rate,
-    ): void
-    {
-        $this->asset = $asset;
-        $this->depreciationGroup = $depreciationGroup;
-        $this->executable = $executable;
-        $this->percentage = $percentage;
-        $this->depreciationAmount = $depreciationAmount;
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->residualPrice = $residualPrice;
-        $this->executed = false;
-        $this->accounted = false;
-        $this->entryPrice = $asset->getEntryPrice();
-        $this->increasedEntryPrice = $asset->getIncreasedEntryPrice();
-        $this->depreciationYear = $depreciationYear;
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->year = $year;
-        $this->method = $depreciationGroup->getMethod();
-        $this->rateFormat = $depreciationGroup->getRateFormat();
-        $this->rate = $rate;
-        $this->disposalDate = $asset->getDisposalDate();
     }
 
     public function updateFromTaxDepreciation(DepreciationTax $depreciationTax): void

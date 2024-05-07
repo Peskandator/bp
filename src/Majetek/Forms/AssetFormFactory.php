@@ -148,7 +148,7 @@ class AssetFormFactory
         $accountingAllowedTypes = [$assetTypesIds[AssetTypesCodes::DEPRECIABLE], $assetTypesIds[AssetTypesCodes::SMALL]];
         $taxAllowedType = $assetTypesIds[AssetTypesCodes::DEPRECIABLE];
 
-        $form
+        $entryPriceInput = $form
             ->addText('entry_price', 'Vstupní cena')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->setNullable()
@@ -212,6 +212,7 @@ class AssetFormFactory
 
         $isAssetIncluded = $editing && $asset && $asset->isIncluded();
         if ($isAssetIncluded) {
+            $entryPriceInput->setDisabled(true);
             $typeSelect->setDisabled(true);
             $isIncluded->setDisabled(true);
             $onlyTaxCheckbox->setDisabled(true);
@@ -332,7 +333,7 @@ class AssetFormFactory
 //                    }
 
                     if ($isAssetIncluded) {
-                        $increasedPriceDiff = $increasedPrice - $asset->getIncreasedEntryPriceByMovements();
+                        $increasedPriceDiff = $increasedPrice - $asset->getIncreasedEntryPrice();
                         if ($increasedPriceDiff < 0) {
                             $baseEntryPrice = $entryPrice;
                             $priceChangeMovements = $asset->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
@@ -517,7 +518,7 @@ class AssetFormFactory
             'has_tax_depreciations' => $asset->hasTaxDepreciations(),
             'is_included' => $asset->isIncluded(),
             'entry_price' => $asset->getEntryPrice(),
-            'increased_price' => $asset->getIncreasedEntryPrice(),
+            'increased_price' => $asset->getIncreasedEntryPriceForView(),
             'increase_date' => $this->getDefaultDateValue($asset->getIncreaseDate()),
             'depreciated_amount_tax' => $asset->getDepreciatedAmountTax(),
             'depreciation_year_tax' => $asset->getDepreciationYearTax(),
@@ -629,6 +630,7 @@ class AssetFormFactory
 
     protected function addMissingValuesFromIncludedAsset(\stdClass $values, Asset $asset): \stdClass
     {
+        $values->entry_price = $asset->getEntryPrice();
         $values->type = $asset->getAssetType()->getId();
         $values->is_included = $asset->isIncluded();
         $values->only_tax = $asset->isOnlyTax();

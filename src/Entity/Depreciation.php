@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Odpisy\Requests\UpdateDepreciationRequest;
+
 interface Depreciation
 {
     public function getId(): int;
@@ -17,4 +19,5 @@ interface Depreciation
     public function getYear(): ?int;
     public function getDepreciationGroup(): DepreciationGroup;
     public function isExecutionCancelable(): bool;
+    public function updateFromRequest(UpdateDepreciationRequest $request): void;
 }

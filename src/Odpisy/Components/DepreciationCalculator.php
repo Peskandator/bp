@@ -61,7 +61,6 @@ class DepreciationCalculator
             $asset->getEntryPrice() - $asset->getBaseDepreciatedAmountTax(),
             $asset->getBaseDepreciatedAmountTax(),
             $group->getRateFormat(),
-            $asset->getIncreaseDate()
         );
     }
 
@@ -82,7 +81,6 @@ class DepreciationCalculator
             $asset->getEntryPrice() - $asset->getBaseDepreciatedAmountAccounting(),
             $asset->getBaseDepreciatedAmountAccounting(),
             $group->getRateFormat(),
-            $asset->getIncreaseDate()
         );
     }
 

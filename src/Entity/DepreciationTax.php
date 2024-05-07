@@ -98,7 +98,8 @@ class DepreciationTax implements Depreciation
 
     public function updateFromRequest(
         UpdateDepreciationRequest $request
-    ){
+    ): void
+    {
         $this->asset = $request->asset;
         $this->depreciationGroup = $request->depreciationGroup;
         $this->executable = $request->executable;
@@ -117,37 +118,6 @@ class DepreciationTax implements Depreciation
         $this->rateFormat = $request->depreciationGroup->getRateFormat();
         $this->rate = $request->rate;
         $this->disposalDate = $request->asset->getDisposalDate();
-    }
-
-    public function update(
-        Asset $asset,
-        DepreciationGroup $depreciationGroup,
-        int $year,
-        int $depreciationYear,
-        float $depreciationAmount,
-        float $percentage,
-        float $depreciatedAmount,
-        float $residualPrice,
-        bool $executable,
-        float $rate
-    ): void
-    {
-        $this->asset = $asset;
-        $this->depreciationGroup = $depreciationGroup;
-        $this->executable = $executable;
-        $this->percentage = $percentage;
-        $this->depreciationAmount = $depreciationAmount;
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->residualPrice = $residualPrice;
-        $this->executed = false;
-        $this->entryPrice = $asset->getEntryPrice();
-        $this->increasedEntryPrice = $asset->getPriceForYear($year);
-        $this->depreciationYear = $depreciationYear;
-        $this->depreciatedAmount = $depreciatedAmount;
-        $this->year = $year;
-        $this->method = $depreciationGroup->getMethod();
-        $this->rateFormat = $depreciationGroup->getRateFormat();
-        $this->rate = $rate;
     }
 
     public function updateNotExecutable(float $depreciatedAmount, float $residualPrice): void

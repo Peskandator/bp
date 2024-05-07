@@ -28,9 +28,7 @@ class EditAssetAction
     public function __invoke(AccountingEntity $entity, Asset $asset, CreateAssetRequest $request): void
     {
         if (!$asset->isIncluded() && $request->isIncluded) {
-            if ($request->increasedEntryPrice !== $request->entryPrice) {
-                $this->movementGenerator->createEntryPriceChangeMovement($asset, $request, false);
-            }
+            $this->movementGenerator->createEntryPriceChangeMovement($asset, $request, true);
             $asset->update($request);
         } else {
             if ($asset->isIncluded()) {

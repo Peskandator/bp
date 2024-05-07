@@ -37,21 +37,6 @@ class DeleteMovementAction
             $depreciation = $movement->getDepreciation();
             $depreciation->setExecuted(false);
         } else if ($movement->getType() === MovementType::ENTRY_PRICE_CHANGE) {
-            $asset->recalculateIncreasedEntryPrice();
-            $entryPriceMovements = $asset->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
-            $dateOfLastChange = null;
-            /**
-             * @var Movement $entryPriceMovement
-             */
-            foreach ($entryPriceMovements as $entryPriceMovement) {
-                $dateOfChange = $entryPriceMovement->getDate();
-                if ($dateOfLastChange === null || $dateOfChange < $dateOfLastChange) {
-                    $dateOfLastChange = $dateOfChange;
-                }
-            }
-            if ($dateOfLastChange !== null) {
-                $asset->setIncreaseDate($dateOfLastChange);
-            }
             $this->movementGenerator->regenerateResidualPricesForPriceChangeMovements($asset);
         }
         $this->editDepreciationCalculator->updateDepreciationPlan($asset);

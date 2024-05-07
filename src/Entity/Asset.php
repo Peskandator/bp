@@ -41,14 +41,6 @@ class Asset
      */
     private ?float $entryPrice;
     /**
-     * @ORM\Column(name="increased_entry_price", type="float", nullable=true)
-     */
-    private ?float $increasedEntryPrice;
-    /**
-     * @ORM\Column(name="increase_date", type="date", nullable=true)
-     */
-    private ?\DateTimeInterface $increaseDate;
-    /**
      * @ORM\Column(name="depreciated_amount_tax", type="float", nullable=true)
      */
     private ?float $depreciatedAmountTax;
@@ -201,8 +193,6 @@ class Asset
         $this->isIncluded = $request->isIncluded;
         $this->depreciationGroupTax = $request->depreciationGroupTax;
         $this->entryPrice = $request->entryPrice;
-        $this->increasedEntryPrice = $request->increasedEntryPrice;
-        $this->increaseDate = $request->increaseDate;
         $this->depreciatedAmountTax = $request->depreciatedAmountTax;
         $this->depreciationYearTax = $request->depreciationYearTax;
         $this->depreciationGroupAccounting = $request->depreciationGroupAccounting;
@@ -268,16 +258,6 @@ class Asset
 
     public function getIncreasedEntryPrice(): ?float
     {
-        return $this->increasedEntryPrice;
-    }
-
-    public function isPriceChangeMovementsRegeneratingNeeded(): bool
-    {
-        return $this->getIncreasedEntryPriceByMovements() !== $this->getIncreasedEntryPrice();
-    }
-
-    public function getIncreasedEntryPriceByMovements(): ?float
-    {
         $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
         $price = $this->getEntryPrice();
         /**
@@ -288,6 +268,18 @@ class Asset
         }
 
         return $price;
+    }
+
+    public function getIncreasedEntryPriceForView(): ?float
+    {
+        $movementsCount = count($this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE));
+        $increasedPrice = $this->getIncreasedEntryPrice();
+
+        if ($movementsCount === 0) {
+            return null;
+        }
+
+        return $increasedPrice;
     }
 
     public function getPriceForYear(int $year): ?float
@@ -306,28 +298,20 @@ class Asset
         return $price;
     }
 
-    public function recalculateIncreasedEntryPrice(): void
-    {
-        $movements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
-        $price = $this->getEntryPrice();
-
-        /**
-         * @var Movement $movement
-         */
-        foreach ($movements as $movement) {
-            $price += $movement->getValue();
-        }
-        $this->increasedEntryPrice = $price;
-    }
-
     public function getIncreaseDate(): ?\DateTimeInterface
     {
-        return $this->increaseDate;
-    }
-
-    public function setIncreaseDate(?\DateTimeInterface $date): void
-    {
-         $this->increaseDate = $date;
+        $entryPriceMovements = $this->getMovementsWithType(MovementType::ENTRY_PRICE_CHANGE);
+        $dateOfLastChange = null;
+        /**
+         * @var Movement $entryPriceMovement
+         */
+        foreach ($entryPriceMovements as $entryPriceMovement) {
+            $dateOfChange = $entryPriceMovement->getDate();
+            if ($dateOfLastChange === null || $dateOfChange > $dateOfLastChange) {
+                $dateOfLastChange = $dateOfChange;
+            }
+        }
+        return $dateOfLastChange;
     }
 
     public function getBaseDepreciatedAmountTax(): ?float
@@ -497,12 +481,12 @@ class Asset
 
     public function getAmortisedPriceTax(): ?float
     {
-        return $this->getIncreasedEntryPriceByMovements() - $this->getDepreciatedAmountTax();
+        return $this->getIncreasedEntryPrice() - $this->getDepreciatedAmountTax();
     }
 
     public function getAmortisedPriceAccounting(): ?float
     {
-        return $this->getIncreasedEntryPriceByMovements() - $this->getDepreciatedAmountAccounting();
+        return $this->getIncreasedEntryPrice() - $this->getDepreciatedAmountAccounting();
     }
 
     public function getUnits(): ?int
