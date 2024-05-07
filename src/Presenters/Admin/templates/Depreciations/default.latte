@@ -105,7 +105,6 @@
                                             <th>ZC</th>
                                             <th>Provést</th>
                                             <th>Provedeno</th>
-                                            <th>Zaúčt.</th>
                                             <th>Akce</th>
                                         </tr>
                                     </thead>
@@ -186,9 +185,6 @@
                                                 <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
                                             </td>
                                             <td>
-                                                <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
-                                            </td>
-                                            <td>
                                                 {if !$depreciation->isExecuted()}
                                                     <div class="d-flex">
                                                         <button class="edit-depreciationTax-button btn-primary btn btn-sm js-edit-input-tax" style="display: none" data-depreciation-id="{$depreciationId}">OK</button>
@@ -230,7 +226,6 @@
                                     <th>ZC</th>
                                     <th>Provést</th>
                                     <th>Provedeno</th>
-                                    <th>Zaúčt.</th>
                                     <th>Akce</th>
                                 </tr>
                                 </thead>
@@ -315,9 +310,6 @@
                                         </td>
                                         <td>
                                             <input class="form-check-input" type="checkbox" disabled {if $depreciation->isExecuted()}checked=""{/if}>
-                                        </td>
-                                        <td>
-                                            <input class="form-check-input" type="checkbox" disabled {if $depreciation->isAccounted()}checked=""{/if}>
                                         </td>
                                         <td>
                                             {if !$depreciation->isSameAsTax() && !$depreciation->isExecuted()}

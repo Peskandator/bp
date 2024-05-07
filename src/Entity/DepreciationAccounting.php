@@ -41,10 +41,6 @@ class DepreciationAccounting implements Depreciation
      */
     private bool $executed;
     /**
-     * @ORM\Column(name="accounted", type="boolean", nullable=false)
-     */
-    private bool $accounted;
-    /**
      * @ORM\Column(name="percentage", type="float", nullable=false)
      */
     private float $percentage;
@@ -108,7 +104,6 @@ class DepreciationAccounting implements Depreciation
         $this->depreciatedAmount = $request->depreciatedAmount;
         $this->residualPrice = $request->residualPrice;
         $this->executed = false;
-        $this->accounted = false;
         $this->entryPrice = $request->asset->getEntryPrice();
         $this->increasedEntryPrice = $request->asset->getPriceForYear($request->year);
         $this->depreciationYear = $request->depreciationYear;
@@ -129,7 +124,6 @@ class DepreciationAccounting implements Depreciation
         $this->depreciatedAmount = $depreciationTax->getDepreciatedAmount();
         $this->residualPrice = $depreciationTax->getResidualPrice();
         $this->executed = false;
-        $this->accounted = false; // TODO ??
         $this->entryPrice = $depreciationTax->getEntryPrice();
         $this->increasedEntryPrice = $depreciationTax->getIncreasedEntryPrice();
         $this->depreciationYear = $depreciationTax->getDepreciationYear();
@@ -214,11 +208,6 @@ class DepreciationAccounting implements Depreciation
     public function setExecuted(bool $value): void
     {
         $this->executed = $value;
-    }
-
-    public function isAccounted(): bool
-    {
-        return $this->accounted;
     }
 
     public function getMethod(): int
