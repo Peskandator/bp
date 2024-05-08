@@ -37,15 +37,43 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-
+                    <h5>Odpisy</h5>
                 </div>
                 <div class="table-responsive px-3 card-body">
+                    {form editDepreciationsAccountingData}
                     <table class="table table-bordered mt-3">
-
+                        <thead>
+                        <tr>
+                            <th>Majetek</th>
+                            <th>Datum</th>
+                            <th>Účet</th>
+                            <th>MD</th>
+                            <th>DAL</th>
+                            <th>ZC</th>
+                            <th>Popis</th>
+                        </tr>
+                        </thead>
+                        <tbody id="accounting-view-export">
+                        {foreach $data as $row}
+                            {var $code = $row['code']}
+                            <tr>
+                                <td>
+                                    {var $asset = $assetArray[$row['code']]}
+                                    {if $asset}<a n:href=":Admin:Asset:default, $asset->getId()">{$asset->getName()}</a> {/if}
+                                </td>
+                                {foreach $form[$code]->getComponents() as $name => $component}
+                                    <td>
+                                        {var $err = $component->hasErrors()}
+                                        <input n:name="$component" class="form-control {if $err}is-invalid{/if}">
+                                    </td>
+                                {/foreach}
+                            </tr>
+                        {/foreach}
+                        </tbody>
                     </table>
+                    {/form}
                 </div>
             </div>
         </div>
     </div>
-
 {/block}

@@ -19,6 +19,8 @@ class DepreciationsAccountingDataGenerator
     public function createDepreciationsAccountingData(AccountingEntity $entity, int $year): array
     {
 //        Datum 	Částka 	ZC 	Popis 	Účet MD   Účet DAL
+//       uložit do DB
+
         $data = [];
         $movements = $entity->getDepreciationAccountingMovementsForYear($year);
 
@@ -31,8 +33,8 @@ class DepreciationsAccountingDataGenerator
             }
             $movementRowDebited = $this->createRow($movement, false);
             $movementRowCredited = $this->createRow($movement, true);
-            $data[] = $movementRowCredited;
             $data[] = $movementRowDebited;
+            $data[] = $movementRowCredited;
         }
         return $data;
     }
@@ -41,6 +43,8 @@ class DepreciationsAccountingDataGenerator
     {
         $row = [];
         $row['movementId'] = $movement->getId();
+        $row['credited'] = $credited;
+        $row['code'] = $this->random_str(10);
         $row['executionDate'] = $movement->getDate();
         $row['residualPrice'] = $movement->getResidualPrice();
         $row['description'] = $movement->getDescription();
@@ -56,6 +60,21 @@ class DepreciationsAccountingDataGenerator
             $row['creditedValue'] = $value;
         }
 
+        bdump($row);
+
         return $row;
+    }
+
+    protected function random_str(
+        int $length
+    ): string
+    {
+        $keyspace = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $pieces = [];
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $pieces []= $keyspace[random_int(0, $max)];
+        }
+        return implode('', $pieces);
     }
 }
