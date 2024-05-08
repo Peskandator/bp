@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Majetek\Enums\DepreciationMethod;
+use App\Majetek\Enums\MovementType;
 use App\Majetek\Requests\CreateEntityRequest;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -418,5 +419,27 @@ class AccountingEntity
         }
 
         return null;
+    }
+
+    public function getDepreciationAccountingMovementsForYear(int $year): array
+    {
+        $result = [];
+        $assets = $this->getAssetsSorted();
+        /**
+         * @var Asset $asset
+         */
+        foreach ($assets as $asset) {
+            $movements = $asset->getMovementsWithType(MovementType::DEPRECIATION_ACCOUNTING);
+            /**
+             * @var Movement $movement
+             */
+            foreach ($movements as $movement) {
+                if ((int)$movement->getDate()->format('Y') === $year) {
+                    $result[] = $movement;
+                }
+            }
+        }
+
+        return $result;
     }
 }

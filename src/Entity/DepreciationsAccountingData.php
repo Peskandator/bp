@@ -26,6 +26,10 @@ class DepreciationsAccountingData
      */
     private string $data;
     /**
+     * @ORM\Column(name="updated_at", type="date", nullable=false)
+     */
+    private \DateTimeInterface $updatedAt;
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AccountingEntity", inversedBy="assets")
      * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=false)
      */
@@ -40,6 +44,12 @@ class DepreciationsAccountingData
         $this->entity = $entity;
         $this->year = $year;
         $this->data = $data;
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function update($data) {
+        $this->data = $data;
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): int
@@ -54,7 +64,7 @@ class DepreciationsAccountingData
 
     public function getData(): string
     {
-        return $this->year;
+        return $this->data;
     }
 
     public function getArrayData(): array
@@ -65,5 +75,10 @@ class DepreciationsAccountingData
     public function getEntity(): AccountingEntity
     {
         return $this->entity;
+    }
+
+    public function getUpdatedA(): \DateTimeInterface
+    {
+        return $this->updatedAt;
     }
 }
