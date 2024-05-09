@@ -421,7 +421,7 @@ class AccountingEntity
         return null;
     }
 
-    public function getDepreciationAccountingMovementsForYear(int $year): array
+    public function getAccountableDepreciationMovementsForYear(int $year): array
     {
         $result = [];
         $assets = $this->getAssetsSorted();
@@ -434,6 +434,9 @@ class AccountingEntity
              * @var Movement $movement
              */
             foreach ($movements as $movement) {
+                if (!$movement->isAccountable()) {
+                    continue;
+                }
                 if ((int)$movement->getDate()->format('Y') === $year) {
                     $result[] = $movement;
                 }

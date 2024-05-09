@@ -72,12 +72,22 @@ class DepreciationsAccountingData
         return Json::decode($this->getData(), Json::FORCE_ARRAY);
     }
 
+    public function setData(string $data): void
+    {
+        $this->data = $data;
+    }
+
+    public function setDataArray(array $data): void
+    {
+        $this->data = Json::encode($data);
+    }
+
     public function getEntity(): AccountingEntity
     {
         return $this->entity;
     }
 
-    public function getUpdatedA(): \DateTimeInterface
+    public function getUpdatedAt(): \DateTimeInterface
     {
         return $this->updatedAt;
     }

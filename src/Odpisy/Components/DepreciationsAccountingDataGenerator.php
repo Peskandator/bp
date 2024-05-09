@@ -5,47 +5,52 @@ namespace App\Odpisy\Components;
 
 
 use App\Entity\AccountingEntity;
+use App\Entity\DepreciationsAccountingData;
 use App\Entity\Movement;
 use Doctrine\ORM\EntityManagerInterface;
+use Nette\Utils\Json;
 
 class DepreciationsAccountingDataGenerator
 {
+    private EntityManagerInterface $entityManager;
+
     public function __construct(
         EntityManagerInterface $entityManager,
     )
     {
+        $this->entityManager = $entityManager;
     }
 
-    public function createDepreciationsAccountingData(AccountingEntity $entity, int $year): array
+    public function createDepreciationsAccountingData(AccountingEntity $entity, int $year): DepreciationsAccountingData
     {
-//        Datum 	Částka 	ZC 	Popis 	Účet MD   Účet DAL
-//       uložit do DB
-
         $data = [];
-        $movements = $entity->getDepreciationAccountingMovementsForYear($year);
+        $movements = $entity->getAccountableDepreciationMovementsForYear($year);
 
         /**
          * @var Movement $movement
          */
         foreach ($movements as $movement) {
-            if (!$movement->isAccountable()) {
-                continue;
-            }
             $movementRowDebited = $this->createRow($movement, false);
             $movementRowCredited = $this->createRow($movement, true);
             $data[] = $movementRowDebited;
             $data[] = $movementRowCredited;
         }
-        return $data;
+        $dataJson = Json::encode($data);
+        $accountingData = new DepreciationsAccountingData($entity, $year, $dataJson);
+        $this->entityManager->persist($accountingData);
+        $this->entityManager->flush();
+
+        return $accountingData;
     }
 
     private function createRow(Movement $movement, bool $credited): array
     {
         $row = [];
         $row['movementId'] = $movement->getId();
+        $row['depreciationId'] = $movement->getDepreciation()?->getId();
         $row['credited'] = $credited;
         $row['code'] = $this->random_str(10);
-        $row['executionDate'] = $movement->getDate();
+        $row['executionDate'] = $movement->getDate()->format('Y-m-d');
         $row['residualPrice'] = $movement->getResidualPrice();
         $row['description'] = $movement->getDescription();
 
@@ -59,8 +64,6 @@ class DepreciationsAccountingDataGenerator
             $row['debitedValue'] = null;
             $row['creditedValue'] = $value;
         }
-
-        bdump($row);
 
         return $row;
     }
@@ -76,5 +79,37 @@ class DepreciationsAccountingDataGenerator
             $pieces []= $keyspace[random_int(0, $max)];
         }
         return implode('', $pieces);
+    }
+
+    public function updateDepreciationsAccountingData(DepreciationsAccountingData $accountingData): DepreciationsAccountingData
+    {
+        $data = $accountingData->getArrayData();
+        $entity = $accountingData->getEntity();
+        $year = $accountingData->getYear();
+        $movements = $entity->getAccountableDepreciationMovementsForYear($year);
+
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+            $found = false;
+            $depreciationId = $movement->getDepreciation()?->getId();
+            foreach ($data as $record) {
+                if ($record['depreciationId'] === $depreciationId) {
+                    $found = true;
+                }
+            }
+
+            if (!$found) {
+                $movementRowDebited = $this->createRow($movement, false);
+                $movementRowCredited = $this->createRow($movement, true);
+                $data[] = $movementRowDebited;
+                $data[] = $movementRowCredited;
+            }
+        }
+        $accountingData->setDataArray($data);
+        $this->entityManager->flush();
+
+        return $accountingData;
     }
 }

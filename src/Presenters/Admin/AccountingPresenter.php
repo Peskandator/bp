@@ -12,7 +12,6 @@ use Nette\Application\UI\Form;
 
 final class AccountingPresenter extends BaseAccountingEntityPresenter
 {
-
     private DepreciationsAccountingDataGenerator $accountingDataGenerator;
     private MovementRepository $movementRepository;
     private EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory;
@@ -52,23 +51,21 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         $this->template->availableYears = $this->currentEntity->getAvailableYearsAccounting();
 
         $accountingDataForYear = $this->currentEntity->getDepreciationsAccountingDataForYear($selectedYear);
+        if ($accountingDataForYear) {
+            $accountingData = $this->accountingDataGenerator->updateDepreciationsAccountingData($accountingDataForYear);
+        } else {
+            $accountingData = $this->accountingDataGenerator->createDepreciationsAccountingData($this->currentEntity, $selectedYear);
+        }
 
-        // UPDATOVAT změny - jen id movementů, které nejsou v poli
-        // + tlačítko přegenerovat
-//        if ($accountingDataForYear) {
-//            $data = $accountingDataForYear->getArrayData();
-//        } else {
-        $data = $this->accountingDataGenerator->createDepreciationsAccountingData($this->currentEntity, $selectedYear);
-//        }
-        $this->template->data = $data;
+        $this->template->accountingData = $accountingData;
+        $data = $accountingData->getArrayData();
         $this->template->assetArray = $this->getAssetData($data);
     }
 
     protected function createComponentEditDepreciationsAccountingData(): Form
     {
-        $selectedYear = $this->template->selectedYear;
-        $data = $this->template->data;
-        $form = $this->editAccountingDataFormFactory->create($this->currentEntity, $selectedYear, $data);
+        $accountingData = $this->template->accountingData;
+        $form = $this->editAccountingDataFormFactory->create($accountingData);
         return $form;
     }
 

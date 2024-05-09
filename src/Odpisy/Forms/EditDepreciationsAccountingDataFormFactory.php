@@ -3,8 +3,10 @@
 namespace App\Odpisy\Forms;
 
 use App\Entity\AccountingEntity;
+use App\Entity\DepreciationsAccountingData;
 use App\Odpisy\Action\EditDepreciationsAccountingDataAction;
 use App\Utils\FlashMessageType;
+use DateTime;
 use Nette\Application\UI\Form;
 
 class EditDepreciationsAccountingDataFormFactory
@@ -18,60 +20,58 @@ class EditDepreciationsAccountingDataFormFactory
         $this->action = $action;
     }
 
-    public function create(AccountingEntity $currentEntity, int $year, array $data): Form
+    public function create(DepreciationsAccountingData $accountingData): Form
     {
         $form = new Form;
+
+        $data = $accountingData->getArrayData();
 
         foreach ($data as $record) {
             $recordCode = $record['code'];
             $container = $form->addContainer($recordCode);
             $container
-                ->addText('date_' . $recordCode, 'Datum provedení')
+                ->addText('date', 'Datum provedení')
                 ->setRequired(true)
-                ->setDefaultValue($this->getDefaultDateValue($record['executionDate']))
+                ->setDefaultValue($record['executionDate'])
+                ->setType('date')
             ;
             $container
-                ->addText('account_' . $recordCode, 'Účet')
+                ->addText('account', 'Účet')
                 ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
                 ->setDefaultValue($record['account'])
             ;
             $container
-                ->addText('debited_' . $recordCode, 'MD')
+                ->addText('debited', 'MD')
                 ->addRule($form::FLOAT, 'Zadejte číslo')
                 ->setNullable()
                 ->setDefaultValue($record['debitedValue'])
             ;
             $container
-                ->addText('credited_' . $recordCode, 'DAL')
+                ->addText('credited', 'DAL')
                 ->addRule($form::FLOAT, 'Zadejte číslo')
                 ->setNullable()
                 ->setDefaultValue($record['creditedValue'])
             ;
             $container
-                ->addText('residualPrice_' . $recordCode, 'ZC')
+                ->addText('residualPrice', 'ZC')
                 ->addRule($form::FLOAT, 'Zadejte číslo')
                 ->setNullable()
                 ->setDefaultValue($record['residualPrice'])
             ;
             $container
-                ->addText('description_' . $recordCode, 'Popis')
+                ->addText('description', 'Popis')
                 ->setDefaultValue($record['description'])
             ;
         }
-        bdump($form);
+        $form->addSubmit('send', 'Uložit');
 
-        $form->onValidate[] = function (Form $form, \stdClass $values) use ($currentEntity) {
+        $form->onValidate[] = function (Form $form, \stdClass $values) use ($accountingData) {
 
         };
 
-        $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {
-//            $request = new EditDepreciationRequest(
-//                $values->id,
-//                $values->amount,
-//                $values->percentage,
-//                $values->executable,
-//            );
-//            $this->action->__invoke();
+        $form->onSuccess[] = function (Form $form, \stdClass $values) use ($accountingData) {
+            $valuesArray = json_decode(json_encode($values), true);
+            $this->action->__invoke($accountingData, $valuesArray);
             $form->getPresenter()->flashMessage(
                 'Odpis byl úspěšně upraven. Neprovedené odpisy následujících let byly přepočítány.',
                 FlashMessageType::SUCCESS)
@@ -80,10 +80,5 @@ class EditDepreciationsAccountingDataFormFactory
         };
 
         return $form;
-    }
-
-    protected function getDefaultDateValue(?\DateTimeInterface $date): string
-    {
-        return $date === null ? '' : $date->format('Y-m-d');
     }
 }
