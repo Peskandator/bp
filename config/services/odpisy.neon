@@ -15,6 +15,7 @@ services:
     - App\Odpisy\Action\ExecuteDepreciationsAction
     - App\Odpisy\Action\CancelDepreciationExecutionAction
     - App\Odpisy\Action\EditDepreciationsAccountingDataAction
+    - App\Odpisy\Action\RegenerateDepreciationsAccountingDataAction
 
     - App\Odpisy\ORM\DepreciationTaxRepository
     - App\Odpisy\ORM\DepreciationAccountingRepository

@@ -1,15 +1,30 @@
 {layout $adminlayoutPath}
 
 {block modals}
-
+    <div class="modal fade js-accounting-page" id="regenerateAccountingDataModal" tabindex="-1" aria-labelledby="regenerateAccountingDataLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="regenerateAccountingDataLabel">Přegenerování dat zaúčtování</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Opravdu chcete data vygenerovat znovu? Všechny změny budou ztraceny!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zpět</button>
+                    <button type="button" class="btn btn-danger" id="regenerateDataConfirm">Přegenerovat</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}
 
 {block content}
 
-<h1>Zaúčtování odpisů</h1>
-
+<h1 class="js-accounting-page">Zaúčtování odpisů</h1>
     <div class="row mb-3">
-        <div class="col-12">
+        <div class="col-6">
             <div class="main-card card">
                 <div class="card-body">
                     <div class="form-group d-flex mb-0" style="max-width: 300px; margin-right: 12px">
@@ -29,6 +44,20 @@
                         </select>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="float-end">
+                <form n:name="regenerateDepreciationsAccountingDataForm" class="js-regenerate-form visually-hidden">
+                </form>
+                <a class="mt-3 btn rounded-3 btn-primary"
+                   id="regenerate-accounting-data-button"
+                   type="submit"
+                   data-bs-toggle="modal"
+                   data-bs-target="#regenerateAccountingDataModal"
+                >
+                    Vygenerovat znovu z pohybů
+                </a>
             </div>
         </div>
     </div>
@@ -52,7 +81,7 @@
                             <th>Popis</th>
                         </tr>
                         </thead>
-                        <tbody id="accounting-view-export">
+                        <tbody>
                         {foreach $accountingData->getArrayData() as $row}
                             {var $code = $row['code']}
                             <tr>

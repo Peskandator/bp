@@ -4,12 +4,14 @@ import depreciations from './depreciations.js';
 import assetForm from './assetPage.js';
 import dials from './dials.js';
 import movement from './movements';
+import accounting from './accounting';
 
 $(document).ready(function(){
     depreciations();
     assetForm();
     dials();
     movement();
+    accounting();
 
     setTimeout(flashMessage, 4200);
     function flashMessage() {
