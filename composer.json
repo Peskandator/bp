@@ -25,7 +25,8 @@
 		"nettrine/orm": "0.8.4",
 		"nettrine/annotations": "0.7.0",
 		"nettrine/cache": "0.3.0",
-		"nettrine/migrations": "0.8.0"
+		"nettrine/migrations": "0.8.0",
+		"shuchkin/simplexlsxgen": "1.4.11"
 	},
 	"require-dev": {
 		"nette/tester": "^2.4",

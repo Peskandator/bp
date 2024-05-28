@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Majetek\ORM\MovementRepository;
+use App\Odpisy\Action\EditDepreciationsAccountingDataAction;
 use App\Odpisy\Action\RegenerateDepreciationsAccountingDataAction;
 use App\Odpisy\Components\DepreciationsAccountingDataGenerator;
 use App\Odpisy\Forms\EditDepreciationsAccountingDataFormFactory;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
+use Shuchkin\SimpleXLSXGen;
 
 final class AccountingPresenter extends BaseAccountingEntityPresenter
 {
@@ -18,12 +20,16 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
     private MovementRepository $movementRepository;
     private EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory;
     private RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction;
+    private EditDepreciationsAccountingDataAction $saveAction;
+    private SimpleXLSXGen $XLSXGen;
 
     public function __construct(
         DepreciationsAccountingDataGenerator $accountingDataGenerator,
         MovementRepository $movementRepository,
         EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory,
         RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction,
+        EditDepreciationsAccountingDataAction $saveAction,
+        SimpleXLSXGen $XLSXGen,
     )
     {
         parent::__construct();
@@ -31,6 +37,8 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         $this->movementRepository = $movementRepository;
         $this->editAccountingDataFormFactory = $editAccountingDataFormFactory;
         $this->regenerateDepreciationsAccountingDataAction = $regenerateDepreciationsAccountingDataAction;
+        $this->saveAction = $saveAction;
+        $this->XLSXGen = $XLSXGen;
     }
 
     public function actionDepreciations(?int $year = null): void
@@ -62,12 +70,36 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
             $accountingData = $this->accountingDataGenerator->createDepreciationsAccountingData($this->currentEntity, $selectedYear);
         }
 
+        $data = $accountingDataForYear->getArrayData();
+        bdump($data);
+
+
         $this->template->accountingData = $accountingData;
         $data = $accountingData->getArrayData();
         $this->template->assetArray = $this->getAssetData($data);
     }
 
-    protected function createComponentEditDepreciationsAccountingData(): Form
+    public function actionExportXlsx(?int $year = null): void
+    {
+        $selectedYear = $year;
+        if (!$selectedYear) {
+            $today = new \DateTimeImmutable('today');
+            $selectedYear = (int)$today->format('Y');
+        }
+
+        $accountingDataForYear = $this->currentEntity->getDepreciationsAccountingDataForYear($selectedYear);
+        if (!$accountingDataForYear) {
+            return;
+        }
+
+        $data = $accountingDataForYear->getArrayData();
+        $dataToExport = $this->getDataForExcelExport($data);
+
+        $xlsx = $this->XLSXGen::fromArray($dataToExport, 'Zaúčtování odpisů ' . $year);
+        $xlsx->downloadAs('Zaúčtování odpisů ' . $year);
+    }
+
+    protected function createComponentEditDepreciationsAccountingDataForm(): Form
     {
         $accountingData = $this->template->accountingData;
         $form = $this->editAccountingDataFormFactory->create($accountingData);
@@ -102,5 +134,34 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         }
 
         return $assets;
+    }
+
+    protected function getDataForExcelExport(array $data): array
+    {
+        $records = [];
+
+        $firstRow = ['<b>Majetek</b>', '<b>Datum</b>', '<b>Účet</b>', '<b>MD</b>', '<b>DAL</b>', '<b>ZC</b>', '<b>Popis</b>'];
+
+        $records[] = $firstRow;
+
+        foreach ($data as $row) {
+            $record = [];
+
+            $movement = $this->movementRepository->find($row['movementId']);
+            $asset = $movement->getAsset();
+
+            $record[] = $asset->getName();
+            $date = new \DateTime($row['executionDate']);
+            $record[] = $date->format('j. n. Y');
+            $record[] = $row['account'];
+            $record[] = $row['debitedValue'];
+            $record[] = $row['creditedValue'];
+            $record[] = $row['residualPrice'];
+            $record[] = $row['description'];
+
+            $records[] = $record;
+        }
+
+        return $records;
     }
 }

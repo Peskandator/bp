@@ -52,7 +52,7 @@
                 </form>
                 <a class="mt-3 btn rounded-3 btn-primary"
                    id="regenerate-accounting-data-button"
-                   type="submit"
+                   type="button"
                    data-bs-toggle="modal"
                    data-bs-target="#regenerateAccountingDataModal"
                 >
@@ -61,52 +61,58 @@
             </div>
         </div>
     </div>
-    {form editDepreciationsAccountingData}
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Odpisy</h5>
-                </div>
-                <div class="table-responsive px-3 card-body">
-                    <table class="table table-bordered mt-3">
-                        <thead>
-                        <tr>
-                            <th>Majetek</th>
-                            <th>Datum</th>
-                            <th>Účet</th>
-                            <th>MD</th>
-                            <th>DAL</th>
-                            <th>ZC</th>
-                            <th>Popis</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {foreach $accountingData->getArrayData() as $row}
-                            {var $code = $row['code']}
+    <form n:name="editDepreciationsAccountingDataForm" class="js-edit-accounting-data-form">
+        <input n:name="export" id="js-accounting-export-input">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Odpisy</h5>
+                    </div>
+                    <div class="table-responsive px-3 card-body">
+                        <table class="table table-bordered mt-3">
+                            <thead>
                             <tr>
-                                <td>
-                                    {var $asset = $assetArray[$row['code']]}
-                                    {if $asset}<a n:href=":Admin:Asset:default, $asset->getId()">{$asset->getName()}</a> {/if}
-                                </td>
-                                {foreach $form[$code]->getComponents() as $name => $component}
-                                    <td>
-                                        {var $err = $component->hasErrors()}
-                                        <input n:name="$component" class="form-control {if $err}is-invalid{/if}">
-                                    </td>
-                                {/foreach}
+                                <th>Majetek</th>
+                                <th>Datum</th>
+                                <th>Účet</th>
+                                <th>MD</th>
+                                <th>DAL</th>
+                                <th>ZC</th>
+                                <th>Popis</th>
                             </tr>
-                        {/foreach}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {foreach $accountingData->getArrayData() as $row}
+                                {var $code = $row['code']}
+                                <tr>
+                                    <td>
+                                        {var $asset = $assetArray[$row['code']]}
+                                        {if $asset}<a n:href=":Admin:Asset:default, $asset->getId()">{$asset->getName()}</a> {/if}
+                                    </td>
+                                    {foreach $form[$code]->getComponents() as $name => $component}
+                                        <td>
+                                            {var $err = $component->hasErrors()}
+                                            <input n:name="$component" class="form-control {if $err}is-invalid{/if}">
+                                        </td>
+                                    {/foreach}
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
+
     <div class="row">
         <div class="col-12">
-            <input n:name="send" class="mt-3 btn rounded-3 btn-primary btn-lg" type="submit">
+            <a class="btn btn-primary mt-3" id="js-edit-accounting-data-form-submit">Uložit</a>
+            <div class="float-end">
+                <a class="btn btn-primary mt-3" id="js-export-excel-button" style="margin-right: 25px;">Export MS Excel</a>
+                <a class="btn btn-primary mt-3" id="js-export-dbf-button">Export Šumava</a>
+            </div>
         </div>
     </div>
-    {/form}
 {/block}

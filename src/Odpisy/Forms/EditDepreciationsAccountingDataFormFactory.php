@@ -26,6 +26,11 @@ class EditDepreciationsAccountingDataFormFactory
 
         $data = $accountingData->getArrayData();
 
+        $form
+            ->addHidden('export')
+            ->setNullable()
+        ;
+
         foreach ($data as $record) {
             $recordCode = $record['code'];
             $container = $form->addContainer($recordCode);
@@ -63,20 +68,29 @@ class EditDepreciationsAccountingDataFormFactory
                 ->setDefaultValue($record['description'])
             ;
         }
-        $form->addSubmit('send', 'Uložit');
 
         $form->onValidate[] = function (Form $form, \stdClass $values) use ($accountingData) {
 
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($accountingData) {
+            $year = $accountingData->getYear();
+
             $valuesArray = json_decode(json_encode($values), true);
             $this->action->__invoke($accountingData, $valuesArray);
             $form->getPresenter()->flashMessage(
-                'Odpis byl úspěšně upraven. Neprovedené odpisy následujících let byly přepočítány.',
+                'Data byla uložena.',
                 FlashMessageType::SUCCESS)
             ;
-            $form->getPresenter()->redirect('this');
+            if (!$values->export) {
+                $form->getPresenter()->redirect('this');
+            }
+            if ($values->export === 'excel') {
+                $form->getPresenter()->redirect(':Admin:Accounting:exportXlsx', $year);
+            }
+            if ($values->export === 'dbf') {
+                $form->getPresenter()->redirect(':Admin:Accounting:exportDbf', $year);
+            }
         };
 
         return $form;
