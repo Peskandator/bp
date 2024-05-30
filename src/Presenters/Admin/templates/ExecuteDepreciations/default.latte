@@ -110,7 +110,6 @@
                 <div class="col-md-4">
                     <div class="main-card card">
                         <div class="card-body">
-
                             <div class="form-errors" n:ifcontent>
                                 <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
                             </div>
@@ -119,13 +118,11 @@
                                 <input n:name="execution_date" type="date" class="form-control" id="executionDate">
                                 <small class="form-error" n:ifcontent>{inputError execution_date}</small>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-
 
         <div class="row mb-4">
             <div class="col-12">

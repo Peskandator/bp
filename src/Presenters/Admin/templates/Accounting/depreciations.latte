@@ -63,12 +63,55 @@
     </div>
     <form n:name="editDepreciationsAccountingDataForm" class="js-edit-accounting-data-form">
         <input n:name="export" id="js-accounting-export-input">
+
+        <div class="form-errors" n:ifcontent>
+            <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert mt-2">{$error}</div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="originInput">Původ</label>
+                                    <input n:name="origin" type="text" class="form-control" id="originInput">
+                                    <small class="form-error" n:ifcontent>{inputError origin}</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="documentInput">Doklad</label>
+                                    <input n:name="document" type="number" step="1" max="1000000" class="form-control" id="documentInput">
+                                    <small class="form-error" n:ifcontent>{inputError document}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="monthInput">Období</label>
+                                    <input n:name="operation_month" type="number" step="1" min="1" max="12" class="form-control" id="monthInput">
+                                    <small class="form-error" n:ifcontent>{inputError operation_month}</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="operationDate">Datum </label>
+                                    <input n:name="operation_date" type="date" class="form-control" id="operationDate">
+                                    <small class="form-error" n:ifcontent>{inputError operation_date}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>Odpisy</h5>
-                    </div>
                     <div class="table-responsive px-3 card-body">
                         <table class="table table-bordered mt-3">
                             <thead>
@@ -78,7 +121,6 @@
                                 <th>Účet</th>
                                 <th>MD</th>
                                 <th>DAL</th>
-                                <th>ZC</th>
                                 <th>Popis</th>
                             </tr>
                             </thead>

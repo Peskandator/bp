@@ -53,7 +53,6 @@ class DepreciationsAccountingDataGenerator
         $row['credited'] = $credited;
         $row['code'] = $this->random_str(10);
         $row['executionDate'] = $movement->getDate()->format('Y-m-d');
-        $row['residualPrice'] = $movement->getResidualPrice();
         $row['description'] = $movement->getDescription();
 
         $value = $movement->getValue();

@@ -172,7 +172,6 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
             $record[] = $row['account'];
             $record[] = $row['debitedValue'];
             $record[] = $row['creditedValue'];
-            $record[] = $row['residualPrice'];
             $record[] = $row['description'];
 
             $records[] = $record;

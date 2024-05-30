@@ -26,6 +26,22 @@ class DepreciationsAccountingData
      */
     private string $code;
     /**
+     * @ORM\Column(name="origin", type="string", nullable=true)
+     */
+    private ?string $origin;
+    /**
+     * @ORM\Column(name="document", type="integer", nullable=true)
+     */
+    private ?int $document;
+    /**
+     * @ORM\Column(name="operation_month", type="integer", nullable=true)
+     */
+    private ?int $operationMonth;
+    /**
+     * @ORM\Column(name="operation_date", type="date", nullable=true)
+     */
+    private ?\DateTimeInterface $operationDate;
+    /**
      * @ORM\Column(name="data", type="json", nullable=false)
      */
     private string $data;
@@ -53,8 +69,12 @@ class DepreciationsAccountingData
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    public function update($data) {
+    public function update($data, ?string $origin, ?int $document, ?int $operationMonth, ?\DateTimeInterface $operationDate) {
         $this->data = $data;
+        $this->origin = $origin;
+        $this->document = $document;
+        $this->operationMonth = $operationMonth;
+        $this->operationDate = $operationDate;
         $this->updatedAt = new \DateTimeImmutable();
     }
 
@@ -101,5 +121,25 @@ class DepreciationsAccountingData
     public function getUpdatedAt(): \DateTimeInterface
     {
         return $this->updatedAt;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function getDocument(): ?int
+    {
+        return $this->document;
+    }
+
+    public function getOperationMonth(): ?int
+    {
+        return $this->operationMonth;
+    }
+
+    public function getOperationDate(): ?\DateTimeInterface
+    {
+        return $this->operationDate;
     }
 }

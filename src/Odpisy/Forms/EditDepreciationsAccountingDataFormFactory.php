@@ -31,11 +31,37 @@ class EditDepreciationsAccountingDataFormFactory
             ->setNullable()
         ;
 
+        $defaultOrigin = $accountingData->getOrigin() ?? 'O-HIM';
+        $form
+            ->addText('origin')
+            ->setDefaultValue($defaultOrigin)
+            ->setNullable()
+        ;
+        $form
+            ->addInteger('operation_month')
+            ->setDefaultValue($accountingData->getOperationMonth())
+            ->addRule($form::MAX, 'Období musí být v rozmezí 1-12', 12)
+            ->addRule($form::MIN, 'Období musí být v rozmezí 1-12', 1)
+            ->setNullable()
+        ;
+        $form
+            ->addInteger('document')
+            ->setDefaultValue($accountingData->getDocument())
+            ->addRule($form::MAX, 'Může být pouze šestimístné číslo.', 1000000)
+            ->setNullable()
+        ;
+        $form
+            ->addText('operation_date')
+            ->setDefaultValue($this->getDefaultDateValue($accountingData->getOperationDate()))
+            ->setType('date')
+            ->setNullable()
+        ;
+
         foreach ($data as $record) {
             $recordCode = $record['code'];
             $container = $form->addContainer($recordCode);
             $container
-                ->addText('date', 'Datum provedení')
+                ->addText('execution_date', 'Datum provedení')
                 ->setRequired(true)
                 ->setDefaultValue($record['executionDate'])
                 ->setType('date')
@@ -56,12 +82,6 @@ class EditDepreciationsAccountingDataFormFactory
                 ->addRule($form::FLOAT, 'Zadejte číslo')
                 ->setNullable()
                 ->setDefaultValue($record['creditedValue'])
-            ;
-            $container
-                ->addText('residualPrice', 'ZC')
-                ->addRule($form::FLOAT, 'Zadejte číslo')
-                ->setNullable()
-                ->setDefaultValue($record['residualPrice'])
             ;
             $container
                 ->addText('description', 'Popis')
@@ -94,5 +114,10 @@ class EditDepreciationsAccountingDataFormFactory
         };
 
         return $form;
+    }
+
+    protected function getDefaultDateValue(?\DateTimeInterface $date): string
+    {
+        return $date === null ? '' : $date->format('Y-m-d');
     }
 }
