@@ -201,7 +201,7 @@ class DbfFileGenerator
                 'length' => 40,
             ]))
             ->addColumn(new Column([
-                'name'         => 'MNOSTVI',
+                'name'         => 'MNOZSTVI',
                 'type'         => FieldType::NUMERIC,
                 'length'       => 14,
                 'decimalCount' => 3,
@@ -262,21 +262,34 @@ class DbfFileGenerator
         $data = $accountingData->getArrayData();
 
         foreach ($data as $row) {
-            bdump($row);
-
             $executionDate = new \DateTime($row['executionDate']);
-            $year = (int)$executionDate->format('Y');
-            $month = (int)$executionDate->format('n');
+            $operationDate = $accountingData->getOperationDate();
 
             $record = $table->appendRecord()
-                ->set('ROK', $year)
-                ->set('ME', $month)
-                ->set('DATUM', $executionDate)
+                ->set('ROK', $accountingData->getYear())
+                ->set('PUVOD', $accountingData->getOrigin())
+                ->set('DOKLAD', $accountingData->getDocument())
+                ->set('ME', $accountingData->getOperationMonth())
+                ->set('DATUM', $operationDate)
                 ->set('UCET', $row['account'])
                 ->set('MD', $row['debitedValue'])
                 ->set('DAL', $row['creditedValue'])
+                ->set('ZAKLAD', 0)
+                ->set('PLNENI', $executionDate)
+                ->set('DATUZP', $executionDate)
+                ->set('SAZBA', 0)
+                ->set('FAKTURA', 0)
+                ->set('POR', 0)
+                ->set('STRED', 0)
+                ->set('VYKON', 0)
+                ->set('STROJ', 0)
                 ->set('TEXT', $row['description'])
-                ->set('MENA', 'CZK');
+                ->set('MNOZSTVI', 0)
+                ->set('HMOTNOST', 0)
+                ->set('MENA', 'CZK')
+                ->set('KURZ', 0)
+                ->set('DEVIZY', 0)
+                ->set('PORIZENI', new \DateTimeImmutable());
 
             $table->writeRecord($record);
         }

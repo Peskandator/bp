@@ -86,6 +86,7 @@ class EditDepreciationsAccountingDataFormFactory
             $container
                 ->addText('description', 'Popis')
                 ->setDefaultValue($record['description'])
+                ->addRule($form::MAX_LENGTH, 'Lze zadat pouze 40 znaků.', 40)
             ;
         }
 

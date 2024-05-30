@@ -66,6 +66,10 @@ class DepreciationsAccountingData
         $this->year = $year;
         $this->code = $code;
         $this->data = $data;
+        $this->origin = 'O-HIM';
+        $this->document = null;
+        $this->operationMonth = null;
+        $this->operationDate = null;
         $this->updatedAt = new \DateTimeImmutable();
     }
 

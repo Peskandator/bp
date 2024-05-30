@@ -53,7 +53,7 @@ class DepreciationsAccountingDataGenerator
         $row['credited'] = $credited;
         $row['code'] = $this->random_str(10);
         $row['executionDate'] = $movement->getDate()->format('Y-m-d');
-        $row['description'] = $movement->getDescription();
+        $row['description'] = $this->getDescriptionForMovement($movement);
 
         $value = $movement->getValue();
 
@@ -112,5 +112,25 @@ class DepreciationsAccountingDataGenerator
         $this->entityManager->flush();
 
         return $accountingData;
+    }
+
+    protected function getDescriptionForMovement(Movement $movement): string
+    {
+        $asset = $movement->getAsset();
+        $assetName = $asset->getName();
+        $inventoryNumber = (string)$asset->getInventoryNumber();
+
+        return $this->shortenAssetName($assetName, strlen($inventoryNumber)) . ' ' . $inventoryNumber;
+    }
+
+    protected function shortenAssetName(string $assetName, int $inventoryNumberLen): string
+    {
+        $diffToShorten = strlen($assetName) + $inventoryNumberLen - 39;
+        $nameStr = $assetName;
+        if ($diffToShorten > 0) {
+            $nameStr = substr($assetName, 0, -($diffToShorten + 3)) . '...';
+        }
+
+        return $nameStr;
     }
 }
