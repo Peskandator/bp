@@ -16,8 +16,8 @@ export default function() {
         $(`.js-edit-accounting-data-form`).submit();
     });
 
-    // $(`#js-export-dbf-button`).click(function (e) {
-    //     $(`#js-accounting-export-input`).val('dbf');
-    //     $(`.js-edit-accounting-data-form`).submit();
-    // });
+    $(`#js-export-dbf-button`).click(function (e) {
+        $(`#js-accounting-export-input`).val('dbf');
+        $(`.js-edit-accounting-data-form`).submit();
+    });
 }

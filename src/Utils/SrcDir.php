@@ -4,15 +4,22 @@ namespace App\Utils;
 
 class SrcDir
 {
-    private string $dir;
+    private string $srcDir;
+    private string $publicDir;
 
-    public function __construct(string $dir)
+    public function __construct(string $srcDir, string $publicDir)
     {
-        $this->dir = $dir;
+        $this->srcDir = $srcDir;
+        $this->publicDir = $publicDir;
     }
 
     public function getDir(): string
     {
-        return $this->dir;
+        return $this->srcDir;
+    }
+
+    public function getUploadsDir(): string
+    {
+        return $this->publicDir . '/uploads';
     }
 }

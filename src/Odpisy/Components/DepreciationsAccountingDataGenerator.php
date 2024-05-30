@@ -36,7 +36,9 @@ class DepreciationsAccountingDataGenerator
             $data[] = $movementRowCredited;
         }
         $dataJson = Json::encode($data);
-        $accountingData = new DepreciationsAccountingData($entity, $year, $dataJson);
+        $code = $this->random_str(10);
+        $accountingData = new DepreciationsAccountingData($entity, $year, $code, $dataJson);
+
         $this->entityManager->persist($accountingData);
         $this->entityManager->flush();
 

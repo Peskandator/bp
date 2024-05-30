@@ -22,6 +22,10 @@ class DepreciationsAccountingData
      */
     private int $year;
     /**
+     * @ORM\Column(name="code", type="string", nullable=false)
+     */
+    private string $code;
+    /**
      * @ORM\Column(name="data", type="json", nullable=false)
      */
     private string $data;
@@ -39,10 +43,12 @@ class DepreciationsAccountingData
     public function __construct(
         $entity,
         $year,
+        $code,
         $data
     ){
         $this->entity = $entity;
         $this->year = $year;
+        $this->code = $code;
         $this->data = $data;
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -60,6 +66,11 @@ class DepreciationsAccountingData
     public function getYear(): int
     {
         return $this->year;
+    }
+
+    public function getCode(): string
+    {
+        return $this->code;
     }
 
     public function getData(): string

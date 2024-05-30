@@ -8,7 +8,7 @@ search:
 services:
     templateDecorator: App\Template\TemplateDecorator(debugMode: %debugMode%)
     - App\Router\RouterFactory::createRouter
-    - App\Utils\SrcDir(dir: '%srcDir%')
+    - App\Utils\SrcDir(srcDir: '%srcDir%', publicDir: '%publicDir%')
     - App\Utils\AcquisitionsProvider
     - App\Utils\DialsCodeValidator
     - App\Utils\EnumerableSorter

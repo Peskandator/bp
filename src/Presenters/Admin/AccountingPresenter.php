@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Majetek\ORM\MovementRepository;
-use App\Odpisy\Action\EditDepreciationsAccountingDataAction;
 use App\Odpisy\Action\RegenerateDepreciationsAccountingDataAction;
+use App\Odpisy\Components\DbfFileGenerator;
 use App\Odpisy\Components\DepreciationsAccountingDataGenerator;
 use App\Odpisy\Forms\EditDepreciationsAccountingDataFormFactory;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\FlashMessageType;
+use Nette\Application\Responses\FileResponse;
 use Nette\Application\UI\Form;
 use Shuchkin\SimpleXLSXGen;
 
@@ -20,16 +21,16 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
     private MovementRepository $movementRepository;
     private EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory;
     private RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction;
-    private EditDepreciationsAccountingDataAction $saveAction;
     private SimpleXLSXGen $XLSXGen;
+    private DbfFileGenerator $dbfFileGenerator;
 
     public function __construct(
         DepreciationsAccountingDataGenerator $accountingDataGenerator,
         MovementRepository $movementRepository,
         EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory,
         RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction,
-        EditDepreciationsAccountingDataAction $saveAction,
         SimpleXLSXGen $XLSXGen,
+        DbfFileGenerator $dbfFileGenerator,
     )
     {
         parent::__construct();
@@ -37,8 +38,8 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         $this->movementRepository = $movementRepository;
         $this->editAccountingDataFormFactory = $editAccountingDataFormFactory;
         $this->regenerateDepreciationsAccountingDataAction = $regenerateDepreciationsAccountingDataAction;
-        $this->saveAction = $saveAction;
         $this->XLSXGen = $XLSXGen;
+        $this->dbfFileGenerator = $dbfFileGenerator;
     }
 
     public function actionDepreciations(?int $year = null): void
@@ -70,10 +71,6 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
             $accountingData = $this->accountingDataGenerator->createDepreciationsAccountingData($this->currentEntity, $selectedYear);
         }
 
-        $data = $accountingDataForYear->getArrayData();
-        bdump($data);
-
-
         $this->template->accountingData = $accountingData;
         $data = $accountingData->getArrayData();
         $this->template->assetArray = $this->getAssetData($data);
@@ -97,6 +94,25 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
 
         $xlsx = $this->XLSXGen::fromArray($dataToExport, 'Zaúčtování odpisů ' . $year);
         $xlsx->downloadAs('Zaúčtování odpisů ' . $year);
+    }
+
+    public function actionExportDbf(?int $year = null): void
+    {
+        $selectedYear = $year;
+        if (!$selectedYear) {
+            $today = new \DateTimeImmutable('today');
+            $selectedYear = (int)$today->format('Y');
+        }
+
+        $accountingDataForYear = $this->currentEntity->getDepreciationsAccountingDataForYear($selectedYear);
+        if (!$accountingDataForYear) {
+            return;
+        }
+        $dbfFilePath = $this->dbfFileGenerator->create($accountingDataForYear);
+        $this->dbfFileGenerator->addRecordsToTable($accountingDataForYear, $dbfFilePath);
+
+        $response = new FileResponse($dbfFilePath, "nevim.dbf", 'application/dbf');
+        $this->sendResponse($response);
     }
 
     protected function createComponentEditDepreciationsAccountingDataForm(): Form
