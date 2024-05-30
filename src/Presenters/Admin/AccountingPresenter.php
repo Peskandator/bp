@@ -8,6 +8,7 @@ use App\Majetek\ORM\MovementRepository;
 use App\Odpisy\Action\RegenerateDepreciationsAccountingDataAction;
 use App\Odpisy\Components\DbfFileGenerator;
 use App\Odpisy\Components\DepreciationsAccountingDataGenerator;
+use App\Odpisy\Components\XLSXFileGenerator;
 use App\Odpisy\Forms\EditDepreciationsAccountingDataFormFactory;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\FlashMessageType;
@@ -23,6 +24,7 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
     private RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction;
     private SimpleXLSXGen $XLSXGen;
     private DbfFileGenerator $dbfFileGenerator;
+    private XLSXFileGenerator $XLSXFileGenerator;
 
     public function __construct(
         DepreciationsAccountingDataGenerator $accountingDataGenerator,
@@ -31,6 +33,7 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction,
         SimpleXLSXGen $XLSXGen,
         DbfFileGenerator $dbfFileGenerator,
+        XLSXFileGenerator $XLSXFileGenerator,
     )
     {
         parent::__construct();
@@ -40,6 +43,7 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         $this->regenerateDepreciationsAccountingDataAction = $regenerateDepreciationsAccountingDataAction;
         $this->XLSXGen = $XLSXGen;
         $this->dbfFileGenerator = $dbfFileGenerator;
+        $this->XLSXFileGenerator = $XLSXFileGenerator;
     }
 
     public function actionDepreciations(?int $year = null): void
@@ -88,10 +92,7 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         if (!$accountingDataForYear) {
             return;
         }
-
-        $data = $accountingDataForYear->getArrayData();
-        $dataToExport = $this->getDataForExcelExport($data);
-
+        $dataToExport = $this->XLSXFileGenerator->generateContent($accountingDataForYear);
         $xlsx = $this->XLSXGen::fromArray($dataToExport, 'Zaúčtování odpisů ' . $year);
         $xlsx->downloadAs('Zaúčtování odpisů ' . $year);
     }
@@ -150,33 +151,5 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
         }
 
         return $assets;
-    }
-
-    protected function getDataForExcelExport(array $data): array
-    {
-        $records = [];
-
-        $firstRow = ['<b>Majetek</b>', '<b>Datum</b>', '<b>Účet</b>', '<b>MD</b>', '<b>DAL</b>', '<b>ZC</b>', '<b>Popis</b>'];
-
-        $records[] = $firstRow;
-
-        foreach ($data as $row) {
-            $record = [];
-
-            $movement = $this->movementRepository->find($row['movementId']);
-            $asset = $movement->getAsset();
-
-            $record[] = $asset->getName();
-            $date = new \DateTime($row['executionDate']);
-            $record[] = $date->format('j. n. Y');
-            $record[] = $row['account'];
-            $record[] = $row['debitedValue'];
-            $record[] = $row['creditedValue'];
-            $record[] = $row['description'];
-
-            $records[] = $record;
-        }
-
-        return $records;
     }
 }
