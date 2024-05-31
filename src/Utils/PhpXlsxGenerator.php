@@ -1172,12 +1172,12 @@ class PhpXlsxGenerator
         return $this;
     }
 
-    protected static function bold(string $colName): string
+    public static function bold(string $colName): string
     {
         return '<b>' . $colName . '</b>';
     }
 
-    protected static function boldItems(array $records): array
+    public static function boldItems(array $records): array
     {
         $returnArr = [];
         foreach ($records as $record) {

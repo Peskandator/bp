@@ -8,6 +8,7 @@ use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAccountingEntityPresenter;
+use App\Utils\CsvResponse;
 use App\Utils\PhpXlsxGenerator;
 use Nette\Application\UI\Form;
 
@@ -76,13 +77,41 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
         }
 
         $depreciations = $this->currentEntity->getTaxDepreciationsForYear($year);
-        $fileName = $this->currentEntity->getName() . ' - Daňové odpisy ' . $year . '.xlsx';
+//        $fileName = $this->currentEntity->getName() . ' - Daňové odpisy ' . $year . '.xlsx';
+        $fileName = $this->currentEntity->getName() . ' - Daňové odpisy ' . $year . '.csv';
         if ($type === "accounting") {
             $depreciations = $this->currentEntity->getAccountingDepreciationsForYear($year);
-            $fileName = $this->currentEntity->getName() . ' - Účetní odpisy ' . $year . '.xlsx';
+//            $fileName = $this->currentEntity->getName() . ' - Účetní odpisy ' . $year . '.xlsx';
+            $fileName = $this->currentEntity->getName() . ' - Účetní odpisy ' . $year . '.csv';
         }
 
+        $rows = $this->getDataForExport($depreciations);
+        $csvResponse = new CsvResponse($fileName, $rows);
+        $this->sendResponse($csvResponse);
 
+//        $firstRow = [
+//            'Majetek',
+//            'Typ',
+//            'Odp.sk., způsob',
+//            'Rok odpisu',
+//            'VC',
+//            'Zvýš. VC',
+//            'Sazba',
+//            '%',
+//            'Odpis',
+//            'Oprávky',
+//            'ZC',
+//            'Provést',
+//            'Provedeno',
+//        ];
+//        $rows = $this->getDataForExport($depreciations);
+//        $xlsxFile = PhpXlsxGenerator::fromArray($firstRow, $rows);
+//        $xlsxFile->downloadAs($fileName);
+    }
+
+    protected function getDataForExport(array $depreciations): array
+    {
+        $rows = [];
         $firstRow = [
             'Majetek',
             'Typ',
@@ -99,15 +128,7 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
             'Provedeno',
         ];
 
-        $rows = $this->getDataForExport($depreciations);
-        $xlsxFile = PhpXlsxGenerator::fromArray($firstRow, $rows);
-        $xlsxFile->downloadAs($fileName);
-    }
-
-    protected function getDataForExport(array $depreciations): array
-    {
-        $rows = [];
-
+        $rows[] = $firstRow;
         foreach ($depreciations as $depreciation) {
             $asset = $depreciation->getAsset();
             $taxGroup = $asset->getDepreciationGroupTax();
