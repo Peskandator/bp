@@ -125,12 +125,7 @@
                                 {$asset->getAmortisedPriceTax()}
                             </td>
                             <td>
-                                {if $asset->getDepreciationGroupAccounting() !== null && !$asset->isOnlyTax()}
-                                    {$asset->getDepreciationGroupAccounting()->getFullName()}
-                                {/if}
-                                {if $asset->isOnlyTax() && $asset->getDepreciationGroupTax() !== null}
-                                    {$asset->getDepreciationGroupTax()->getFullName()}
-                                {/if}
+                                {$asset->getCorrectDepreciationGroupAccountingName()}
                             </td>
                             <td>
                                 {$asset->getDepreciatedAmountAccounting()}
@@ -159,6 +154,7 @@
                     {/foreach}
                     </tbody>
                 </table>
+                <a class="btn btn-primary" n:href=":Admin:Assets:export, $activeTab">Export MS Excel</a>
             </div>
         </div>
     </div>

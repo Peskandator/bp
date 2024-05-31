@@ -166,18 +166,10 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive px-3 card-body">
-                            {var $accountingGroup = $asset->getDepreciationGroupAccounting()}
-                            {var $taxGroup = $asset->getDepreciationGroupTax()}
                             <div class="d-flex">
                                 <div style="font-size: 18px">Odpisová skupina a způsob: </div>
                                 <div style="font-size: 18px; font-weight: bold; margin-left: 13px">
-                                    {if $asset->isOnlyTax()}
-                                        {if $taxGroup !== null}
-                                            {$taxGroup->getFullName()}
-                                        {/if}
-                                    {elseif $accountingGroup !== null}
-                                        {$accountingGroup->getFullName()}
-                                    {/if}
+                                    {$asset->getCorrectDepreciationGroupAccountingName()}
                                 </div>
                             </div>
                             <table class="table table-bordered mt-3">

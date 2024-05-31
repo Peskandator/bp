@@ -243,15 +243,7 @@
                                             {$asset->getAssetType()->getName()}
                                         </td>
                                         <td>
-                                            {var $accountingGroup = $asset->getDepreciationGroupAccounting()}
-                                            {if $asset->isOnlyTax()}
-                                                {var $taxGroup = $asset->getDepreciationGroupTax()}
-                                                {if $taxGroup !== null}
-                                                    {$taxGroup->getFullName()}
-                                                {/if}
-                                            {elseif $accountingGroup !== null}
-                                                {$accountingGroup->getFullName()}
-                                            {/if}
+                                            {$asset->getCorrectDepreciationGroupAccountingName()}
                                         </td>
                                         <td>
                                             {$depreciation->getDepreciationYear()}

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
+use App\Entity\Depreciation;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\CsvResponse;
-use App\Utils\PhpXlsxGenerator;
 use Nette\Application\UI\Form;
 
 final class DepreciationsPresenter extends BaseAccountingEntityPresenter
@@ -85,7 +85,7 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
             $fileName = $this->currentEntity->getName() . ' - Účetní odpisy ' . $year . '.csv';
         }
 
-        $rows = $this->getDataForExport($depreciations);
+        $rows = $this->getDataForExport($depreciations, $type);
         $csvResponse = new CsvResponse($fileName, $rows);
         $this->sendResponse($csvResponse);
 
@@ -109,7 +109,7 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
 //        $xlsxFile->downloadAs($fileName);
     }
 
-    protected function getDataForExport(array $depreciations): array
+    protected function getDataForExport(array $depreciations, $type): array
     {
         $rows = [];
         $firstRow = [
@@ -129,15 +129,20 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
         ];
 
         $rows[] = $firstRow;
+        /**
+         * @var Depreciation $depreciation
+         */
         foreach ($depreciations as $depreciation) {
             $asset = $depreciation->getAsset();
-            $taxGroup = $asset->getDepreciationGroupTax();
-            $taxGroupName = $taxGroup ? $taxGroup->getFullName() : '';
+            $groupName = $asset->getDepreciationGroupTax() ? $asset->getDepreciationGroupTax()->getFullName() : '';
+            if ($type === 'accounting') {
+                $groupName = $asset->getCorrectDepreciationGroupAccountingName();
+            }
 
             $row = [];
             $row[] = $asset->getName();
             $row[] = $asset->getAssetType()->getName();
-            $row[] = $taxGroupName;
+            $row[] = $groupName;
             $row[] = $depreciation->getDepreciationYear();
             $row[] = $depreciation->getEntryPrice();
             $row[] = $depreciation->getIncreasedEntryPrice();

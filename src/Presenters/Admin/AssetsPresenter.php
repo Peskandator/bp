@@ -10,6 +10,7 @@ use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Majetek\ORM\AssetRepository;
 use App\Presenters\BaseAccountingEntityPresenter;
+use App\Utils\CsvResponse;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
@@ -129,5 +130,68 @@ final class AssetsPresenter extends BaseAccountingEntityPresenter
         };
 
         return $form;
+    }
+
+    public function actionExport(int $view = 0): void
+    {
+        $viewName = [
+            'Vše',
+            'Odpisované',
+            'Neodpisované',
+            'Drobné',
+            'Leasingy'
+        ];
+        $assets = $this->getFilteredAssets($view);
+        $fileName = $this->currentEntity->getName() . ' - Majetky - ' . $viewName[$view] . '.csv';
+        $rows = $this->getDataForExport($assets);
+        $csvResponse = new CsvResponse($fileName, $rows);
+        $this->sendResponse($csvResponse);
+    }
+
+    protected function getDataForExport(array $assets): array
+    {
+        $rows = [];
+        $firstRow = [
+            'Typ',
+            'Inv. č.',
+            'Název',
+            'Datum zařazení',
+            'VC',
+            'Zvýš. VC',
+            'Daň. odp. sk.',
+            'Daň. oprávky',
+            'Daň. ZC',
+            'Úč. odp. sk.',
+            'Úč. oprávky',
+            'Úč. ZC',
+            'Vyřazeno',
+        ];
+
+        $rows[] = $firstRow;
+        foreach ($assets as $asset) {
+            $taxGroup = $asset->getDepreciationGroupTax();
+            $taxGroupName = $taxGroup ? $taxGroup->getFullName() : '';
+            $accountingGroupName = $asset->getCorrectDepreciationGroupAccountingName();
+
+
+            $row = [];
+            $row[] = $asset->getAssetType()->getName();
+            $row[] = $asset->getInventoryNumber();
+            $row[] = $asset->getName();
+            $row[] = $asset->getEntryDate()->format(('j.n.Y'));
+            $row[] = $asset->getEntryPrice();
+            $row[] = $asset->getIncreasedEntryPrice();
+            $row[] = $taxGroupName;
+            $row[] = $asset->getDepreciatedAmountTax();
+            $row[] = $asset->getAmortisedPriceTax();
+            $row[] = $accountingGroupName;
+            $row[] = $asset->getDepreciatedAmountAccounting();
+            $row[] = $asset->getAmortisedPriceAccounting();
+            $row[] = $asset->isDisposed() ? 'ANO' : 'NE';
+
+            $rows[] = $row;
+        }
+
+        return $rows;
     }
 }
