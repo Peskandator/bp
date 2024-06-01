@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Nette\Utils\DateTime;
 use Nette\Utils\Json;
 
 /**
@@ -66,14 +67,17 @@ class DepreciationsAccountingData
         $this->year = $year;
         $this->code = $code;
         $this->data = $data;
-        $this->origin = 'O-HIM';
-        $this->document = null;
-        $this->operationMonth = null;
-        $this->operationDate = null;
+        $this->origin = 'O-IM';
+        $this->document = 0;
+        $this->operationMonth = 12;
+
+        $defaultDate = $year . '-12-31';
+        $date = new DateTime($defaultDate);
+        $this->operationDate = $date;
         $this->updatedAt = new \DateTimeImmutable();
     }
 
-    public function update($data, ?string $origin, ?int $document, ?int $operationMonth, ?\DateTimeInterface $operationDate) {
+    public function update($data, string $origin, int $document, int $operationMonth, \DateTimeInterface $operationDate) {
         $this->data = $data;
         $this->origin = $origin;
         $this->document = $document;

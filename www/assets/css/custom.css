@@ -181,16 +181,22 @@ h6 {
 .field-label {
     font-size: 18px;
     margin-top: 10px;
+    color: #0d6efd;
 }
 
 .field-label-checklist {
     font-size: 18px;
     margin-bottom: 5px;
     margin-top: 10px;
+    color: #0d6efd;
 }
 
 .filter-row-first {
     margin-left: 1rem;
+}
+
+.filter-row-mr {
+    margin-right: 1rem;
 }
 
 .custom-checkbox {
@@ -210,3 +216,9 @@ label.custom-control-label::after {
 .checkboxlist-row {
     margin-top: 7px;
 }
+
+.card-header {
+    font-size: 20px;
+    background-color: #f7e5c6 !important;
+}
+

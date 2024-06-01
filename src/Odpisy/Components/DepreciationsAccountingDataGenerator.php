@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Odpisy\Components;
 
-
 use App\Entity\AccountingEntity;
 use App\Entity\DepreciationsAccountingData;
 use App\Entity\Movement;
@@ -49,6 +48,7 @@ class DepreciationsAccountingDataGenerator
     {
         $row = [];
         $row['movementId'] = $movement->getId();
+        $row['assetId'] = $movement->getAsset()->getId();
         $row['depreciationId'] = $movement->getDepreciation()?->getId();
         $row['credited'] = $credited;
         $row['code'] = $this->random_str(10);
@@ -120,17 +120,17 @@ class DepreciationsAccountingDataGenerator
         $assetName = $asset->getName();
         $inventoryNumber = (string)$asset->getInventoryNumber();
 
-        return $this->shortenAssetName($assetName, strlen($inventoryNumber)) . ' ' . $inventoryNumber;
+        return 'Odpis - ' . $inventoryNumber . ' - ' . $assetName;
     }
 
-    protected function shortenAssetName(string $assetName, int $inventoryNumberLen): string
-    {
-        $diffToShorten = strlen($assetName) + $inventoryNumberLen - 39;
-        $nameStr = $assetName;
-        if ($diffToShorten > 0) {
-            $nameStr = substr($assetName, 0, -($diffToShorten + 3)) . '...';
-        }
-
-        return $nameStr;
-    }
+//    protected function shortenAssetName(string $assetName, int $inventoryNumberLen): string
+//    {
+//        $diffToShorten = strlen($assetName) + $inventoryNumberLen - 39;
+//        $nameStr = $assetName;
+//        if ($diffToShorten > 0) {
+//            $nameStr = substr($assetName, 0, -($diffToShorten + 3)) . '...';
+//        }
+//
+//        return $nameStr;
+//    }
 }

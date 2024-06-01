@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
-use App\Majetek\ORM\MovementRepository;
+use App\Majetek\ORM\AssetRepository;
 use App\Odpisy\Action\RegenerateDepreciationsAccountingDataAction;
 use App\Odpisy\Components\DbfFileGenerator;
 use App\Odpisy\Components\DepreciationsAccountingDataGenerator;
@@ -19,31 +19,31 @@ use Shuchkin\SimpleXLSXGen;
 final class AccountingPresenter extends BaseAccountingEntityPresenter
 {
     private DepreciationsAccountingDataGenerator $accountingDataGenerator;
-    private MovementRepository $movementRepository;
     private EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory;
     private RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction;
     private SimpleXLSXGen $XLSXGen;
     private DbfFileGenerator $dbfFileGenerator;
     private XLSXFileGenerator $XLSXFileGenerator;
+    private AssetRepository $assetRepository;
 
     public function __construct(
         DepreciationsAccountingDataGenerator $accountingDataGenerator,
-        MovementRepository $movementRepository,
         EditDepreciationsAccountingDataFormFactory $editAccountingDataFormFactory,
         RegenerateDepreciationsAccountingDataAction $regenerateDepreciationsAccountingDataAction,
         SimpleXLSXGen $XLSXGen,
         DbfFileGenerator $dbfFileGenerator,
         XLSXFileGenerator $XLSXFileGenerator,
+        AssetRepository $assetRepository,
     )
     {
         parent::__construct();
         $this->accountingDataGenerator = $accountingDataGenerator;
-        $this->movementRepository = $movementRepository;
         $this->editAccountingDataFormFactory = $editAccountingDataFormFactory;
         $this->regenerateDepreciationsAccountingDataAction = $regenerateDepreciationsAccountingDataAction;
         $this->XLSXGen = $XLSXGen;
         $this->dbfFileGenerator = $dbfFileGenerator;
         $this->XLSXFileGenerator = $XLSXFileGenerator;
+        $this->assetRepository = $assetRepository;
     }
 
     public function actionDepreciations(?int $year = null): void
@@ -143,10 +143,9 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
     {
         $assets = [];
         foreach ($data as $row) {
-            $movementId = $row['movementId'];
+            $assetId = $row['assetId'];
             $code = $row['code'];
-            $movement = $this->movementRepository->find($movementId);
-            $asset = $movement->getAsset();
+            $asset = $this->assetRepository->find($assetId);
             $assets[$code] = $asset;
         }
 

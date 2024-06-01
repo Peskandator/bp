@@ -35,26 +35,27 @@ class EditDepreciationsAccountingDataFormFactory
         $form
             ->addText('origin')
             ->setDefaultValue($defaultOrigin)
-            ->setNullable()
+            ->addRule($form::MAX_LENGTH, 'Maximální délka původu je 4.', 4)
+            ->setRequired()
         ;
         $form
             ->addInteger('operation_month')
             ->setDefaultValue($accountingData->getOperationMonth())
             ->addRule($form::MAX, 'Období musí být v rozmezí 1-12', 12)
             ->addRule($form::MIN, 'Období musí být v rozmezí 1-12', 1)
-            ->setNullable()
+            ->setRequired()
         ;
         $form
             ->addInteger('document')
             ->setDefaultValue($accountingData->getDocument())
             ->addRule($form::MAX, 'Může být pouze šestimístné číslo.', 1000000)
-            ->setNullable()
+            ->setRequired()
         ;
         $form
             ->addText('operation_date')
             ->setDefaultValue($this->getDefaultDateValue($accountingData->getOperationDate()))
             ->setType('date')
-            ->setNullable()
+            ->setRequired()
         ;
 
         foreach ($data as $record) {

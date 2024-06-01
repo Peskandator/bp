@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
+use App\Entity\Asset;
 use App\Entity\Movement;
 use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
@@ -15,6 +16,7 @@ use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
 use App\Presenters\BaseAccountingEntityPresenter;
+use App\Utils\CsvResponse;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
 use Nette\Application\UI\Form;
@@ -109,7 +111,6 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         $this->template->asset = $asset;
         $this->template->activeTab = 2;
         $this->template->movements = $asset->getSortedMovements();
-
     }
 
     public function actionDepreciations(int $assetId): void
@@ -220,5 +221,51 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         };
 
         return $form;
+    }
+
+    public function actionMovementsExport(int $assetId): void
+    {
+        $asset = $this->findAssetById($assetId);
+        $movements = $asset->getSortedMovements();
+        $fileName = $asset->getName() . ' - Pohyby.csv';
+        $rows = $this->getDataForExport($asset, $movements);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
+    }
+
+    protected function getDataForExport(Asset $asset, array $movements): array
+    {
+        $rows = [];
+        $firstRow = [
+            'Typ',
+            'Datum',
+            'Částka',
+            'ZC',
+            'Popis',
+            'Účet MD',
+            'Účet DAL',
+            'Zaúčtovat',
+        ];
+
+        $rows[] = $firstRow;
+        /**
+         * @var Movement $movement
+         */
+        foreach ($movements as $movement) {
+
+            $row = [];
+            $row[] = $movement->getTypeName();
+            $row[] = $movement->getDate()->format('j. n. Y');
+            $row[] = $movement->getValue();
+            $row[] = $movement->getResidualPrice();
+            $row[] = $movement->getDescription();
+            $row[] = $movement->getAccountDebited();
+            $row[] = $movement->getAccountCredited();
+            $row[] = $movement->isAccountable() ? 'ANO' : 'NE';
+            $rows[] = $row;
+        }
+
+        return $rows;
     }
 }

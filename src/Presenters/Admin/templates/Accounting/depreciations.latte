@@ -24,7 +24,7 @@
 
 <h1 class="js-accounting-page">Zaúčtování odpisů</h1>
     <div class="row mb-3">
-        <div class="col-6">
+        <div class="col-md-6">
             <div class="main-card card">
                 <div class="card-body">
                     <div class="form-group d-flex mb-0" style="max-width: 300px; margin-right: 12px">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6">
+        <div class="col-md-6">
             <div class="float-end">
                 <form n:name="regenerateDepreciationsAccountingDataForm" class="js-regenerate-form visually-hidden">
                 </form>
@@ -71,6 +71,9 @@
         <div class="row mb-3">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                        Doplňkové údaje pro zaúčtování
+                    </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-6">
@@ -82,7 +85,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label for="documentInput">Doklad</label>
+                                    <label for="documentInput">Číslo úč. dokladu</label>
                                     <input n:name="document" type="number" step="1" max="1000000" class="form-control" id="documentInput">
                                     <small class="form-error" n:ifcontent>{inputError document}</small>
                                 </div>
@@ -91,7 +94,7 @@
                         <div class="row mb-3">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label for="monthInput">Období</label>
+                                    <label for="monthInput">Měsíc zaúčtování</label>
                                     <input n:name="operation_month" type="number" step="1" min="1" max="12" class="form-control" id="monthInput">
                                     <small class="form-error" n:ifcontent>{inputError operation_month}</small>
                                 </div>

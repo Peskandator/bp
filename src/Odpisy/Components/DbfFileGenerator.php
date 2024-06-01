@@ -262,11 +262,9 @@ class DbfFileGenerator
         $data = $accountingData->getArrayData();
 
         foreach ($data as $row) {
-            $executionDate = new \DateTime($row['executionDate']);
             $operationDate = $accountingData->getOperationDate();
-
             $record = $table->appendRecord()
-                ->set('ROK', $accountingData->getYear())
+                ->set('ROK', 2022)
                 ->set('PUVOD', $accountingData->getOrigin())
                 ->set('DOKLAD', $accountingData->getDocument())
                 ->set('ME', $accountingData->getOperationMonth())
@@ -275,10 +273,11 @@ class DbfFileGenerator
                 ->set('MD', $row['debitedValue'])
                 ->set('DAL', $row['creditedValue'])
                 ->set('ZAKLAD', 0)
-                ->set('PLNENI', $executionDate)
-                ->set('DATUZP', $executionDate)
+                ->set('PLNENI', $operationDate)
+                ->set('DATUZP', $operationDate)
                 ->set('SAZBA', 0)
                 ->set('FAKTURA', 0)
+                ->set('SPLATNOST', $operationDate)
                 ->set('POR', 0)
                 ->set('STRED', 0)
                 ->set('VYKON', 0)
