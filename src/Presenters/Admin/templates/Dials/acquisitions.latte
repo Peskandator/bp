@@ -191,14 +191,13 @@
                                 {/foreach}
                             </tbody>
                         </table>
+                        <a class="btn btn-primary" n:href=":Admin:Dials:exportAcquisitions">Export MS Excel</a>
                     </div>
                 </div>
                 <div class="card-header card-header-top">
                     Přidat způsob pořízení/vyřazení
                 </div>
-
                 <div class="card-body">
-{*                    <h6 class="mt-1">Přidat způsob pořízení/vyřazení</h6>*}
                     {form addAcquisitionForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>

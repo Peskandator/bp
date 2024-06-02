@@ -8,6 +8,7 @@ use App\Entity\Asset;
 use App\Majetek\Action\DeleteAssetAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Forms\AssetFormFactory;
+use App\Majetek\Latte\Filters\FloatFilter;
 use App\Majetek\ORM\AssetRepository;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\CsvResponse;
@@ -22,6 +23,7 @@ final class AssetsPresenter extends BaseAccountingEntityPresenter
     private AssetFormJsonGenerator $jsonGenerator;
     private AssetRepository $assetRepository;
     private DeleteAssetAction $deleteAssetAction;
+    private FloatFilter $floatFilter;
 
     public function __construct(
         EnumerableSorter $enumerableSorter,
@@ -29,6 +31,7 @@ final class AssetsPresenter extends BaseAccountingEntityPresenter
         AssetFormJsonGenerator $jsonGenerator,
         AssetRepository $assetRepository,
         DeleteAssetAction $deleteAssetAction,
+        FloatFilter $floatFilter,
     )
     {
         parent::__construct();
@@ -37,6 +40,7 @@ final class AssetsPresenter extends BaseAccountingEntityPresenter
         $this->jsonGenerator = $jsonGenerator;
         $this->assetRepository = $assetRepository;
         $this->deleteAssetAction = $deleteAssetAction;
+        $this->floatFilter = $floatFilter;
     }
 
     public function actionDefault(?int $view = null): void
@@ -173,20 +177,19 @@ final class AssetsPresenter extends BaseAccountingEntityPresenter
             $taxGroupName = $taxGroup ? $taxGroup->getFullName() : '';
             $accountingGroupName = $asset->getCorrectDepreciationGroupAccountingName();
 
-
             $row = [];
             $row[] = $asset->getAssetType()->getName();
             $row[] = $asset->getInventoryNumber();
             $row[] = $asset->getName();
             $row[] = $asset->getEntryDate()->format(('j.n.Y'));
             $row[] = $asset->getEntryPrice();
-            $row[] = $asset->getIncreasedEntryPrice();
+            $row[] = $this->floatFilter->__invoke($asset->getIncreasedEntryPrice());
             $row[] = $taxGroupName;
-            $row[] = $asset->getDepreciatedAmountTax();
-            $row[] = $asset->getAmortisedPriceTax();
+            $row[] = $this->floatFilter->__invoke($asset->getDepreciatedAmountTax());
+            $row[] = $this->floatFilter->__invoke($asset->getAmortisedPriceTax());
             $row[] = $accountingGroupName;
-            $row[] = $asset->getDepreciatedAmountAccounting();
-            $row[] = $asset->getAmortisedPriceAccounting();
+            $row[] = $this->floatFilter->__invoke($asset->getDepreciatedAmountAccounting());
+            $row[] = $this->floatFilter->__invoke($asset->getAmortisedPriceAccounting());
             $row[] = $asset->isDisposed() ? 'ANO' : 'NE';
 
             $rows[] = $row;

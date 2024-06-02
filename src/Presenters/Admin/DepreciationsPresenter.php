@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\Depreciation;
+use App\Majetek\Latte\Filters\FloatFilter;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
 use App\Odpisy\Forms\EditTaxDepreciationFormFactory;
@@ -17,17 +18,20 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
     private EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory;
     private EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory;
     private EditDepreciationCalculator $editDepreciationCalculator;
+    private FloatFilter $floatFilter;
 
     public function __construct(
         EditTaxDepreciationFormFactory $editTaxDepreciationFormFactory,
         EditAccountingDepreciationFormFactory $editAccountingDepreciationFormFactory,
         EditDepreciationCalculator $editDepreciationCalculator,
+        FloatFilter $floatFilter,
     )
     {
         parent::__construct();
         $this->editTaxDepreciationFormFactory = $editTaxDepreciationFormFactory;
         $this->editAccountingDepreciationFormFactory = $editAccountingDepreciationFormFactory;
         $this->editDepreciationCalculator = $editDepreciationCalculator;
+        $this->floatFilter = $floatFilter;
     }
 
     public function actionDefault(?int $yearArg = null, string $type = "tax"): void
@@ -144,13 +148,13 @@ final class DepreciationsPresenter extends BaseAccountingEntityPresenter
             $row[] = $asset->getAssetType()->getName();
             $row[] = $groupName;
             $row[] = $depreciation->getDepreciationYear();
-            $row[] = $depreciation->getEntryPrice();
-            $row[] = $depreciation->getIncreasedEntryPrice();
-            $row[] = $depreciation->getRate();
-            $row[] = $depreciation->getPercentage();
-            $row[] = $depreciation->getDepreciationAmount();
-            $row[] = $depreciation->getDepreciatedAmount();
-            $row[] = $depreciation->getResidualPrice();
+            $row[] = $this->floatFilter->__invoke($depreciation->getEntryPrice());
+            $row[] = $this->floatFilter->__invoke($depreciation->getIncreasedEntryPrice());
+            $row[] = $this->floatFilter->__invoke($depreciation->getRate());
+            $row[] = $this->floatFilter->__invoke($depreciation->getPercentage());
+            $row[] = $this->floatFilter->__invoke($depreciation->getDepreciationAmount());
+            $row[] = $this->floatFilter->__invoke($depreciation->getDepreciatedAmount());
+            $row[] = $this->floatFilter->__invoke($depreciation->getResidualPrice());
             $row[] = $depreciation->isExecutable() ? 'ANO' : 'NE';
             $row[] = $depreciation->isExecuted() ? 'ANO' : 'NE';
 

@@ -108,10 +108,10 @@
                                 {$asset->getEntryDate()->format(('j.n.Y'))}
                             </td>
                             <td>
-                                {$asset->getEntryPrice()}
+                                {$asset->getEntryPrice()|float}
                             </td>
                             <td>
-                                {$asset->getIncreasedEntryPrice()}
+                                {$asset->getIncreasedEntryPrice()|float}
                             </td>
                             <td>
                                 {if $asset->getDepreciationGroupTax() !== null}
@@ -119,19 +119,19 @@
                                 {/if}
                             </td>
                             <td>
-                                {$asset->getDepreciatedAmountTax()}
+                                {$asset->getDepreciatedAmountTax()|float}
                             </td>
                             <td>
-                                {$asset->getAmortisedPriceTax()}
+                                {$asset->getAmortisedPriceTax()|float}
                             </td>
                             <td>
                                 {$asset->getCorrectDepreciationGroupAccountingName()}
                             </td>
                             <td>
-                                {$asset->getDepreciatedAmountAccounting()}
+                                {$asset->getDepreciatedAmountAccounting()|float}
                             </td>
                             <td>
-                                {$asset->getAmortisedPriceAccounting()}
+                                {$asset->getAmortisedPriceAccounting()|float}
                             </td>
                             <td>
                                 <div class="form-check">

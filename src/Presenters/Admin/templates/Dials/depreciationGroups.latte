@@ -174,12 +174,13 @@
                             {/foreach}
                             </tbody>
                         </table>
+                        <a class="btn btn-primary" n:href=":Admin:Dials:exportDepreciationGroups">Export MS Excel</a>
                     </div>
                 </div>
                 <div class="card-header card-header-top">
                     Přidat odpisovou skupinu
                 </div>
-                <div class="card-header js-group-form-card">
+                <div class="card-body js-group-form-card">
                     {form addDepreciationGroupForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>

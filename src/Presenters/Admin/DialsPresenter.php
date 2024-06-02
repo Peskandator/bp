@@ -25,6 +25,7 @@ use App\Majetek\Action\EditDepreciationGroupAction;
 use App\Majetek\Action\EditDisposalAction;
 use App\Majetek\Action\EditLocationAction;
 use App\Majetek\Action\EditPlaceAction;
+use App\Majetek\Components\ExportDialsDataGenerator;
 use App\Majetek\Enums\DepreciationMethod;
 use App\Majetek\Enums\RateFormat;
 use App\Majetek\ORM\AcquisitionRepository;
@@ -38,6 +39,7 @@ use App\Majetek\Requests\CreateCategoryRequest;
 use App\Majetek\Requests\CreateDepreciationGroupRequest;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\AcquisitionsProvider;
+use App\Utils\CsvResponse;
 use App\Utils\DeletabilityResolver;
 use App\Utils\DialsCodeValidator;
 use App\Utils\EnumerableSorter;
@@ -76,6 +78,7 @@ final class DialsPresenter extends BaseAccountingEntityPresenter
     private EditDisposalAction $editDisposalAction;
     private DeletabilityResolver $deletabilityResolver;
     private DeleteDisposalAction $deleteDisposalAction;
+    private ExportDialsDataGenerator $exportDataGenerator;
 
     public function __construct(
         AddLocationAction $addLocationAction,
@@ -107,6 +110,7 @@ final class DialsPresenter extends BaseAccountingEntityPresenter
         EditDisposalAction $editDisposalAction,
         DeletabilityResolver $deletabilityResolver,
         DeleteDisposalAction $deleteDisposalAction,
+        ExportDialsDataGenerator $exportDataGenerator,
     )
     {
         parent::__construct();
@@ -139,6 +143,7 @@ final class DialsPresenter extends BaseAccountingEntityPresenter
         $this->editDisposalAction = $editDisposalAction;
         $this->deletabilityResolver = $deletabilityResolver;
         $this->deleteDisposalAction = $deleteDisposalAction;
+        $this->exportDataGenerator = $exportDataGenerator;
     }
 
     public function actionLocations(): void
@@ -272,8 +277,6 @@ final class DialsPresenter extends BaseAccountingEntityPresenter
                 $this->flashMessage($validationMsg,FlashMessageType::ERROR);
                 return;
             }
-
-
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) {
@@ -1305,5 +1308,56 @@ final class DialsPresenter extends BaseAccountingEntityPresenter
         if ($values->rate_increased_price === null) {
             $form['rate_increased_price']->addError('Toto pole je povinné.');
         }
+    }
+
+    public function actionExportAcquisitions(): void
+    {
+        $fileName = $this->currentEntity->getName() . ' - Seznam způsobů pořízení a vyřazení.csv';
+        $acquisitions = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideAcquisitions($this->currentEntity));
+        $disposals = $this->enumerableSorter->sortByCodeArr($this->acquisitionsProvider->provideDisposals($this->currentEntity));
+        $rows = $this->exportDataGenerator->getAcquisitionsAndDisposalsDataForExport($acquisitions, $disposals);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
+    }
+
+    public function actionExportLocations(): void
+    {
+        $fileName = $this->currentEntity->getName() . ' - Seznam středisek.csv';
+        $locations = $this->enumerableSorter->sortByCode($this->currentEntity->getLocations());
+        $rows = $this->exportDataGenerator->getLocationsDataForExport($locations);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
+    }
+
+    public function actionExportPlaces(): void
+    {
+        $fileName = $this->currentEntity->getName() . ' - Seznam míst.csv';
+        $places = $this->enumerableSorter->sortByCodeArr($this->currentEntity->getPlaces());
+        $rows = $this->exportDataGenerator->getPlacesDataForExport($places);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
+    }
+
+    public function actionExportCategories(): void
+    {
+        $fileName = $this->currentEntity->getName() . ' - Seznam kategorií.csv';
+        $categories = $this->enumerableSorter->sortByCode($this->currentEntity->getCategories());
+        $rows = $this->exportDataGenerator->getCategoriesDataForExport($categories);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
+    }
+
+    public function actionExportDepreciationGroups(): void
+    {
+        $fileName = $this->currentEntity->getName() . ' - Seznam odpisových skupin.csv';
+        $groups = $this->enumerableSorter->sortGroupsByMethodAndNumber($this->currentEntity->getDepreciationGroups()->toArray());
+        $rows = $this->exportDataGenerator->getDepreciationGroupsDataForExport($groups);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
     }
 }

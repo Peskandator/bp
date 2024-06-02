@@ -43,7 +43,7 @@
                             <div class="form-errors d-block" n:ifcontent>
                                 <div n:foreach="$form['id']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>ID -</b> {$error}</div>
                                 <div n:foreach="$form['name']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Název -</b> {$error}</div>
-                                <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Číslo střediska -</b> {$error}</div>
+                                <div n:foreach="$form['code']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Kód střediska -</b> {$error}</div>
                             </div>
                         </form>
                         <form n:name="deleteLocationForm" class="js-delete-form">
@@ -56,7 +56,7 @@
                             <thead>
                                 <tr>
                                     <th>Název</th>
-                                    <th>Číslo střediska</th>
+                                    <th>Kód střediska</th>
                                     <th>Akce</th>
                                 </tr>
                             </thead>
@@ -95,6 +95,7 @@
                                 {/foreach}
                             </tbody>
                         </table>
+                        <a class="btn btn-primary" n:href=":Admin:Dials:exportLocations">Export MS Excel</a>
                     </div>
                 </div>
                 <div class="card-header card-header-top">
@@ -115,7 +116,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label for="locationCode">Číslo střediska</label>
+                                    <label for="locationCode">Kód střediska</label>
                                     <input n:name="code" type="number" class="form-control" id="locationCode" min="1" max="999" data-tab-index-1="2">
                                     <small class="form-error" n:ifcontent>{inputError code}</small>
                                 </div>

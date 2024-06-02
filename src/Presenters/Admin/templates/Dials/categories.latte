@@ -96,7 +96,6 @@
                                             <div class="form-check category-depreciable-text-{$categoryId} js-edit-text js-text-{$categoryId}">
                                                 <input class="form-check-input" type="checkbox" disabled {if $category->isDepreciable()}checked=""{/if} style="margin-top: 10px">
                                             </div>
-
                                             <div class="form-check">
                                                 <input style="display: none; margin-top: 10px"
                                                     class="form-check-input js-edit-depreciable-checkbox
@@ -108,16 +107,16 @@
                                         </td>
                                         <td>
                                             {if $currentGroup}
-                                                <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getGroup()}{$currentGroup->getPrefix()} - {$currentGroup->getMethodText()}</span>
+                                                <span class="category-group-text-{$categoryId} js-edit-text js-text-{$categoryId}">{$currentGroup->getFullName()}</span>
                                             {/if}
                                             <div class="form-group js-edit-depreciable-true-{$categoryId}">
                                                 <select class="category-group-{$categoryId} form-select js-edit-input js-input-{$categoryId}" style="display: none" data-tab-index="3">
                                                     {if $currentGroup}
-                                                        <option value="{$currentGroup->getId()}">{$currentGroup->getGroup()}{$currentGroup->getPrefix()}  - {$currentGroup->getMethodText()}</option>
+                                                        <option value="{$currentGroup->getId()}">{$currentGroup->getFullName()}</option>
                                                     {/if}
                                                     {foreach $groups as $group}
                                                         {if ($currentGroup !== null && $currentGroup->getId())!== $group->getId() || $currentGroup === null}
-                                                            <option value="{$group->getId()}">{$group->getGroup()}{$group->getPrefix()} - {$group->getMethodText()}</option>
+                                                            <option value="{$group->getId()}">{$group->getFullName()}</option>
                                                         {/if}
                                                     {/foreach}
                                                 </select>
@@ -160,6 +159,7 @@
                                 {/foreach}
                             </tbody>
                         </table>
+                        <a class="btn btn-primary" n:href=":Admin:Dials:exportCategories">Export MS Excel</a>
                     </div>
                 </div>
                 <div class="card-header card-header-top">

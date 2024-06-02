@@ -12,6 +12,7 @@ use App\Majetek\Components\AssetFormJsonGenerator;
 use App\Majetek\Enums\MovementType;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Majetek\Forms\EditMovementFormFactory;
+use App\Majetek\Latte\Filters\FloatFilter;
 use App\Majetek\ORM\MovementRepository;
 use App\Odpisy\Components\EditDepreciationCalculator;
 use App\Odpisy\Forms\EditAccountingDepreciationFormFactory;
@@ -33,6 +34,7 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
     private DeleteMovementAction $deleteMovementAction;
     private MovementRepository $movementRepository;
     private EditMovementFormFactory $editMovementFormFactory;
+    private FloatFilter $floatFilter;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
@@ -44,6 +46,7 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         EditDepreciationCalculator $editDepreciationCalculator,
         DeleteMovementAction $deleteMovementAction,
         MovementRepository $movementRepository,
+        FloatFilter $floatFilter,
     )
     {
         parent::__construct();
@@ -56,6 +59,7 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         $this->deleteMovementAction = $deleteMovementAction;
         $this->movementRepository = $movementRepository;
         $this->editMovementFormFactory = $editMovementFormFactory;
+        $this->floatFilter = $floatFilter;
     }
 
     public function actionDefault(int $assetId): void
@@ -263,8 +267,8 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
             'Účet DAL',
             'Zaúčtovat',
         ];
-
         $rows[] = $firstRow;
+
         /**
          * @var Movement $movement
          */
@@ -273,8 +277,8 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
             $row = [];
             $row[] = $movement->getTypeName();
             $row[] = $movement->getDate()->format('j. n. Y');
-            $row[] = $movement->getValue();
-            $row[] = $movement->getResidualPrice();
+            $row[] = $this->floatFilter->__invoke($movement->getValue());
+            $row[] = $this->floatFilter->__invoke($movement->getResidualPrice());
             $row[] = $movement->getDescription();
             $row[] = $movement->getAccountDebited();
             $row[] = $movement->getAccountCredited();
@@ -301,8 +305,8 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
             'Provést',
             'Provedeno',
         ];
-
         $rows[] = $firstRow;
+
         /**
          * @var Depreciation $depreciation
          */
@@ -310,13 +314,13 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
             $row = [];
             $row[] = $depreciation->getYear();
             $row[] = $depreciation->getDepreciationYear();
-            $row[] = $depreciation->getEntryPrice();
-            $row[] = $depreciation->getIncreasedEntryPrice();
-            $row[] = $depreciation->getRate();
-            $row[] = $depreciation->getPercentage();
-            $row[] = $depreciation->getDepreciationAmount();
-            $row[] = $depreciation->getDepreciatedAmount();
-            $row[] = $depreciation->getResidualPrice();
+            $row[] = $this->floatFilter->__invoke($depreciation->getEntryPrice());
+            $row[] = $this->floatFilter->__invoke($depreciation->getIncreasedEntryPrice());
+            $row[] = $this->floatFilter->__invoke($depreciation->getRate());
+            $row[] = $this->floatFilter->__invoke($depreciation->getPercentage());
+            $row[] = $this->floatFilter->__invoke($depreciation->getDepreciationAmount());
+            $row[] = $this->floatFilter->__invoke($depreciation->getDepreciatedAmount());
+            $row[] = $this->floatFilter->__invoke($depreciation->getResidualPrice());
             $row[] = $depreciation->isExecutable() ? 'ANO' : 'NE';
             $row[] = $depreciation->isExecuted() ? 'ANO' : 'NE';
             $rows[] = $row;
