@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Entity\Asset;
+use App\Entity\Depreciation;
 use App\Entity\Movement;
 use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
@@ -228,13 +229,28 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         $asset = $this->findAssetById($assetId);
         $movements = $asset->getSortedMovements();
         $fileName = $asset->getName() . ' - Pohyby.csv';
-        $rows = $this->getDataForExport($asset, $movements);
+        $rows = $this->getMovementsDataForExport($asset, $movements);
         $csvResponse = new CsvResponse($fileName, $rows);
 
         $this->sendResponse($csvResponse);
     }
 
-    protected function getDataForExport(Asset $asset, array $movements): array
+    public function actionDepreciationsExport(int $assetId, string $type = "tax"): void
+    {
+        $asset = $this->findAssetById($assetId);
+        $fileName = $asset->getName() . ' - Daňové odpisy.csv';
+        $depreciations = $this->template->taxDepreciations = $asset->getTaxDepreciations()->toArray();
+        if ($type === "accounting") {
+            $fileName = $asset->getName() . ' - Účetní odpisy.csv';
+            $depreciations = $this->template->accountingDepreciations = $asset->getAccountingDepreciations()->toArray();
+        }
+        $rows = $this->getDepreciationsDataForExport($asset, $depreciations);
+        $csvResponse = new CsvResponse($fileName, $rows);
+
+        $this->sendResponse($csvResponse);
+    }
+
+    protected function getMovementsDataForExport(Asset $asset, array $movements): array
     {
         $rows = [];
         $firstRow = [
@@ -263,6 +279,46 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
             $row[] = $movement->getAccountDebited();
             $row[] = $movement->getAccountCredited();
             $row[] = $movement->isAccountable() ? 'ANO' : 'NE';
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
+    protected function getDepreciationsDataForExport(Asset $asset, array $depreciations): array
+    {
+        $rows = [];
+        $firstRow = [
+            'Rok',
+            'Rok odpisu',
+            'VC',
+            'Zvýšená VC',
+            'Sazba',
+            '%',
+            'Odpis',
+            'Oprávky',
+            'ZC',
+            'Provést',
+            'Provedeno',
+        ];
+
+        $rows[] = $firstRow;
+        /**
+         * @var Depreciation $depreciation
+         */
+        foreach ($depreciations as $depreciation) {
+            $row = [];
+            $row[] = $depreciation->getYear();
+            $row[] = $depreciation->getDepreciationYear();
+            $row[] = $depreciation->getEntryPrice();
+            $row[] = $depreciation->getIncreasedEntryPrice();
+            $row[] = $depreciation->getRate();
+            $row[] = $depreciation->getPercentage();
+            $row[] = $depreciation->getDepreciationAmount();
+            $row[] = $depreciation->getDepreciatedAmount();
+            $row[] = $depreciation->getResidualPrice();
+            $row[] = $depreciation->isExecutable() ? 'ANO' : 'NE';
+            $row[] = $depreciation->isExecuted() ? 'ANO' : 'NE';
             $rows[] = $row;
         }
 
