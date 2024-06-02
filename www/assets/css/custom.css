@@ -160,7 +160,6 @@ h6 {
 }
 
 .card-header-checkbox {
-    margin-top: 5px;
     margin-left: auto;
     font-size: 19px;
     margin-right: 20px;
@@ -220,5 +219,9 @@ label.custom-control-label::after {
 .card-header {
     font-size: 20px;
     background-color: #f7e5c6 !important;
+}
+
+.card-header-top {
+    border-top: 1px solid rgba(0, 0, 0, 0.175);
 }
 

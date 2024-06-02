@@ -27,9 +27,9 @@
         <div class="col-12">
             <div class="card js-dials-groups-page">
                 <div class="card-header">
-                    <h5>Seznam odpisových skupin</h5>
+                    Seznam odpisových skupin
                 </div>
-                <div class="card-header">
+                <div class="card-body">
                     <div class="table-responsive px-3">
                         <form n:name="editDepreciationGroupForm" class="edit-group-form">
                             <div class="form-errors d-block" n:ifcontent>
@@ -176,8 +176,10 @@
                         </table>
                     </div>
                 </div>
+                <div class="card-header card-header-top">
+                    Přidat odpisovou skupinu
+                </div>
                 <div class="card-header js-group-form-card">
-                    <h6 class="mt-1 mb-3">Přidat odpisovou skupinu</h6>
                     {form addDepreciationGroupForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>

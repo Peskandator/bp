@@ -27,9 +27,9 @@
         <div class="col-lg-8 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Seznam středisek</h5>
+                    Seznam středisek
                 </div>
-                <div class="card-header">
+                <div class="card-body">
                     <div class="table-responsive px-3">
                         <form n:name="editLocationForm" class="edit-location-form">
                             <div class="form-errors d-block" n:ifcontent>
@@ -97,8 +97,10 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-header">
-                    <h6 class="mt-1 mb-3">Přidat středisko</h6>
+                <div class="card-header card-header-top">
+                    Přidat středisko
+                </div>
+                <div class="card-body">
                     {form addLocationForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>

@@ -44,9 +44,9 @@
         <div class="col-lg-8 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Seznam způsobů pořízení a vyřazení</h5>
+                    Seznam způsobů pořízení a vyřazení
                 </div>
-                <div class="card-header">
+                <div class="card-body">
                     <div class="table-responsive px-3">
                         <form n:name="editAcquisitionForm" class="edit-acquisition-form">
                             <div class="form-errors d-block" n:ifcontent>
@@ -193,13 +193,17 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-header">
-                    <h6 class="mt-1">Přidat způsob pořízení/vyřazení</h6>
+                <div class="card-header card-header-top">
+                    Přidat způsob pořízení/vyřazení
+                </div>
+
+                <div class="card-body">
+{*                    <h6 class="mt-1">Přidat způsob pořízení/vyřazení</h6>*}
                     {form addAcquisitionForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
                         </div>
-                        <div class="row mb-4 px-2 d-flex justify-content-center align-content-center">
+                        <div class="row mb-4 d-flex align-content-center" style="margin-left: 0">
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="acquisitionName">Text</label>
@@ -222,7 +226,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" type="submit">
+                        <input n:name="send" class="mb-2 btn rounded-3 btn-primary" style="margin-left: 0.5rem" type="submit">
                     {/form}
                 </div>
             </div>

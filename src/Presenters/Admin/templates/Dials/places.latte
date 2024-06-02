@@ -27,9 +27,9 @@
         <div class="col-lg-10 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Seznam míst</h5>
+                    Seznam míst
                 </div>
-                <div class="card-header">
+                <div class="card-body">
                     <div class="table-responsive px-3">
                         <form n:name="editPlaceForm" class="edit-place-form">
                             <div class="form-errors d-block" n:ifcontent>
@@ -93,7 +93,7 @@
                                                 <input type="number" class="place-code-{$placeId} form-control js-edit-input js-input-{$placeId}" style="display: none" value="{$place->getCode()}" min="7" max="999" data-tab-index="3">
                                             </div>
                                         </td>
-                                        <td class="d-flex">
+                                        <td>
                                             <button class="edit-place-button btn-primary btn btn-sm js-edit-input" style="display: none" data-place-id="{$place->getId()}">OK</button>
                                             <i class="fas fa-pencil-alt text-primary icon js-edit-text js-edit-start" title="Upravit" data-record-id="{$place->getId()}"></i>
                                             {if $deletabilityResolver->isPlaceDeletable($place)}
@@ -112,8 +112,10 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-header">
-                    <h6 class="mt-1 mb-3">Přidat místo</h6>
+                <div class="card-header card-header-top">
+                    Přidat místo
+                </div>
+                <div class="card-body">
                     {form addPlaceForm}
                         <div class="form-errors" n:ifcontent>
                             <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
