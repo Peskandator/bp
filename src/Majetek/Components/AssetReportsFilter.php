@@ -6,6 +6,7 @@ namespace App\Majetek\Components;
 
 use App\Entity\AccountingEntity;
 use App\Entity\Asset;
+use App\Majetek\Enums\AssetColumns;
 use App\Majetek\ORM\AssetRepository;
 use App\Utils\DateTimeFormatter;
 use App\Utils\EnumerableSorter;
@@ -28,19 +29,18 @@ class AssetReportsFilter
         $this->enumerableSorter = $enumerableSorter;
     }
 
-    public function getResults(AccountingEntity $entity, string $filter): array
+    public function getResults(AccountingEntity $entity, ?array $filter): array
     {
         $this->currentEntity = $entity;
 
-        $filterDataStdClass = json_decode(urldecode($filter));
+        $filteredAssets = $this->getFilteredResults($filter);
+        $sortedAssets = $this->sortAssets($filter, $filteredAssets);
+        $groupedAssets = $this->groupAssets($filter, $sortedAssets);
+        $data = $this->createDataForExport($filter, $groupedAssets);
 
-        $filterData =  json_decode(json_encode($filterDataStdClass), true);
+        bdump($data);
 
-        $filteredAssets = $this->getFilteredResults($filterData);
-        $sortedAssets = $this->sortAssets($filterData, $filteredAssets);
-        $groupedAssets = $this->groupAssets($filterData, $sortedAssets);
-
-        return $groupedAssets;
+        return $data;
     }
 
     protected function getFilteredResults(?array $filter): array
@@ -188,5 +188,131 @@ class AssetReportsFilter
             default:
                 return 'all';
         }
+    }
+
+    protected function createDataForExport(?array $filter, array $assetGrouped): array
+    {
+        $columns = $filter['columns'];
+        $assets = [];
+
+        foreach ($assetGrouped as $groupName => $records) {
+            /**
+             * @var Asset $record
+             */
+            foreach ($records as $record) {
+                $asset = [];
+
+                foreach ($columns as $column) {
+                    $asset[$column] = $this->getColumnValueForExport($record, $column);
+                }
+                $assets[$groupName][$record->getId()] = $asset;
+            }
+        }
+
+        return $assets;
+    }
+
+    protected function getColumnValueForExport(Asset $asset, $column): float|int|null|string|\DateTimeInterface
+    {
+        switch ($column) {
+            case 'type':
+                return $asset->getAssetType()->getName();
+            case 'inventory_number':
+                return $asset->getInventoryNumber();
+            case 'name':
+                return $asset->getName();
+            case 'category':
+                return $asset->getCategory() ? $asset->getCategory()->getName() : 'Bez zařazení';
+            case 'entry_date':
+                return $asset->getEntryDate()->format('j. n. Y');
+            case 'entry_price':
+                return $asset->getEntryPrice();
+            case 'increased_price':
+                return $asset->getIncreasedEntryPrice();
+            case 'depreciated_amount_tax':
+                return $asset->getDepreciatedAmountTax();
+            case 'residual_price_tax':
+                return $asset->getAmortisedPriceTax();
+            case 'depreciated_amount_accounting':
+                return $asset->getDepreciatedAmountAccounting();
+            case 'residual_price_accounting':
+                return $asset->getAmortisedPriceAccounting();
+            case 'depreciation_group_accounting':
+                $groupAccounting = $asset->getCorrectDepreciationGroupAccounting();
+                return $groupAccounting ? $groupAccounting->getFullName() : 'Bez zařazení';
+            case 'depreciation_group_tax':
+                $groupTax = $asset->getDepreciationGroupTax();
+                return $groupTax ? $groupTax->getFullName() : 'Bez zařazení';
+            case 'is_disposed':
+                return $asset->isDisposed() ? 'ANO' : 'NE';
+            default:
+                return '';
+        }
+    }
+
+    public function getColumnNamesFromFilter(?array $filter): array
+    {
+        $names = AssetColumns::NAMES_SHORT;
+
+        $columns = $filter['columns'];
+        $columnNames = [];
+
+        foreach ($columns as $column) {
+            $columnNames[$column] = $names[$column];
+        }
+
+        return $columnNames;
+    }
+
+    public function getFirstRowColumns(?array $filter): array
+    {
+        $columns = $filter['columns'];
+
+        $taxColumns =
+        [
+            'depreciation_group_tax',
+            'depreciated_amount_tax',
+            'residual_price_tax'
+        ];
+        $accountingColumns =
+        [
+            'depreciation_group_accounting',
+            'depreciated_amount_accounting',
+            'residual_price_accounting'
+        ];
+
+        $before = 0;
+        $after = 0;
+        $taxColumnsCount = 0;
+        $accountingColumnsCount = 0;
+        $isBefore = true;
+
+        foreach ($columns as $column) {
+            bdump($column);
+            if (in_array($column, $taxColumns)) {
+                $isBefore = false;
+                $taxColumnsCount++;
+                continue;
+            }
+            if (in_array($column, $accountingColumns)) {
+                $isBefore = false;
+                $accountingColumnsCount++;
+                continue;
+            }
+            if ($isBefore) {
+                $before++;
+                continue;
+            }
+            $after++;
+        }
+
+        $firstRow = [];
+        $firstRow['before'] = $before;
+        $firstRow['after'] = $after;
+        $firstRow['tax'] = $taxColumnsCount;
+        $firstRow['accounting'] = $accountingColumnsCount;
+
+        bdump($firstRow);
+        return $firstRow;
     }
 }

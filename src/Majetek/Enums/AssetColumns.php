@@ -9,9 +9,9 @@ final class AssetColumns
 {
     public const NAMES =
         [
+            'name' => 'Název',
             'type' => 'Typ',
             'inventory_number' => 'Inventární číslo',
-            'name' => 'Název',
             'entry_date' => 'Datum zařazení',
             'category' => 'Kategorie',
             'entry_price' => 'Vstupní cena',
@@ -22,6 +22,24 @@ final class AssetColumns
             'depreciation_group_accounting' => 'Účetní odpisová skupina',
             'depreciated_amount_accounting' => 'Účetní oprávky',
             'residual_price_accounting' => 'Účetní zůstatková cena',
+            'is_disposed' => 'Vyřazeno',
+        ]
+    ;
+    public const NAMES_SHORT =
+        [
+            'name' => 'Název',
+            'type' => 'Typ',
+            'inventory_number' => 'Inv.č.',
+            'entry_date' => 'Datum zař.',
+            'category' => 'Kat.',
+            'entry_price' => 'VC',
+            'increased_price' => 'Zvýš.VC',
+            'depreciation_group_tax' => 'Odp.sk.',
+            'depreciated_amount_tax' => 'Oprávky',
+            'residual_price_tax' => 'ZC',
+            'depreciation_group_accounting' => 'Odp.sk.',
+            'depreciated_amount_accounting' => 'Oprávky',
+            'residual_price_accounting' => 'ZC',
             'is_disposed' => 'Vyřazeno',
         ]
     ;

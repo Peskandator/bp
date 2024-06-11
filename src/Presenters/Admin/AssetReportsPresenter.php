@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Majetek\Components\AssetReportsFilter;
+use App\Majetek\Enums\AssetColumns;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Reports\Forms\FilterAssetsForReportFormFactory;
 use Nette\Application\UI\Form;
@@ -59,10 +60,13 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
                 null)
         );
 
-        $records = $this->assetReportsFilter->getResults($this->currentEntity, $filter);
-
-        $this->template->assetsGrouped = $records;
+        $filterDataStdClass = json_decode(urldecode($filter));
+        $filterData = json_decode(json_encode($filterDataStdClass), true);
+        $records = $this->assetReportsFilter->getResults($this->currentEntity, $filterData);
         $this->template->entity = $this->currentEntity;
+        $this->template->assetsGrouped = $records;
+        $this->template->columns = $this->assetReportsFilter->getColumnNamesFromFilter($filterData);
+        $this->template->firstRow = $this->assetReportsFilter->getFirstRowColumns($filterData);
     }
 
     protected function createComponentFilterAssetsForReportForm(): Form
@@ -70,6 +74,4 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
         $form = $this->filterAssetsForReportFormFactory->create($this->currentEntity);
         return $form;
     }
-
-
 }

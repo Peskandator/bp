@@ -104,6 +104,12 @@ class FilterAssetsForReportFormFactory
                     $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
                 }
             }
+
+            if (count($values->columns) <= 0) {
+                $errorMsg = 'Výsledek musí obsahovat alespoň jeden sloupec.';
+                $form['columns']->addError($errorMsg);
+                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {
