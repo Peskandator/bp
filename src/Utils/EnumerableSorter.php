@@ -63,4 +63,31 @@ class EnumerableSorter
 
         return $groups;
     }
+
+    public function sortGroupsInArrayByMethodAndNumber(array $groups): array
+    {
+        uksort($groups, function (string $first, string $second) {
+            $methodFirst = substr($first, 2);
+            $methodSecond = substr($second, 2);
+            $groupNumberFirst = substr($first, 0, 1);
+            $groupNumberSecond = substr($second, 0, 1);
+
+            if ($methodFirst > $methodSecond) {
+                return 1;
+            }
+            if ($methodFirst < $methodSecond) {
+                return -1;
+            };
+            if ($groupNumberFirst > $groupNumberSecond) {
+                return 1;
+            }
+            if ($groupNumberFirst < $groupNumberSecond) {
+                return -1;
+            };
+
+            return 0;
+        });
+
+        return $groups;
+    }
 }

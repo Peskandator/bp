@@ -16,6 +16,98 @@
         </div>
     </div>
 
+    <div class="row mb-2">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Data
+                </div>
+                <div class="card-body pb-4">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <div class="field-label-checklist" style="margin-top: 0">
+                                Sloupce
+                            </div>
+                            <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                {inputError columns}
+                            </div>
+                            <div class="filter-row-first row checkboxlist-row">
+                                {foreach $form['columns']->items as $key => $label}
+                                    <div class="form-check col-12 col-sm-6 col-lg-3">
+                                        <input n:name="columns:$key" class="form-check-input" type="checkbox" data-type-code="{$key}">
+                                        <label n:name="columns:$key" class="form-check-label">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <div class="field-label-checklist" style="margin-top: 0">
+                                Seskupení
+                            </div>
+                            <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                {inputError grouping}
+                            </div>
+                            <div class="filter-row-first row checkboxlist-row">
+                                {foreach $form['grouping']->items as $key => $label}
+                                    <div class="form-check col-12 col-sm-6 col-lg-3">
+                                        <input n:name="grouping:$key" class="form-check-input" type="radio" data-type-code="{$key}">
+                                        <label n:name="grouping:$key" class="form-check-label">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <div class="field-label-checklist" style="margin-top: 0">
+                                Třídění
+                            </div>
+                            <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                {inputError sorting}
+                            </div>
+                            <div class="filter-row-first row checkboxlist-row">
+                                {foreach $form['sorting']->items as $key => $label}
+                                    <div class="form-check col-12 col-sm-6 col-lg-3">
+                                        <input n:name="sorting:$key" class="form-check-input" type="radio" data-type-code="{$key}">
+                                        <label n:name="sorting:$key" class="form-check-label">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="field-label-checklist" style="margin-top: 0">
+                                Suma
+                            </div>
+                            <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                {inputError summing}
+                            </div>
+                            <div class="filter-row-first row checkboxlist-row">
+                                {foreach $form['summing']->items as $key => $label}
+                                    <div class="form-check col-12 col-sm-6 col-lg-3">
+                                        <input n:name="summing:$key" class="form-check-input" type="checkbox" data-type-code="{$key}">
+                                        <label n:name="summing:$key" class="form-check-label">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card filter-form">
@@ -120,13 +212,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <button class="btn-primary btn" data-entity-id="{$entity->getId()}">Filtrovat</button>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <button class="btn-primary btn" data-entity-id="{$entity->getId()}">Filtrovat</button>
         </div>
     </div>
     {/form}

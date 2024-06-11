@@ -480,16 +480,22 @@ class Asset
         return $this->depreciationGroupAccounting;
     }
 
-    public function getCorrectDepreciationGroupAccountingName(): string
+    public function getCorrectDepreciationGroupAccounting(): ?DepreciationGroup
     {
         $accountingGroup = $this->getDepreciationGroupAccounting();
         if ($this->isOnlyTax()) {
             $taxGroup = $this->getDepreciationGroupTax();
             if ($taxGroup !== null) {
-                return $taxGroup->getFullName();
+                return $taxGroup;
             }
         }
-        return $accountingGroup->getFullName();
+        return $accountingGroup;
+    }
+
+    public function getCorrectDepreciationGroupAccountingName(): string
+    {
+        $group = $this->getCorrectDepreciationGroupAccounting();
+        return $group ? $group->getFullName() : '';
     }
 
     public function getAmortisedPriceTax(): ?float

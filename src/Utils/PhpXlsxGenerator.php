@@ -220,10 +220,6 @@ class PhpXlsxGenerator
             $rows[] = $record;
         }
 
-//        bdump($rows);
-//            die;
-
-
         return (new static())->addSheet($rows, $sheetName);
     }
 

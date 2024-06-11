@@ -18,7 +18,9 @@
                 </div>
                 <div class="card-body pb-4">
                     <div class="table-responsive px-3 card-body">
-                        <table class="table table-bordered mt-3">
+                        {foreach $assetsGrouped as $groupName => $group}
+                            <h5>{if $groupName !== 'all'}{$groupName}{/if}</h5>
+                            <table class="table table-bordered mt-3">
                             <thead>
                             <tr>
                                 <th></th>
@@ -50,7 +52,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {foreach $assets as $asset}
+                            {foreach $group as $asset}
                                 <tr>
                                     <td>
                                         {$asset->getAssetType()->getName()}
@@ -107,6 +109,7 @@
                             {/foreach}
                             </tbody>
                         </table>
+                        {/foreach}
                     </div>
                 </div>
             </div>

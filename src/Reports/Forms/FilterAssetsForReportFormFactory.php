@@ -4,6 +4,7 @@ namespace App\Reports\Forms;
 
 use App\Entity\AccountingEntity;
 use App\Entity\Place;
+use App\Majetek\Enums\AssetColumns;
 use App\Majetek\Enums\AssetTypesCodes;
 use App\Utils\DateTimeFormatter;
 use App\Utils\FlashMessageType;
@@ -24,7 +25,25 @@ class FilterAssetsForReportFormFactory
     {
         $form = new Form;
 
-
+        $columns = AssetColumns::NAMES;
+        $form
+            ->addCheckboxList('columns', 'Sloupce', $columns)
+            ->setDefaultValue(array_keys($columns))
+        ;
+        $sorting = AssetColumns::SORTING_BY;
+        $form
+            ->addRadioList('sorting', 'Třídění', $sorting)
+            ->setDefaultValue('inventory_number')
+        ;
+        $summing = AssetColumns::SUMMING_BY;
+        $form
+            ->addCheckboxList('summing', 'Sumy', $summing)
+        ;
+        $grouping = AssetColumns::GROUPING_BY;
+        $form
+            ->addRadioList('grouping', 'Seskupení', $grouping)
+            ->setDefaultValue('none')
+        ;
         $assetTypes = AssetTypesCodes::NAMES;
         $form
             ->addCheckboxList('types', 'Typy majetku', $assetTypes)
@@ -75,6 +94,15 @@ class FilterAssetsForReportFormFactory
                 $errorMsg = 'Neplatný vyhledávací dotaz. Datum "od" musí dříve než datum "do".';
                 $form['from_date']->addError($errorMsg);
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+            }
+
+
+            foreach ($values->summing as $sumByColumn) {
+                if (!in_array($sumByColumn, $values->columns)) {
+                    $errorMsg = 'Sloupec "' . AssetColumns::SUMMING_BY[$sumByColumn] . '", podle kterého jsou počítány sumy, musí být zaškrtnut v seznamu sloupců.';
+                    $form['summing']->addError($errorMsg);
+                    $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+                }
             }
         };
 
