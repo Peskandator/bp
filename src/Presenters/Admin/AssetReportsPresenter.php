@@ -67,6 +67,7 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
         $this->template->assetsGrouped = $records;
         $this->template->columns = $this->assetReportsFilter->getColumnNamesFromFilter($filterData);
         $this->template->firstRow = $this->assetReportsFilter->getFirstRowColumns($filterData);
+        $this->template->summedColumns = $filterData['summing'];
     }
 
     protected function createComponentFilterAssetsForReportForm(): Form

@@ -204,6 +204,23 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="field-label">Účet</div>
+                        <div class="col-md-5">
+                            <div class="form-group filter-row-first filter-row-mr">
+                                <label for="accountFrom">Od</label>
+                                <input n:name="account_from" type="number" step="0.01" class="form-control" id="accountFrom" min="100000" max="999999">
+                                <small class="form-error" n:ifcontent>{inputError account_from}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group filter-row-first filter-row-mr">
+                                <label for="accountTo">Do</label>
+                                <input n:name="account_to" type="number" step="0.01" class="form-control" id="entryPriceTo" min="100000" max="999999">
+                                <small class="form-error" n:ifcontent>{inputError account_to}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div class="custom-checkbox" style="margin-top: 12px; font-size: 18px">
                                 <label class="custom-control-label" for="disposed" style="color: #0d6efd;">Vyřazené majetky</label>

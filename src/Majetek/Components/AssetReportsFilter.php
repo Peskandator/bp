@@ -38,8 +38,6 @@ class AssetReportsFilter
         $groupedAssets = $this->groupAssets($filter, $sortedAssets);
         $data = $this->createDataForExport($filter, $groupedAssets);
 
-        bdump($data);
-
         return $data;
     }
 
@@ -49,12 +47,14 @@ class AssetReportsFilter
 
         $result = [];
 
-        $allowedTypes = $filter['entry_price_from'] ?? null;
-        $allowedCategories = $filter['entry_price_from'] ?? null;
-        $allowedPlaces = $filter['entry_price_from'] ?? null;
+        $allowedTypes = $filter['types'] ?? null;
+        $allowedCategories = $filter['categories'] ?? null;
+        $allowedPlaces = $filter['places'] ?? null;
         $fromPrice = $filter['entry_price_from'] ?? null;
         $toPrice = $filter['entry_price_to'] ?? null;
         $withDisposed = $filter['disposed'] ?? null;
+        $fromAccount = $filter['account_from'] ?? null;
+        $toAccount = $filter['account_to'] ?? null;
 
         /**
          * @var Asset $asset
@@ -97,6 +97,15 @@ class AssetReportsFilter
                 continue;
             }
 
+            $category = $asset->getCategory();
+            $assetAccount = $category?->getAccountAsset();
+            if ($fromAccount && $assetAccount < $fromAccount) {
+                continue;
+            }
+            if ($toAccount && $assetAccount > $toAccount) {
+                continue;
+            }
+
             $result[] = $asset;
         }
 
@@ -136,6 +145,9 @@ class AssetReportsFilter
                 return $asset->getEntryPrice();
             case 'increased_price':
                 return $asset->getIncreasedEntryPrice();
+            case 'account':
+                $category = $asset->getCategory();
+                return $category ? ($category->getAccountAsset() ?? '') : '';
             case 'depreciated_amount_tax':
                 return $asset->getDepreciatedAmountTax();
             case 'residual_price_tax':
@@ -161,7 +173,7 @@ class AssetReportsFilter
                 $assets[$groupByValue][] = $record;
             }
 
-            if ($groupBy === 'depreciation_group_tax' || $groupBy === 'depreciation_group_accounting') {
+            if ($groupBy === 'depreciation_group_tax') {
                 $assets = $this->enumerableSorter->sortGroupsInArrayByMethodAndNumber($assets);
             }
 
@@ -178,8 +190,9 @@ class AssetReportsFilter
                 return $asset->getAssetType()->getName();
             case 'category':
                 return $asset->getCategory() ? $asset->getCategory()->getName() : 'Bez zařazení';
-            case 'depreciation_group_accounting':
-                return $asset->getCorrectDepreciationGroupAccounting()->getFullName();
+            case 'account':
+                $category = $asset->getCategory();
+                return $category ? ($category->getAccountAsset() ?? '') : '';
             case 'depreciation_group_tax':
                 $groupTax = $asset->getDepreciationGroupTax();
                 return $groupTax ? $groupTax->getFullName() : 'Bez zařazení';
@@ -193,9 +206,20 @@ class AssetReportsFilter
     protected function createDataForExport(?array $filter, array $assetGrouped): array
     {
         $columns = $filter['columns'];
-        $assets = [];
+        $columnsForSumming = $filter['summing'];
+        $summedColumnsTemplate = [];
+        foreach ($columns as $column) {
+            if (in_array($column, $columnsForSumming)) {
+                $summedColumnsTemplate[$column] = 0;
+                continue;
+            }
+            $summedColumnsTemplate[$column] = '';
+        }
+
+        $result = [];
 
         foreach ($assetGrouped as $groupName => $records) {
+            $summedColumns = $summedColumnsTemplate;
             /**
              * @var Asset $record
              */
@@ -203,13 +227,18 @@ class AssetReportsFilter
                 $asset = [];
 
                 foreach ($columns as $column) {
-                    $asset[$column] = $this->getColumnValueForExport($record, $column);
+                    $value = $this->getColumnValueForExport($record, $column);
+                    $asset[$column] = $value;
+                    if (in_array($column, $columnsForSumming)) {
+                        $summedColumns[$column] += $value;
+                    }
                 }
-                $assets[$groupName][$record->getId()] = $asset;
+                $result[$groupName][$record->getId()] = $asset;
             }
+            $result[$groupName]['summing'] = $summedColumns;
         }
 
-        return $assets;
+        return $result;
     }
 
     protected function getColumnValueForExport(Asset $asset, $column): float|int|null|string|\DateTimeInterface
@@ -229,6 +258,9 @@ class AssetReportsFilter
                 return $asset->getEntryPrice();
             case 'increased_price':
                 return $asset->getIncreasedEntryPrice();
+            case 'account':
+                $category = $asset->getCategory();
+                return $category ? ($category->getAccountAsset() ?? '') : '';
             case 'depreciated_amount_tax':
                 return $asset->getDepreciatedAmountTax();
             case 'residual_price_tax':
@@ -237,9 +269,6 @@ class AssetReportsFilter
                 return $asset->getDepreciatedAmountAccounting();
             case 'residual_price_accounting':
                 return $asset->getAmortisedPriceAccounting();
-            case 'depreciation_group_accounting':
-                $groupAccounting = $asset->getCorrectDepreciationGroupAccounting();
-                return $groupAccounting ? $groupAccounting->getFullName() : 'Bez zařazení';
             case 'depreciation_group_tax':
                 $groupTax = $asset->getDepreciationGroupTax();
                 return $groupTax ? $groupTax->getFullName() : 'Bez zařazení';
@@ -276,7 +305,6 @@ class AssetReportsFilter
         ];
         $accountingColumns =
         [
-            'depreciation_group_accounting',
             'depreciated_amount_accounting',
             'residual_price_accounting'
         ];
@@ -288,7 +316,6 @@ class AssetReportsFilter
         $isBefore = true;
 
         foreach ($columns as $column) {
-            bdump($column);
             if (in_array($column, $taxColumns)) {
                 $isBefore = false;
                 $taxColumnsCount++;
@@ -312,7 +339,6 @@ class AssetReportsFilter
         $firstRow['tax'] = $taxColumnsCount;
         $firstRow['accounting'] = $accountingColumnsCount;
 
-        bdump($firstRow);
         return $firstRow;
     }
 }

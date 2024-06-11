@@ -46,8 +46,16 @@
                             </thead>
                             <tbody>
                             {foreach $group as $assetId => $assetData}
+                                {continueIf $assetId === 'summing' && count($summedColumns) === 0}
                                 <tr>
                                     {foreach $assetData as $columnName => $val}
+                                        {if $assetId === 'summing'}
+                                            <td style="border-top: solid 2px black">
+                                                <b>{$val}</b>
+                                            </td>
+                                        {/if}
+                                        {continueIf $assetId === 'summing'}
+
                                         {if $columnName === 'name'}
                                             <td>
                                                 <a n:href=":Admin:Asset:default, $assetId" class="clickable-link">{$val}</a>

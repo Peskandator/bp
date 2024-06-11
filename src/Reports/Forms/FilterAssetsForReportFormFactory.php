@@ -3,6 +3,7 @@
 namespace App\Reports\Forms;
 
 use App\Entity\AccountingEntity;
+use App\Entity\AssetType;
 use App\Entity\Place;
 use App\Majetek\Enums\AssetColumns;
 use App\Majetek\Enums\AssetTypesCodes;
@@ -44,7 +45,7 @@ class FilterAssetsForReportFormFactory
             ->addRadioList('grouping', 'Seskupení', $grouping)
             ->setDefaultValue('none')
         ;
-        $assetTypes = AssetTypesCodes::NAMES;
+        $assetTypes = $this->getAssetTypesForCheckboxList($currentEntity->getAssetTypes()->toArray());
         $form
             ->addCheckboxList('types', 'Typy majetku', $assetTypes)
         ;
@@ -68,6 +69,16 @@ class FilterAssetsForReportFormFactory
             ->addText('entry_price_from', 'do VC')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->addRule($form::MIN, 'Cena musí být vyšší než 0.',0)
+            ->setNullable()
+        ;
+        $form
+            ->addInteger('account_from', 'Účet')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
+            ->setNullable()
+        ;
+        $form
+            ->addInteger('account_to', 'Účet')
+            ->addRule($form::LENGTH, 'Délka účtu musí být 6 znaků.', 6)
             ->setNullable()
         ;
         $form
@@ -96,7 +107,6 @@ class FilterAssetsForReportFormFactory
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
             }
 
-
             foreach ($values->summing as $sumByColumn) {
                 if (!in_array($sumByColumn, $values->columns)) {
                     $errorMsg = 'Sloupec "' . AssetColumns::SUMMING_BY[$sumByColumn] . '", podle kterého jsou počítány sumy, musí být zaškrtnut v seznamu sloupců.';
@@ -110,10 +120,15 @@ class FilterAssetsForReportFormFactory
                 $form['columns']->addError($errorMsg);
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
             }
+
+            if ($values->account_to && $values->account_from && $values->account_to < $values->account_from) {
+                $from = $values->account_to;
+                $values->account_to = $values->account_from;
+                $values->account_from = $from;
+            }
         };
 
         $form->onSuccess[] = function (Form $form, \stdClass $values) use ($currentEntity) {
-
             $valuesArr = json_decode(json_encode($values), true);
             $data = urlencode(json_encode($valuesArr));
             $form->getPresenter()->redirect('AssetReports:result', $data);
@@ -135,14 +150,27 @@ class FilterAssetsForReportFormFactory
         return $arr;
     }
 
-    private function getCategoriesForCheckboxList(array $cateogories): array
+    private function getCategoriesForCheckboxList(array $categories): array
     {
         $arr = [];
         /**
          * @var Place $category
          */
-        foreach ($cateogories as $category) {
+        foreach ($categories as $category) {
             $arr[$category->getId()] = $category->getName();
+        }
+
+        return $arr;
+    }
+
+    private function getAssetTypesForCheckboxList(array $assetTypes): array
+    {
+        $arr = [];
+        /**
+         * @var AssetType $type
+         */
+        foreach ($assetTypes as $type) {
+            $arr[$type->getId()] = $type->getName();
         }
 
         return $arr;
