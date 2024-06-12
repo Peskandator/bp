@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace App\Majetek\Enums;
+namespace App\Reports\Enums;
 
 final class AssetColumns
 {

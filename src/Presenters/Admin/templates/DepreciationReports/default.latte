@@ -6,20 +6,253 @@
 
 {block content}
 
-<h1>Sestavy odpisů</h1>
+    <h1>Sestavy odpisů</h1>
 
-<div class="row">
-    <div class="col-12">
-{*        <div class="card">*}
-{*            <div class="card-header">*}
+    {form filterDepreciationsForReportForm}
+        <div class="row">
+            <div class="form-errors" n:ifcontent>
+                <div n:foreach="$form->getOwnErrors() as $error" class="alert alert-danger custom-alert">{$error}</div>
+            </div>
+        </div>
 
-{*            </div>*}
-{*            <div class="table-responsive px-3 card-body">*}
-{*                <table class="table table-bordered mt-3">*}
-{*                    *}
-{*                </table>*}
-{*            </div>*}
-{*        </div>*}
-    </div>
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Data
+                    </div>
+                    <div class="card-body pb-4">
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="field-label-checklist" style="margin-top: 0">
+                                    Sloupce
+                                </div>
+                                <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                    {inputError columns}
+                                </div>
+                                <div class="filter-row-first row checkboxlist-row">
+                                    {foreach $form['columns']->items as $key => $label}
+                                        <div class="form-check col-12 col-sm-6 col-lg-3">
+                                            <input n:name="columns:$key" class="form-check-input" type="checkbox" data-type-code="{$key}">
+                                            <label n:name="columns:$key" class="form-check-label">
+                                                {$label}
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="field-label-checklist" style="margin-top: 0">
+                                    Seskupení
+                                </div>
+                                <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                    {inputError grouping}
+                                </div>
+                                <div class="filter-row-first row checkboxlist-row">
+                                    {foreach $form['grouping']->items as $key => $label}
+                                        <div class="form-check col-12 col-sm-6 col-lg-3">
+                                            <input n:name="grouping:$key" class="form-check-input" type="radio" data-type-code="{$key}">
+                                            <label n:name="grouping:$key" class="form-check-label">
+                                                {$label}
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="field-label-checklist" style="margin-top: 0">
+                                    Třídění
+                                </div>
+                                <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                    {inputError sorting}
+                                </div>
+                                <div class="filter-row-first row checkboxlist-row">
+                                    {foreach $form['sorting']->items as $key => $label}
+                                        <div class="form-check col-12 col-sm-6 col-lg-3">
+                                            <input n:name="sorting:$key" class="form-check-input" type="radio" data-type-code="{$key}">
+                                            <label n:name="sorting:$key" class="form-check-label">
+                                                {$label}
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="field-label-checklist" style="margin-top: 0">
+                                    Suma
+                                </div>
+                                <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                    {inputError summing}
+                                </div>
+                                <div class="filter-row-first row checkboxlist-row">
+                                    {foreach $form['summing']->items as $key => $label}
+                                        <div class="form-check col-12 col-sm-6 col-lg-3">
+                                            <input n:name="summing:$key" class="form-check-input" type="checkbox" data-type-code="{$key}">
+                                            <label n:name="summing:$key" class="form-check-label">
+                                                {$label}
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card filter-form">
+                    <div class="card-header">
+                        Filtr
+                    </div>
+                    <div class="card-body pb-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="field-label-checklist" style="margin-top: 0">Odp. skupiny</div>
+                                <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                    {inputError depreciation_groups}
+                                </div>
+                                <div class="filter-row-first row checkboxlist-row">
+                                    {foreach $form['depreciation_groups']->items as $key => $label}
+                                        <div class="form-check col-12 col-sm-6 col-lg-3">
+                                            <input n:name="depreciation_groups:$key" class="form-check-input" type="checkbox" data-type-code="{$key}">
+                                            <label n:name="depreciation_groups:$key" class="form-check-label">
+                                                {$label}
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="field-label">Datum provedení</div>
+                            <div class="col-12 col-lg-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="fromEntryDate">Od</label>
+                                    <input n:name="from_date" type="date" class="form-control" id="fromEntryDate">
+                                    <small class="form-error" n:ifcontent>{inputError from_date}</small>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="toEntryDate">Do</label>
+                                    <input n:name="to_date" type="date" class="form-control" id="toEntryDate">
+                                    <small class="form-error" n:ifcontent>{inputError to_date}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="field-label-checklist">Kategorie</div>
+                                <div n:ifcontent class="col-sm-12 alert alert-danger" role="alert">
+                                    {inputError categories}
+                                </div>
+                                <div class="filter-row-first row checkboxlist-row">
+                                    {foreach $form['categories']->items as $key => $label}
+                                        <div class="form-check col-12 col-sm-6 col-lg-3 mb-2">
+                                            <input n:name="categories:$key" class="form-check-input" data-category-code="{$key}">
+                                            <label n:name="categories:$key" class="form-check-label">
+                                                {$label}
+                                            </label>
+                                        </div>
+                                    {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="field-label">Vstupní cena</div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="entryPriceFrom">Od</label>
+                                    <input n:name="entry_price_from" type="number" step="0.01" class="form-control" id="entryPriceFrom" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError entry_price_from}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="entryPriceTo">Do</label>
+                                    <input n:name="entry_price_to" type="number" step="0.01" class="form-control" id="entryPriceTo" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError entry_price_to}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="field-label">Výše odpisu</div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="depreciationAmountFrom">Od</label>
+                                    <input n:name="depreciation_amount_from" type="number" step="0.01" class="form-control" id="depreciationAmountFrom" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError depreciation_amount_from}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="depreciationAmountTo">Do</label>
+                                    <input n:name="depreciation_amount_to" type="number" step="0.01" class="form-control" id="depreciationAmountTo" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError depreciation_amount_to}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="field-label">Účet MD</div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="accountDebitedFrom">Od</label>
+                                    <input n:name="account_debited_from" type="number" step="0.01" class="form-control" id="accountDebitedFrom" min="100000" max="999999">
+                                    <small class="form-error" n:ifcontent>{inputError account_debited_from}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="accountDebitedTo">Do</label>
+                                    <input n:name="account_debited_to" type="number" step="0.01" class="form-control" id="accountDebitedTo" min="100000" max="999999">
+                                    <small class="form-error" n:ifcontent>{inputError account_debited_to}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="field-label">Účet DAL</div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="accountCreditedFrom">Od</label>
+                                    <input n:name="account_credited_from" type="number" step="0.01" class="form-control" id="accountCreditedFrom" min="100000" max="999999">
+                                    <small class="form-error" n:ifcontent>{inputError account_credited_from}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="accountCreditedTo">Do</label>
+                                    <input n:name="account_credited_to" type="number" step="0.01" class="form-control" id="accountCreditedTo" min="100000" max="999999">
+                                    <small class="form-error" n:ifcontent>{inputError account_credited_to}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="custom-checkbox" style="margin-top: 12px; font-size: 18px">
+                                    <label class="custom-control-label" for="onlyAccountable" style="color: #0d6efd;">Jen odpisy k zaúčtovaní</label>
+                                    <input n:name="only_accountable" class="form-check-input" type="checkbox" id="onlyAccountable">
+                                    <small class="form-error" n:ifcontent>{inputError only_accountable}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <button class="btn-primary btn" data-entity-id="{$entity->getId()}">Filtrovat</button>
+            </div>
+        </div>
+    {/form}
 
 {/block}

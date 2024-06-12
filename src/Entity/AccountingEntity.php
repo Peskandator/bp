@@ -445,4 +445,24 @@ class AccountingEntity
 
         return $result;
     }
+
+    public function getDepreciationTaxMovements(): array
+    {
+        $result = [];
+        $assets = $this->getAssetsSorted();
+        /**
+         * @var Asset $asset
+         */
+        foreach ($assets as $asset) {
+            $movements = $asset->getMovementsWithType(MovementType::DEPRECIATION_TAX);
+            /**
+             * @var Movement $movement
+             */
+            foreach ($movements as $movement) {
+                $result[] = $movement;
+            }
+        }
+
+        return $result;
+    }
 }

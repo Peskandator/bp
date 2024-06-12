@@ -1,13 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Majetek\Components;
-
+namespace App\Reports\Components;
 
 use App\Entity\AccountingEntity;
 use App\Entity\Asset;
-use App\Majetek\Enums\AssetColumns;
-use App\Majetek\ORM\AssetRepository;
+use App\Reports\Enums\AssetColumns;
 use App\Utils\DateTimeFormatter;
 use App\Utils\EnumerableSorter;
 
@@ -15,17 +13,14 @@ class AssetReportsFilter
 {
     private DateTimeFormatter $dateTimeFormatter;
     private AccountingEntity $currentEntity;
-    private AssetRepository $assetRepository;
     private EnumerableSorter $enumerableSorter;
 
     public function __construct(
         DateTimeFormatter $dateTimeFormatter,
-        AssetRepository $assetRepository,
         EnumerableSorter $enumerableSorter,
     )
     {
         $this->dateTimeFormatter = $dateTimeFormatter;
-        $this->assetRepository = $assetRepository;
         $this->enumerableSorter = $enumerableSorter;
     }
 
@@ -43,7 +38,7 @@ class AssetReportsFilter
 
     protected function getFilteredResults(?array $filter): array
     {
-        $assets = $this->assetRepository->findAll();
+        $assets = $this->currentEntity->getAssetsSorted();
 
         $result = [];
 
@@ -298,16 +293,16 @@ class AssetReportsFilter
         $columns = $filter['columns'];
 
         $taxColumns =
-        [
-            'depreciation_group_tax',
-            'depreciated_amount_tax',
-            'residual_price_tax'
-        ];
+            [
+                'depreciation_group_tax',
+                'depreciated_amount_tax',
+                'residual_price_tax'
+            ];
         $accountingColumns =
-        [
-            'depreciated_amount_accounting',
-            'residual_price_accounting'
-        ];
+            [
+                'depreciated_amount_accounting',
+                'residual_price_accounting'
+            ];
 
         $before = 0;
         $after = 0;

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
-use App\Majetek\Components\AssetReportsFilter;
-use App\Majetek\Enums\AssetColumns;
+use App\Reports\Components\AssetReportsFilter;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Reports\Forms\FilterAssetsForReportFormFactory;
 use Nette\Application\UI\Form;
