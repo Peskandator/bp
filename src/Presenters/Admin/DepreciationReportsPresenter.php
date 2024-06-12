@@ -6,6 +6,7 @@ namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Reports\Components\DepreciationReportsFilter;
+use App\Reports\Enums\DepreciationColumns;
 use App\Reports\Forms\FilterDepreciationsForReportFormFactory;
 use Nette\Application\UI\Form;
 
@@ -62,10 +63,12 @@ final class DepreciationReportsPresenter extends BaseAccountingEntityPresenter
         $filterDataStdClass = json_decode(urldecode($filter));
         $filterData = json_decode(json_encode($filterDataStdClass), true);
         $records = $this->depreciationReportsFilter->getResults($this->currentEntity, $filterData);
+        $groupedBy = $filterData['grouping'] !== 'none' ? DepreciationColumns::NAMES[$filterData['grouping']] : null;
         $this->template->entity = $this->currentEntity;
         $this->template->depreciationsGrouped = $records;
         $this->template->columns = $this->depreciationReportsFilter->getColumnNamesFromFilter($filterData);
         $this->template->summedColumns = $filterData['summing'];
+        $this->template->groupedBy = $groupedBy;
     }
 
     protected function createComponentFilterDepreciationsForReportForm(): Form

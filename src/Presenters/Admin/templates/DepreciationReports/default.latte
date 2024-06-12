@@ -185,6 +185,23 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="field-label">Zvýšená vstupní cena</div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="entryPriceFrom">Od</label>
+                                    <input n:name="increased_price_from" type="number" step="0.01" class="form-control" id="increasedPriceFrom" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError increased_price_from}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group filter-row-first filter-row-mr">
+                                    <label for="increasedPriceTo">Do</label>
+                                    <input n:name="increased_price_to" type="number" step="0.01" class="form-control" id="increasedPriceTo" min="0" max="1000000000">
+                                    <small class="form-error" n:ifcontent>{inputError increased_price_to}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="field-label">Výše odpisu</div>
                             <div class="col-md-5">
                                 <div class="form-group filter-row-first filter-row-mr">

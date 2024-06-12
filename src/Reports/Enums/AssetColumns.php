@@ -81,6 +81,11 @@ final class AssetColumns
         ]
     ;
 
+    // TODO: uděat main_content responzivní - odebrat margin po stranách
+    // středisko
+    // main-
+    // přidat veškeré sloupce
+
     private function __construct()
     {
         // empty

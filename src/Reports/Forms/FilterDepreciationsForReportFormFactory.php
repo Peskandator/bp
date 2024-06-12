@@ -34,11 +34,12 @@ class FilterDepreciationsForReportFormFactory
         $sorting = DepreciationColumns::SORTING_BY;
         $form
             ->addRadioList('sorting', 'Třídění', $sorting)
-            ->setDefaultValue('inventory_number')
+            ->setDefaultValue('year')
         ;
         $summing = DepreciationColumns::SUMMING_BY;
         $form
             ->addCheckboxList('summing', 'Sumy', $summing)
+            ->setDefaultValue(array_keys($summing))
         ;
         $grouping = DepreciationColumns::GROUPING_BY;
         $form
@@ -58,13 +59,25 @@ class FilterDepreciationsForReportFormFactory
             ->addCheckboxList('categories', 'Kategorie', $categories)
         ;
         $form
-            ->addText('entry_price_from', 'do VC')
+            ->addText('entry_price_from', 'od VC')
             ->addRule($form::FLOAT, 'Zadejte číslo')
             ->addRule($form::MIN, 'Cena musí být vyšší než 0.',0)
             ->setNullable()
         ;
         $form
-            ->addText('entry_price_to', 'od VC')
+            ->addText('entry_price_to', 'do VC')
+            ->addRule($form::FLOAT,'Zadejte číslo')
+            ->addRule($form::MIN, 'Cena musí být vyšší než 0.', 0)
+            ->setNullable()
+        ;
+        $form
+            ->addText('increased_price_from', 'od zvýšené VC')
+            ->addRule($form::FLOAT, 'Zadejte číslo')
+            ->addRule($form::MIN, 'Cena musí být vyšší než 0.',0)
+            ->setNullable()
+        ;
+        $form
+            ->addText('increased_price_to', 'do zvýšené VC')
             ->addRule($form::FLOAT,'Zadejte číslo')
             ->addRule($form::MIN, 'Cena musí být vyšší než 0.', 0)
             ->setNullable()

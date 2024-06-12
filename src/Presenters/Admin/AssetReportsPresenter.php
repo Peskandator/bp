@@ -6,6 +6,7 @@ namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
 use App\Reports\Components\AssetReportsFilter;
 use App\Presenters\BaseAccountingEntityPresenter;
+use App\Reports\Enums\AssetColumns;
 use App\Reports\Forms\FilterAssetsForReportFormFactory;
 use Nette\Application\UI\Form;
 
@@ -62,11 +63,13 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
         $filterDataStdClass = json_decode(urldecode($filter));
         $filterData = json_decode(json_encode($filterDataStdClass), true);
         $records = $this->assetReportsFilter->getResults($this->currentEntity, $filterData);
+        $groupedBy = $filterData['grouping'] !== 'none' ? AssetColumns::NAMES[$filterData['grouping']] : null;
         $this->template->entity = $this->currentEntity;
         $this->template->assetsGrouped = $records;
         $this->template->columns = $this->assetReportsFilter->getColumnNamesFromFilter($filterData);
         $this->template->firstRow = $this->assetReportsFilter->getFirstRowColumns($filterData);
         $this->template->summedColumns = $filterData['summing'];
+        $this->template->groupedBy = $groupedBy;
     }
 
     protected function createComponentFilterAssetsForReportForm(): Form

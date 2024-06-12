@@ -217,7 +217,7 @@ class DepreciationTax implements Depreciation
         return $this->rateFormat;
     }
 
-    public function getRate(): float
+    public function getRate(): ?float
     {
         return $this->rate;
     }

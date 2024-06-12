@@ -38,73 +38,85 @@ class DepreciationReportsFilter
 
     protected function getFilteredResults(?array $filter): array
     {
-        $depreciationMovements = $this->currentEntity->getDepreciationTaxMovements();
-
-
-
-
+        $movements = $this->currentEntity->getDepreciationTaxMovements();
         $result = [];
 
-        $allowedTypes = $filter['types'] ?? null;
+
         $allowedCategories = $filter['categories'] ?? null;
-        $allowedPlaces = $filter['places'] ?? null;
+        $depreciationGroups = $filter['depreciation_groups'] ?? null;
         $fromPrice = $filter['entry_price_from'] ?? null;
         $toPrice = $filter['entry_price_to'] ?? null;
-        $withDisposed = $filter['disposed'] ?? null;
-        $fromAccount = $filter['account_from'] ?? null;
-        $toAccount = $filter['account_to'] ?? null;
+        $fromIncreasedPrice = $filter['increased_price_from'] ?? null;
+        $toIncreasedPrice = $filter['increased_price_to'] ?? null;
+        $fromAccountDebited = $filter['account_from_debited'] ?? null;
+        $toAccountDebited = $filter['account_to_debited'] ?? null;
+        $fromAccountCredited = $filter['account_from_credited'] ?? null;
+        $toAccountCredited = $filter['account_to_credited'] ?? null;
+        $onlyAccountable = $filter['only_accountable'] ?? false;
 
         /**
-         * @var Movement $depreciationMovement
+         * @var Movement $movement
          */
-        foreach ($depreciationMovements as $depreciationMovement) {
-            if ($this->currentEntity->getId() !== $depreciationMovement->getEntity()->getId()) {
+        foreach ($movements as $movement) {
+            $asset = $movement->getAsset();
+            $depreciation = $movement->getDepreciation();
+
+            if ($this->currentEntity->getId() !== $movement->getEntity()->getId()) {
                 continue;
             }
 
-//            if ($asset->isDisposed() && !$withDisposed) {
-//                continue;
-//            }
-//
-//            if ($allowedTypes && count($allowedTypes) > 0 && !in_array($asset->getAssetType()->getId(), $allowedTypes)) {
-//                continue;
-//            }
-//
-//            if ($allowedCategories && count($allowedCategories) > 0 && !in_array($asset->getCategory()->getId(), $allowedCategories)) {
-//                continue;
-//            }
-//
-//            if ($allowedPlaces && count($allowedPlaces) > 0 && !in_array($asset->getPlace()->getId(), $allowedPlaces)) {
-//                continue;
-//            }
-//
-//            $fromDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
-//            if ($fromDate && $asset->getEntryDate() < $fromDate) {
-//                continue;
-//            }
-//            $toDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
-//            if ($toDate && $asset->getEntryDate() > $toDate) {
-//                continue;
-//            }
-//
-//            $currentYear = (int)date("Y");
-//            if ($fromPrice !== null && $asset->getPriceForYear($currentYear) < $fromPrice) {
-//                continue;
-//            }
-//            if ($toPrice !== null && $asset->getPriceForYear($currentYear) > $toPrice) {
-//                continue;
-//            }
-//
-//            $category = $asset->getCategory();
-//            $assetAccount = $category?->getAccountAsset();
-//            if ($fromAccount && $assetAccount < $fromAccount) {
-//                continue;
-//            }
-//            if ($toAccount && $assetAccount > $toAccount) {
-//                continue;
-//            }
+            if (!$movement->isAccountable() && $onlyAccountable) {
+                continue;
+            }
+            if ($allowedCategories && count($allowedCategories) > 0 && !in_array($asset->getCategory()->getId(), $allowedCategories)) {
+                continue;
+            }
+            if ($depreciationGroups && count($depreciationGroups) > 0 && !in_array($depreciation->getDepreciationGroup(), $depreciationGroups)) {
+                continue;
+            }
 
-            $result[] = $depreciationMovement;
+            $fromDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
+            if ($fromDate && $movement->getDate() < $fromDate) {
+                continue;
+            }
+            $toDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
+            if ($toDate && $movement->getDate() > $toDate) {
+                continue;
+            }
+
+            $entryPrice = $depreciation?->getEntryPrice();
+            if ($fromPrice !== null && $entryPrice !== null && $entryPrice < $fromPrice) {
+                continue;
+            }
+            if ($toPrice !== null && $entryPrice !== null && $entryPrice > $toPrice) {
+                continue;
+            }
+
+            $increasedPrice = $depreciation?->getIncreasedEntryPrice();
+            if ($fromIncreasedPrice !== null && $increasedPrice !== null && $increasedPrice < $fromIncreasedPrice) {
+                continue;
+            }
+            if ($toIncreasedPrice !== null && $increasedPrice !== null && $increasedPrice > $toIncreasedPrice) {
+                continue;
+            }
+
+            $accountDebited = $movement->getAccountDebited();
+            if ($fromAccountDebited && $accountDebited < $fromAccountDebited) {
+                continue;
+            }
+            if ($toAccountDebited && $accountDebited > $toAccountDebited) {
+                continue;
+            }
+
+            $accountCredited = $movement->getAccountCredited();
+            if ($fromAccountCredited && $accountCredited < $fromAccountCredited) {
+                continue;
+            }
+            if ($toAccountCredited && $accountCredited > $toAccountCredited) {
+                continue;
+            }
+
+            $result[] = $movement;
         }
 
         return $result;
@@ -132,32 +144,25 @@ class DepreciationReportsFilter
         return $depreciations;
     }
 
-    protected function getSortByColumnValue(Movement $depreciation, $column): float|int|null|string|\DateTimeInterface
+    protected function getSortByColumnValue(Movement $movement, $column): float|int|null|string|\DateTimeInterface
     {
-        switch ($column) {
-//            case 'entry_date':
-//                return $depreciation->getEntryDate();
-//            case 'name':
-//                return $depreciation->getName();
-//            case 'entry_price':
-//                return $depreciation->getEntryPrice();
-//            case 'increased_price':
-//                return $depreciation->getIncreasedEntryPrice();
-//            case 'account':
-//                $category = $depreciation->getCategory();
-//                return $category ? ($category->getAccountAsset() ?? '') : '';
-//            case 'depreciated_amount_tax':
-//                return $depreciation->getDepreciatedAmountTax();
-//            case 'residual_price_tax':
-//                return $depreciation->getAmortisedPriceTax();
-//            case 'depreciated_amount_accounting':
-//                return $depreciation->getDepreciatedAmountAccounting();
-//            case 'residual_price_accounting':
-//                return $depreciation->getAmortisedPriceAccounting();
-            default:
-                return '';
-//                return $depreciation->getInventoryNumber();
-        }
+        $asset = $movement->getAsset();
+        $depreciation = $movement->getDepreciation();
+
+        return match ($column) {
+            'asset_name' => $asset->getName(),
+            'depreciation_group_tax' => $depreciation->getDepreciationGroup()->getFullName(),
+            'year' => $depreciation->getYear(),
+            'execution_date' => $movement->getDate(),
+            'account_debited' => $movement->getAccountDebited(),
+            'account_credited' => $movement->getAccountCredited(),
+            'entry_price' => $depreciation->getEntryPrice(),
+            'increased_price' => $depreciation->getIncreasedEntryPrice(),
+            'depreciation_amount' => $depreciation->getDepreciationAmount(),
+            'depreciated_amount' => $depreciation->getDepreciatedAmount(),
+            'residual_price' => $depreciation->getResidualPrice(),
+            default => '',
+        };
     }
 
     protected function groupDepreciations(?array $filter, array $records): array
@@ -182,21 +187,25 @@ class DepreciationReportsFilter
         return $depreciations;
     }
 
-    protected function getGroupByColumnValue(Movement $depreciation, $column): float|int|null|string|\DateTimeInterface
+    protected function getGroupByColumnValue(Movement $movement, $column): float|int|null|string|\DateTimeInterface
     {
+        $asset = $movement->getAsset();
+        $depreciation = $movement->getDepreciation();
+
         switch ($column) {
-//            case 'type':
-//                return $depreciation->getAssetType()->getName();
-//            case 'category':
-//                return $depreciation->getCategory() ? $depreciation->getCategory()->getName() : 'Bez zařazení';
-//            case 'account':
-//                $category = $depreciation->getCategory();
-//                return $category ? ($category->getAccountAsset() ?? '') : '';
-//            case 'depreciation_group_tax':
-//                $groupTax = $depreciation->getDepreciationGroupTax();
-//                return $groupTax ? $groupTax->getFullName() : 'Bez zařazení';
-//            case 'entry_date':
-//                return $depreciation->getEntryDate()->format('Y');
+            case 'asset_name':
+                return $asset->getName();
+            case 'category':
+                $category = $asset->getCategory();
+                return $category ? $category->getName() : 'Bez zařazení';
+            case 'depreciation_group_tax':
+                return $depreciation->getDepreciationGroup()->getFullName();
+            case 'year':
+                return $depreciation->getYear() ?? 'Bez zařazení';
+            case 'account_debited':
+                return $movement->getAccountDebited();
+            case 'account_credited':
+                return $movement->getAccountCredited();
             default:
                 return 'all';
         }
@@ -240,39 +249,47 @@ class DepreciationReportsFilter
         return $result;
     }
 
-    protected function getColumnValueForExport(Movement $depreciation, $column): float|int|null|string|\DateTimeInterface
+    protected function getColumnValueForExport(Movement $movement, $column): float|int|null|string|\DateTimeInterface
     {
+        $asset = $movement->getAsset();
+        $depreciation = $movement->getDepreciation();
+
         switch ($column) {
-//            case 'type':
-//                return $depreciation->getAssetType()->getName();
-//            case 'inventory_number':
-//                return $depreciation->getInventoryNumber();
-//            case 'name':
-//                return $depreciation->getName();
-//            case 'category':
-//                return $depreciation->getCategory() ? $depreciation->getCategory()->getName() : 'Bez zařazení';
-//            case 'entry_date':
-//                return $depreciation->getEntryDate()->format('j. n. Y');
-//            case 'entry_price':
-//                return $depreciation->getEntryPrice();
-//            case 'increased_price':
-//                return $depreciation->getIncreasedEntryPrice();
-//            case 'account':
-//                $category = $depreciation->getCategory();
-//                return $category ? ($category->getAccountAsset() ?? '') : '';
-//            case 'depreciated_amount_tax':
-//                return $depreciation->getDepreciatedAmountTax();
-//            case 'residual_price_tax':
-//                return $depreciation->getAmortisedPriceTax();
-//            case 'depreciated_amount_accounting':
-//                return $depreciation->getDepreciatedAmountAccounting();
-//            case 'residual_price_accounting':
-//                return $depreciation->getAmortisedPriceAccounting();
-//            case 'depreciation_group_tax':
-//                $groupTax = $depreciation->getDepreciationGroupTax();
-//                return $groupTax ? $groupTax->getFullName() : 'Bez zařazení';
-//            case 'is_disposed':
-//                return $depreciation->isDisposed() ? 'ANO' : 'NE';
+            case 'asset_name':
+                return $asset->getName();
+            case 'inventory_number':
+                return $asset->getInventoryNumber();
+            case 'depreciation_group_tax':
+                return $depreciation->getDepreciationGroup()->getFullName();
+            case 'category':
+                $category = $asset->getCategory();
+                return $category ? $category->getName() : '';
+            case 'year':
+                return $depreciation->getYear();
+            case 'depreciation_year':
+                return $depreciation->getDepreciationYear();
+            case 'execution_date':
+                return $movement->getDate()->format('j.n.Y');
+            case 'rate':
+                return $depreciation->getRate();
+            case 'percentage':
+                return $depreciation->getPercentage();
+            case 'account_debited':
+                return $movement->getAccountDebited();
+            case 'account_credited':
+                return $movement->getAccountCredited();
+            case 'entry_price':
+                return $depreciation->getEntryPrice();
+            case 'increased_price':
+                return $depreciation->getIncreasedEntryPrice();
+            case 'residual_price':
+                return $depreciation->getResidualPrice();
+            case 'depreciation_amount':
+                return $depreciation->getDepreciationAmount();
+            case 'depreciated_amount':
+                return $depreciation->getDepreciatedAmount();
+            case 'is_accountable':
+                return $movement->isAccountable() ? 'ANO' : 'NE';
             default:
                 return '';
         }

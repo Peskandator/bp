@@ -11,6 +11,8 @@ interface Depreciation
     public function getId(): int;
     public function getDepreciationAmount(): float;
     public function getDepreciatedAmount(): float;
+    public function getEntryPrice(): float;
+    public function getIncreasedEntryPrice(): ?float;
     public function getResidualPrice(): float;
     public function getAsset(): Asset;
     public function getDepreciationYear(): int;
@@ -20,4 +22,7 @@ interface Depreciation
     public function getDepreciationGroup(): DepreciationGroup;
     public function isExecutionCancelable(): bool;
     public function updateFromRequest(UpdateDepreciationRequest $request): void;
+    public function getRate(): ?float;
+    public function getRateFormat(): int;
+    public function getPercentage(): float;
 }

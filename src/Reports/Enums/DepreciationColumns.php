@@ -9,15 +9,15 @@ final class DepreciationColumns
 {
     public const NAMES =
         [
-            'asset_name' => 'Majetek',
+            'asset_name' => 'Název majetku',
             'inventory_number' => 'Inventární číslo',
             'category' => 'Kategorie majetku',
             'depreciation_group_tax' => 'Odpisová skupina, způsob',
             'year' => 'Rok',
             'execution_date' => 'Datum',
             'depreciation_year' => 'Rok odpisu',
-            'account_credited' => 'Účet MD',
-            'account_debited' => 'Účet DAL',
+            'account_debited' => 'Účet MD',
+            'account_credited' => 'Účet DAL',
             'entry_price' => 'Vstupní cena',
             'increased_price' => 'Zvýšená vstupní cena',
             'rate' => 'Sazba',
@@ -30,15 +30,15 @@ final class DepreciationColumns
     ;
     public const NAMES_SHORT =
         [
-            'asset_name' => 'Majetek',
+            'asset_name' => 'Maj.',
             'inventory_number' => 'Inv.č.',
             'category' => 'Kat.',
             'depreciation_group_tax' => 'Odp.sk.,zp.',
             'year' => 'Rok',
             'execution_date' => 'Datum',
             'depreciation_year' => 'Rok odp.',
-            'account_credited' => 'Účet MD',
-            'account_debited' => 'Účet DAL',
+            'account_debited' => 'Účet MD',
+            'account_credited' => 'Účet DAL',
             'entry_price' => 'VC',
             'increased_price' => 'Zvýš. VC',
             'rate' => 'Sazba',
@@ -52,13 +52,12 @@ final class DepreciationColumns
 
     public const SORTING_BY =
         [
-            'asset_name' => 'Majetek',
-            'inventory_number' => 'Inventární číslo',
+            'asset_name' => 'Název majetku',
             'depreciation_group_tax' => 'Odpisová skupina, způsob',
             'year' => 'Rok',
             'execution_date' => 'Datum',
-            'account_credited' => 'Účet MD',
-            'account_debited' => 'Účet DAL',
+            'account_debited' => 'Účet MD',
+            'account_credited' => 'Účet DAL',
             'entry_price' => 'Vstupní cena',
             'increased_price' => 'Zvýšená vstupní cena',
             'depreciation_amount' => 'Výše odpisu',
@@ -80,11 +79,12 @@ final class DepreciationColumns
     public const GROUPING_BY =
         [
             'none' => 'Žádné',
-            'asset_name' => 'Majetek',
+            'asset_name' => 'Název majetku',
+            'category' => 'Kategorie',
             'depreciation_group_tax' => 'Odpisová skupina, způsob',
             'year' => 'Rok',
-            'account_credited' => 'Účet MD',
-            'account_debited' => 'Účet DAL',
+            'account_debited' => 'Účet MD',
+            'account_credited' => 'Účet DAL',
         ]
     ;
 

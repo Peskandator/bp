@@ -38,6 +38,7 @@ class FilterAssetsForReportFormFactory
         $summing = AssetColumns::SUMMING_BY;
         $form
             ->addCheckboxList('summing', 'Sumy', $summing)
+            ->setDefaultValue(array_keys($summing))
         ;
         $grouping = AssetColumns::GROUPING_BY;
         $form
