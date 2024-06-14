@@ -4,25 +4,30 @@ declare(strict_types=1);
 
 namespace App\Presenters\Admin;
 use App\Components\Breadcrumb\BreadcrumbItem;
+use App\Reports\Components\AssetHTMLGenerator;
 use App\Reports\Components\AssetReportsFilter;
 use App\Presenters\BaseAccountingEntityPresenter;
 use App\Reports\Enums\AssetColumns;
 use App\Reports\Forms\FilterAssetsForReportFormFactory;
+use Dompdf\Dompdf;
 use Nette\Application\UI\Form;
 
 final class AssetReportsPresenter extends BaseAccountingEntityPresenter
 {
     private FilterAssetsForReportFormFactory $filterAssetsForReportFormFactory;
     private AssetReportsFilter $assetReportsFilter;
+    private AssetHTMLGenerator $assetHTMLGenerator;
 
     public function __construct(
         FilterAssetsForReportFormFactory $filterAssetsForReportFormFactory,
         AssetReportsFilter $assetReportsFilter,
+        AssetHTMLGenerator $assetHTMLGenerator,
     )
     {
         parent::__construct();
         $this->filterAssetsForReportFormFactory = $filterAssetsForReportFormFactory;
         $this->assetReportsFilter = $assetReportsFilter;
+        $this->assetHTMLGenerator = $assetHTMLGenerator;
     }
 
     public function actionDefault(): void
@@ -64,12 +69,34 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
         $filterData = json_decode(json_encode($filterDataStdClass), true);
         $records = $this->assetReportsFilter->getResults($this->currentEntity, $filterData);
         $groupedBy = $filterData['grouping'] !== 'none' ? AssetColumns::NAMES[$filterData['grouping']] : null;
+        $columns = $this->assetReportsFilter->getColumnNamesFromFilter($filterData);
+        $firstRow = $this->assetReportsFilter->getFirstRowColumns($filterData);
+        $summedColumns = $filterData['summing'];
         $this->template->entity = $this->currentEntity;
         $this->template->assetsGrouped = $records;
-        $this->template->columns = $this->assetReportsFilter->getColumnNamesFromFilter($filterData);
-        $this->template->firstRow = $this->assetReportsFilter->getFirstRowColumns($filterData);
-        $this->template->summedColumns = $filterData['summing'];
+        $this->template->columns = $columns;
+        $this->template->firstRow = $firstRow;
+        $this->template->summedColumns = $summedColumns;
         $this->template->groupedBy = $groupedBy;
+        $this->template->exportFilter = $filter;
+    }
+
+    public function actionExport(string $filter)
+    {
+        $htmlData = $this->assetHTMLGenerator->generate($this->currentEntity, $filter);
+
+//        $html = mb_convert_encoding($htmlData, 'HTML-ENTITIES', 'UTF-8');
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($htmlData);
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'landscape');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser
+        $dompdf->stream($this->currentEntity->getName() . ' - Sestava majetku');
     }
 
     protected function createComponentFilterAssetsForReportForm(): Form

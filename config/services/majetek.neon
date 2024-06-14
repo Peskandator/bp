@@ -3,6 +3,7 @@ services:
     - App\Majetek\Components\MovementGenerator
     - App\Majetek\Components\ExportDialsDataGenerator
     - App\Reports\Components\AssetReportsFilter
+    - App\Reports\Components\AssetHTMLGenerator
     - App\Majetek\Latte\Filters\FloatFilter
 
     - App\Majetek\Forms\AssetFormFactory
