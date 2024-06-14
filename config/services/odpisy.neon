@@ -6,6 +6,7 @@ services:
     - App\Odpisy\Components\DbfFileGenerator
     - App\Odpisy\Components\XLSXFileGenerator
     - App\Reports\Components\DepreciationReportsFilter
+    - App\Reports\Components\DepreciationHTMLGenerator
 
     - App\Odpisy\Forms\EditTaxDepreciationFormFactory
     - App\Odpisy\Forms\EditAccountingDepreciationFormFactory
