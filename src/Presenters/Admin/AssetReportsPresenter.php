@@ -30,7 +30,7 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
         $this->assetHTMLGenerator = $assetHTMLGenerator;
     }
 
-    public function actionDefault(): void
+    public function actionDefault(?string $filter = null): void
     {
         $this->getComponent('breadcrumb')->addItem(
             new BreadcrumbItem(
@@ -44,6 +44,7 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
         );
 
         $this->template->entity = $this->currentEntity;
+        $this->template->filter = $filter;
     }
 
     public function actionResult(string $filter): void
@@ -94,6 +95,14 @@ final class AssetReportsPresenter extends BaseAccountingEntityPresenter
     protected function createComponentFilterAssetsForReportForm(): Form
     {
         $form = $this->filterAssetsForReportFormFactory->create($this->currentEntity);
+
+        $filter = $this->template->filter ?? null;
+        if ($filter !== null) {
+            $filterDataStdClass = json_decode(urldecode($filter));
+            $filterData = json_decode(json_encode($filterDataStdClass), true);
+            $this->filterAssetsForReportFormFactory->setDefaultsFromFilter($form, $filterData);
+        }
+
         return $form;
     }
 }

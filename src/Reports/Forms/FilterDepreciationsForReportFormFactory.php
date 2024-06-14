@@ -158,11 +158,11 @@ class FilterDepreciationsForReportFormFactory
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
             }
 
-            if (count($values->columns) > 18) {
-                $errorMsg = 'Maximální počet vybraných sloupců je 17.';
-                $form['columns']->addError($errorMsg);
-                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
-            }
+//            if (count($values->columns) > 18) {
+//                $errorMsg = 'Maximální počet vybraných sloupců je 17.';
+//                $form['columns']->addError($errorMsg);
+//                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+//            }
 
             if ($values->account_debited_to && $values->account_debited_from && $values->account_debited_to < $values->account_debited_from) {
                 $from = $values->account_debited_to;
@@ -183,6 +183,11 @@ class FilterDepreciationsForReportFormFactory
         };
 
         return $form;
+    }
+
+    public function setDefaultsFromFilter(Form $form, ?array $filter): void
+    {
+        $form->setDefaults($filter);
     }
 
     private function getCategoriesForCheckboxList(array $categories): array

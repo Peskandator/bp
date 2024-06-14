@@ -5,9 +5,6 @@ namespace App\Reports\Components;
 
 use App\Entity\AccountingEntity;
 use App\Majetek\Latte\Filters\FloatFilter;
-use App\Majetek\ORM\AssetTypeRepository;
-use App\Majetek\ORM\CategoryRepository;
-use App\Majetek\ORM\DepreciationGroupRepository;
 use App\Reports\Enums\DepreciationColumns;
 use App\Utils\DateTimeFormatter;
 
@@ -16,27 +13,18 @@ class DepreciationHTMLGenerator
     private DepreciationReportsFilter $depreciationReportsFilter;
     private DateTimeFormatter $dateTimeFormatter;
     private FloatFilter $floatFilter;
-    private CategoryRepository $categoryRepository;
-    private AssetTypeRepository $assetTypeRepository;
-    private DepreciationGroupRepository $depreciationGroupRepository;
     private HtmlToPdfGenerator $htmlToPdfGenerator;
 
     public function __construct(
         DepreciationReportsFilter $depreciationReportsFilter,
         DateTimeFormatter $dateTimeFormatter,
         FloatFilter $floatFilter,
-        CategoryRepository $categoryRepository,
-        AssetTypeRepository $assetTypeRepository,
-        DepreciationGroupRepository $depreciationGroupRepository,
         HtmlToPdfGenerator $htmlToPdfGenerator,
     )
     {
         $this->depreciationReportsFilter = $depreciationReportsFilter;
         $this->dateTimeFormatter = $dateTimeFormatter;
         $this->floatFilter = $floatFilter;
-        $this->categoryRepository = $categoryRepository;
-        $this->assetTypeRepository = $assetTypeRepository;
-        $this->depreciationGroupRepository = $depreciationGroupRepository;
         $this->htmlToPdfGenerator = $htmlToPdfGenerator;
     }
 
@@ -55,10 +43,10 @@ class DepreciationHTMLGenerator
         $data .= '<h2>' . $accountingEntity->getName() . ' - Sestava odpisů </h2>';
 
         if($groupedBy) {
-            $data .= '<h3 style="color: #0d6efd;">Seskupení: ' . $groupedBy . '</h3>';
+            $data .= '<div style="color: #0d6efd; font-size: 14px;">Seskupení: ' . $groupedBy . '</div>';
         }
         if($sorting) {
-            $data .= '<h3 style="color: #0d6efd;">Třídění: ' . $sorting . '</h3>';
+            $data .= '<div style="color: #0d6efd; font-size: 14px;">Třídění: ' . $sorting . '</div>';
         }
 
         $filterData = $this->getFilterDescription($filter);
@@ -152,8 +140,8 @@ class DepreciationHTMLGenerator
         }
 
         $content .= $this->htmlToPdfGenerator->writeAssetTypeNames($allowedTypes, 'Typ: ');
-        $content .= $this->writeCategoryNames($allowedCategories, 'Kategorie: ');
-        $content .= $this->writeCategoryNames($allowedCategories, 'Kategorie: ');
+        $content .= $this->htmlToPdfGenerator->writeCategoryNames($allowedCategories, 'Kategorie: ');
+        $content .= $this->htmlToPdfGenerator->writeDepreciationGroupNames($depreciationGroups, 'Odpisové skupiny: ');
 
         $fromDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
         $toDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);

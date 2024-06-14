@@ -30,7 +30,7 @@ final class DepreciationReportsPresenter extends BaseAccountingEntityPresenter
         $this->depreciationHTMLGenerator = $depreciationHTMLGenerator;
     }
 
-    public function actionDefault(): void
+    public function actionDefault(?string $filter = null): void
     {
         $this->getComponent('breadcrumb')->addItem(
             new BreadcrumbItem(
@@ -44,6 +44,7 @@ final class DepreciationReportsPresenter extends BaseAccountingEntityPresenter
         );
 
         $this->template->entity = $this->currentEntity;
+        $this->template->filter = $filter;
     }
 
     public function actionResult(string $filter): void
@@ -92,6 +93,14 @@ final class DepreciationReportsPresenter extends BaseAccountingEntityPresenter
     protected function createComponentFilterDepreciationsForReportForm(): Form
     {
         $form = $this->filterDepreciationsForReportFormFactory->create($this->currentEntity);
+
+        $filter = $this->template->filter ?? null;
+        if ($filter !== null) {
+            $filterDataStdClass = json_decode(urldecode($filter));
+            $filterData = json_decode(json_encode($filterDataStdClass), true);
+            $this->filterDepreciationsForReportFormFactory->setDefaultsFromFilter($form, $filterData);
+        }
+
         return $form;
     }
 }

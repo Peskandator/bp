@@ -121,11 +121,11 @@ class FilterAssetsForReportFormFactory
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
             }
 
-            if (count($values->columns) > 14) {
-                $errorMsg = 'Maximální počet vybraných sloupců je 14.';
-                $form['columns']->addError($errorMsg);
-                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
-            }
+//            if (count($values->columns) > 14) {
+//                $errorMsg = 'Maximální počet vybraných sloupců je 14.';
+//                $form['columns']->addError($errorMsg);
+//                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+//            }
 
             if ($values->account_to && $values->account_from && $values->account_to < $values->account_from) {
                 $from = $values->account_to;
@@ -141,6 +141,11 @@ class FilterAssetsForReportFormFactory
         };
 
         return $form;
+    }
+
+    public function setDefaultsFromFilter(Form $form, ?array $filter): void
+    {
+        $form->setDefaults($filter);
     }
 
     private function getPlacesForCheckboxList(array $places): array
