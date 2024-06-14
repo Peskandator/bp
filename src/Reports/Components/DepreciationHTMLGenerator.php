@@ -4,17 +4,40 @@ declare(strict_types=1);
 namespace App\Reports\Components;
 
 use App\Entity\AccountingEntity;
+use App\Majetek\Latte\Filters\FloatFilter;
+use App\Majetek\ORM\AssetTypeRepository;
+use App\Majetek\ORM\CategoryRepository;
+use App\Majetek\ORM\DepreciationGroupRepository;
 use App\Reports\Enums\DepreciationColumns;
+use App\Utils\DateTimeFormatter;
 
 class DepreciationHTMLGenerator
 {
     private DepreciationReportsFilter $depreciationReportsFilter;
+    private DateTimeFormatter $dateTimeFormatter;
+    private FloatFilter $floatFilter;
+    private CategoryRepository $categoryRepository;
+    private AssetTypeRepository $assetTypeRepository;
+    private DepreciationGroupRepository $depreciationGroupRepository;
+    private HtmlToPdfGenerator $htmlToPdfGenerator;
 
     public function __construct(
         DepreciationReportsFilter $depreciationReportsFilter,
+        DateTimeFormatter $dateTimeFormatter,
+        FloatFilter $floatFilter,
+        CategoryRepository $categoryRepository,
+        AssetTypeRepository $assetTypeRepository,
+        DepreciationGroupRepository $depreciationGroupRepository,
+        HtmlToPdfGenerator $htmlToPdfGenerator,
     )
     {
         $this->depreciationReportsFilter = $depreciationReportsFilter;
+        $this->dateTimeFormatter = $dateTimeFormatter;
+        $this->floatFilter = $floatFilter;
+        $this->categoryRepository = $categoryRepository;
+        $this->assetTypeRepository = $assetTypeRepository;
+        $this->depreciationGroupRepository = $depreciationGroupRepository;
+        $this->htmlToPdfGenerator = $htmlToPdfGenerator;
     }
 
     public function generate(AccountingEntity $accountingEntity, string $filterParam): string
@@ -23,32 +46,25 @@ class DepreciationHTMLGenerator
         $filter = json_decode(json_encode($filterDataStdClass), true);
         $depreciationsGrouped = $this->depreciationReportsFilter->getResults($accountingEntity, $filter);
         $groupedBy = $filter['grouping'] !== 'none' ? DepreciationColumns::NAMES[$filter['grouping']] : null;
+        $sorting = DepreciationColumns::NAMES[$filter['sorting']] ?? null;
         $summedColumns = $filter['summing'];
         $columns = $this->depreciationReportsFilter->getColumnNamesFromFilter($filter);
 
-        $data = '<html lang="cs-CZ"><head><meta http-equiv="Content-Type" charset="UTF-8"/><title></title>';
-
-        $css = '<style>
-                body { font-family: DejaVu Sans, sans-serif; font-size: 12px;}
-                .table > * > * > * { padding: .2rem .2rem; border-bottom-width: 1px; border-color: rgb(222, 226, 230);} 
-                .table > thead { vertical-align: bottom; }
-                tbody, td, tfoot, th, thead, tr { border-width: 0; border-style: solid; border-color: inherit;}
-                .table-bordered > * > * > * { border-width: 0 1px }
-                table { border-collapse: collapse; border: 1px solid black;}
-                '
-        ;
-
-        $css .= '</style>';
-        $data .= $css;
-
-        $data .= '</head><body>';
+        $data = $this->htmlToPdfGenerator->generateHtmlHead();
 
         $data .= '<h2>' . $accountingEntity->getName() . ' - Sestava odpisů </h2>';
-
 
         if($groupedBy) {
             $data .= '<h3 style="color: #0d6efd;">Seskupení: ' . $groupedBy . '</h3>';
         }
+        if($sorting) {
+            $data .= '<h3 style="color: #0d6efd;">Třídění: ' . $sorting . '</h3>';
+        }
+
+        $filterData = $this->getFilterDescription($filter);
+
+        $data .= $filterData;
+
         foreach ($depreciationsGrouped as $groupName => $group) {
             if ($groupName !== 'all') {
                 $data .= '<h3>' . $groupName . '</h3>';
@@ -116,4 +132,120 @@ class DepreciationHTMLGenerator
         return $data;
     }
 
+    protected function getFilterDescription(?array $filter): string
+    {
+        $content = '';
+
+        $allowedTypes = $filter['types'] ?? null;
+        $allowedCategories = $filter['categories'] ?? null;
+        $depreciationGroups = $filter['depreciation_groups'] ?? null;
+        $fromAccountDebited = $filter['account_from_debited'] ?? null;
+        $toAccountDebited = $filter['account_to_debited'] ?? null;
+        $fromAccountCredited = $filter['account_from_credited'] ?? null;
+        $toAccountCredited = $filter['account_to_credited'] ?? null;
+        $onlyAccountable = $filter['only_accountable'] ?? false;
+
+
+        if ($onlyAccountable) {
+            $content .= 'Jen k zaúčtování : ANO';
+            $content = $this->addNewLine($content);
+        }
+
+        $content .= $this->htmlToPdfGenerator->writeAssetTypeNames($allowedTypes, 'Typ: ');
+        $content .= $this->writeCategoryNames($allowedCategories, 'Kategorie: ');
+        $content .= $this->writeCategoryNames($allowedCategories, 'Kategorie: ');
+
+        $fromDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
+        $toDate = $this->dateTimeFormatter->changeToDateFormat($filter['from_date']);
+        $fromDateStr = $fromDate ? $fromDate->format('j. n. Y') : '___';
+        $toDateStr = $toDate ? $toDate->format('j. n. Y') : '___';
+        if ($fromDate || $toDate) {
+            $content .= 'Datum provedení:';
+            if ($fromDate) {
+                $content .= ' od ' . $fromDateStr;
+            }
+            if ($fromDate) {
+                $content .= ' do ' . $toDateStr;
+            }
+            $content = $this->addNewLine($content);
+        }
+
+        $fromPrice = $filter['entry_price_from'] ?? null;
+        $toPrice = $filter['entry_price_to'] ?? null;
+        if ($fromPrice !== null || $toPrice !== null) {
+            $content .= 'Vstupní cena';
+            if ($fromPrice !== null) {
+                $content .= ' od ' . $this->floatFilter->__invoke($fromPrice);
+            }
+            if ($toPrice !== null) {
+                $content .= ' do ' . $this->floatFilter->__invoke($toPrice);
+            }
+            $content = $this->addNewLine($content);
+        }
+
+        $fromIncreasedPrice = $filter['increased_price_from'] ?? null;
+        $toIncreasedPrice = $filter['increased_price_to'] ?? null;
+        if ($fromIncreasedPrice !== null || $toIncreasedPrice !== null) {
+            $content .= 'Zvýšená vstupní cena';
+            if ($fromIncreasedPrice !== null) {
+                $content .= ' od ' . $this->floatFilter->__invoke($fromIncreasedPrice);
+            }
+            if ($toIncreasedPrice !== null) {
+                $content .= ' do ' . $this->floatFilter->__invoke($toIncreasedPrice);
+            }
+            $content = $this->addNewLine($content);
+        }
+
+        $depreciationAmountFrom = $filter['depreciation_amount_from'] ?? null;
+        $depreciationAmountTo = $filter['depreciation_amount_to'] ?? null;
+        if ($depreciationAmountFrom !== null || $depreciationAmountTo !== null) {
+            $content .= 'Výše odpisu';
+            if ($depreciationAmountFrom !== null) {
+                $content .= ' od ' . $this->floatFilter->__invoke($depreciationAmountFrom);
+            }
+            if ($depreciationAmountTo !== null) {
+                $content .= ' do ' . $this->floatFilter->__invoke($depreciationAmountTo);
+            }
+            $content = $this->addNewLine($content);
+        }
+
+        if ($fromAccountDebited || $toAccountDebited) {
+            $content .= 'Účet MD:';
+            if ($fromAccountDebited !== null) {
+                $content .= ' od ' . $fromAccountDebited;
+            }
+            if ($toAccountDebited !== null) {
+                $content .= ' do ' . $toAccountDebited;
+            }
+            $content = $this->addNewLine($content);
+        }
+
+        if ($fromAccountCredited || $toAccountCredited) {
+            $content .= 'Účet DAL:';
+            if ($fromAccountCredited !== null) {
+                $content .= ' od ' . $fromAccountCredited;
+            }
+            if ($toAccountCredited !== null) {
+                $content .= ' do ' . $toAccountCredited;
+            }
+            $content = $this->addNewLine($content);
+        }
+
+        if ($content !== '')
+        {
+            return '
+                <div style="color: #0d6efd; font-size: 14px;">Filtr:</div>
+                    <div style="color: #0d6efd; font-size: 12px; margin-left: 20px">'
+                        . $content .
+                    '</div>
+                </div>'
+                ;
+        }
+        return '';
+    }
+
+    protected function addNewLine(string $html): string
+    {
+        return $html . '<br>';
+    }
 }

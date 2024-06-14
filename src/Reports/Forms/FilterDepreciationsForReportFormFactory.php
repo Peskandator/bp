@@ -5,7 +5,6 @@ namespace App\Reports\Forms;
 use App\Entity\AccountingEntity;
 use App\Entity\DepreciationGroup;
 use App\Entity\Place;
-use App\Reports\Enums\AssetColumns;
 use App\Reports\Enums\DepreciationColumns;
 use App\Utils\DateTimeFormatter;
 use App\Utils\FlashMessageType;
@@ -147,7 +146,7 @@ class FilterDepreciationsForReportFormFactory
 
             foreach ($values->summing as $sumByColumn) {
                 if (!in_array($sumByColumn, $values->columns)) {
-                    $errorMsg = 'Sloupec "' . AssetColumns::SUMMING_BY[$sumByColumn] . '", podle kterého jsou počítány sumy, musí být zaškrtnut v seznamu sloupců.';
+                    $errorMsg = 'Sloupec "' . DepreciationColumns::SUMMING_BY[$sumByColumn] . '", podle kterého jsou počítány sumy, musí být zaškrtnut v seznamu sloupců.';
                     $form['summing']->addError($errorMsg);
                     $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
                 }
@@ -155,6 +154,12 @@ class FilterDepreciationsForReportFormFactory
 
             if (count($values->columns) <= 0) {
                 $errorMsg = 'Výsledek musí obsahovat alespoň jeden sloupec.';
+                $form['columns']->addError($errorMsg);
+                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+            }
+
+            if (count($values->columns) > 18) {
+                $errorMsg = 'Maximální počet vybraných sloupců je 17.';
                 $form['columns']->addError($errorMsg);
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
             }

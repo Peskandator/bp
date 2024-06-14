@@ -92,7 +92,7 @@ class FilterAssetsForReportFormFactory
         ;
 
         $form->onValidate[] = function (Form $form, \stdClass $values) use ($currentEntity) {
-            if (((float)$values->entry_price_from !== null && (float)$values->entry_price_to) !== null && (float)$values->entry_price_from > (float)$values->entry_price_to) {
+            if (($values->entry_price_from !== null && $values->entry_price_to !== null) && (float)$values->entry_price_from > (float)$values->entry_price_to) {
                 $errorMsg = 'Pole "Od VC" musí být vyšší než pole "Do VC"';
                 $form['entry_price_from']->addError($errorMsg);
                 $form['entry_price_to']->addError($errorMsg);
@@ -117,6 +117,12 @@ class FilterAssetsForReportFormFactory
 
             if (count($values->columns) <= 0) {
                 $errorMsg = 'Výsledek musí obsahovat alespoň jeden sloupec.';
+                $form['columns']->addError($errorMsg);
+                $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
+            }
+
+            if (count($values->columns) > 14) {
+                $errorMsg = 'Maximální počet vybraných sloupců je 14.';
                 $form['columns']->addError($errorMsg);
                 $form->getPresenter()->flashMessage($errorMsg, FlashMessageType::ERROR);
             }

@@ -2,13 +2,10 @@ services:
     - App\Majetek\Components\AssetFormJsonGenerator
     - App\Majetek\Components\MovementGenerator
     - App\Majetek\Components\ExportDialsDataGenerator
-    - App\Reports\Components\AssetReportsFilter
-    - App\Reports\Components\AssetHTMLGenerator
     - App\Majetek\Latte\Filters\FloatFilter
 
     - App\Majetek\Forms\AssetFormFactory
     - App\Majetek\Forms\EditMovementFormFactory
-    - App\Reports\Forms\FilterAssetsForReportFormFactory
 
     - App\Majetek\Action\CreateAssetAction
     - App\Majetek\Action\EditAssetAction

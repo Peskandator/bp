@@ -5,15 +5,12 @@ services:
     - App\Odpisy\Components\DepreciationsAccountingDataGenerator
     - App\Odpisy\Components\DbfFileGenerator
     - App\Odpisy\Components\XLSXFileGenerator
-    - App\Reports\Components\DepreciationReportsFilter
-    - App\Reports\Components\DepreciationHTMLGenerator
 
     - App\Odpisy\Forms\EditTaxDepreciationFormFactory
     - App\Odpisy\Forms\EditAccountingDepreciationFormFactory
     - App\Odpisy\Forms\ExecuteDepreciationsFormFactory
     - App\Odpisy\Forms\CancelDepreciationExecutionFormFactory
     - App\Odpisy\Forms\EditDepreciationsAccountingDataFormFactory
-    - App\Reports\Forms\FilterDepreciationsForReportFormFactory
 
     - App\Odpisy\Action\EditTaxDepreciationAction
     - App\Odpisy\Action\EditAccountingDepreciationAction

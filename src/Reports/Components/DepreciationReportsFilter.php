@@ -41,7 +41,6 @@ class DepreciationReportsFilter
         $movements = $this->currentEntity->getDepreciationTaxMovements();
         $result = [];
 
-
         $allowedCategories = $filter['categories'] ?? null;
         $depreciationGroups = $filter['depreciation_groups'] ?? null;
         $fromPrice = $filter['entry_price_from'] ?? null;
@@ -71,7 +70,7 @@ class DepreciationReportsFilter
             if ($allowedCategories && count($allowedCategories) > 0 && !in_array($asset->getCategory()->getId(), $allowedCategories)) {
                 continue;
             }
-            if ($depreciationGroups && count($depreciationGroups) > 0 && !in_array($depreciation->getDepreciationGroup(), $depreciationGroups)) {
+            if ($depreciationGroups && count($depreciationGroups) > 0 && !in_array($depreciation->getDepreciationGroup()->getId(), $depreciationGroups)) {
                 continue;
             }
 

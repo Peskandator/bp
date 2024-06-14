@@ -1,0 +1,9 @@
+services:
+    - App\Reports\Components\AssetReportsFilter
+    - App\Reports\Components\AssetHTMLGenerator
+    - App\Reports\Components\DepreciationReportsFilter
+    - App\Reports\Components\DepreciationHTMLGenerator
+    - App\Reports\Components\HtmlToPdfGenerator
+
+    - App\Reports\Forms\FilterAssetsForReportFormFactory
+    - App\Reports\Forms\FilterDepreciationsForReportFormFactory
