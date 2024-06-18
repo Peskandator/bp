@@ -93,7 +93,9 @@ class DepreciationCalculator
                     break;
                 }
                 if ($depreciation->isExecuted()) {
-                    throw new \Exception();
+                    $request->depreciationYear++;
+                    $request->year++;
+                    continue;
                 }
                 $request->asset->getTaxDepreciations()->removeElement($depreciation);
                 $this->entityManager->remove($depreciation);

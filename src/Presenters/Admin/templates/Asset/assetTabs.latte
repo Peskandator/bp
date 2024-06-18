@@ -1,6 +1,6 @@
 {define assetTabs}
     <div class="row mb-3">
-        <div class="col-12">
+        <div class="col-12 d-flex">
             <ul class="nav nav-pills">
                 <li class="nav-item">
                     <a class="nav-link {if $activeTab === 1}active{/if}" n:href=":Admin:Asset:default, $asset->getId()">Základní údaje</a>
@@ -12,6 +12,8 @@
                     <a class="nav-link {if $activeTab === 3}active{/if}" n:href=":Admin:Asset:depreciations, $asset->getId()">Odpisy</a>
                 </li>
             </ul>
+
+            <a class="btn btn-primary" style="margin-left: auto;" n:href=":Admin:Asset:export, $asset->getId()">Export PDF</a>
         </div>
     </div>
 {/define}

@@ -5,9 +5,6 @@ namespace App\Reports\Components;
 
 use App\Entity\AccountingEntity;
 use App\Majetek\Latte\Filters\FloatFilter;
-use App\Majetek\ORM\AssetTypeRepository;
-use App\Majetek\ORM\CategoryRepository;
-use App\Majetek\ORM\PlaceRepository;
 use App\Reports\Enums\AssetColumns;
 use App\Utils\DateTimeFormatter;
 
@@ -16,27 +13,18 @@ class AssetHTMLGenerator
     private AssetReportsFilter $assetReportsFilter;
     private DateTimeFormatter $dateTimeFormatter;
     private FloatFilter $floatFilter;
-    private PlaceRepository $placeRepository;
-    private CategoryRepository $categoryRepository;
-    private AssetTypeRepository $assetTypeRepository;
     private HtmlToPdfGenerator $htmlToPdfGenerator;
 
     public function __construct(
         AssetReportsFilter $assetReportsFilter,
         DateTimeFormatter $dateTimeFormatter,
         FloatFilter $floatFilter,
-        PlaceRepository $placeRepository,
-        CategoryRepository $categoryRepository,
-        AssetTypeRepository $assetTypeRepository,
         HtmlToPdfGenerator $htmlToPdfGenerator,
     )
     {
         $this->assetReportsFilter = $assetReportsFilter;
         $this->dateTimeFormatter = $dateTimeFormatter;
         $this->floatFilter = $floatFilter;
-        $this->placeRepository = $placeRepository;
-        $this->categoryRepository = $categoryRepository;
-        $this->assetTypeRepository = $assetTypeRepository;
         $this->htmlToPdfGenerator = $htmlToPdfGenerator;
     }
 
@@ -126,6 +114,11 @@ class AssetHTMLGenerator
                 foreach ($assetData as $columnName => $val) {
                     $columnCounter++;
 
+                    $value = $val;
+                    if (is_float($value)) {
+                        $value = $this->floatFilter->__invoke($value);
+                    }
+
                     if ($assetId === 'summing') {
                         if ($columnCounter === 1) {
                             $data .= '<td style="border-top: solid 1px black; border-left-color: black">';
@@ -134,7 +127,7 @@ class AssetHTMLGenerator
                         } else {
                             $data .= '<td style="border-top: solid 1px black">';
                         }
-                        $data .= '<b>' . $val . '</b>';
+                        $data .= '<b>' . $value . '</b>';
                         $data .= '</td>';
                         continue;
                     }
@@ -145,7 +138,7 @@ class AssetHTMLGenerator
                     } else {
                         $data .= '<td>';
                     }
-                    $data .= $val;
+                    $data .= $value;
                     $data .= '</td>';
                 }
                 $data .= '</tr>';

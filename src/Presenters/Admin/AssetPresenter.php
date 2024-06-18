@@ -9,6 +9,7 @@ use App\Entity\Depreciation;
 use App\Entity\Movement;
 use App\Majetek\Action\DeleteMovementAction;
 use App\Majetek\Components\AssetFormJsonGenerator;
+use App\Majetek\Components\InventoryCardHtmlGenerator;
 use App\Majetek\Enums\MovementType;
 use App\Majetek\Forms\AssetFormFactory;
 use App\Majetek\Forms\EditMovementFormFactory;
@@ -21,6 +22,7 @@ use App\Presenters\BaseAccountingEntityPresenter;
 use App\Utils\CsvResponse;
 use App\Utils\EnumerableSorter;
 use App\Utils\FlashMessageType;
+use Dompdf\Dompdf;
 use Nette\Application\UI\Form;
 
 final class AssetPresenter extends BaseAccountingEntityPresenter
@@ -35,6 +37,7 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
     private MovementRepository $movementRepository;
     private EditMovementFormFactory $editMovementFormFactory;
     private FloatFilter $floatFilter;
+    private InventoryCardHtmlGenerator $inventoryCardHtmlGenerator;
 
     public function __construct(
         AssetFormFactory $assetFormFactory,
@@ -47,6 +50,7 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         DeleteMovementAction $deleteMovementAction,
         MovementRepository $movementRepository,
         FloatFilter $floatFilter,
+        InventoryCardHtmlGenerator $inventoryCardHtmlGenerator,
     )
     {
         parent::__construct();
@@ -60,6 +64,7 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         $this->movementRepository = $movementRepository;
         $this->editMovementFormFactory = $editMovementFormFactory;
         $this->floatFilter = $floatFilter;
+        $this->inventoryCardHtmlGenerator = $inventoryCardHtmlGenerator;
     }
 
     public function actionDefault(int $assetId): void
@@ -226,6 +231,18 @@ final class AssetPresenter extends BaseAccountingEntityPresenter
         };
 
         return $form;
+    }
+
+    public function actionExport(int $assetId): void
+    {
+        $asset = $this->findAssetById($assetId);
+        $htmlData = $this->inventoryCardHtmlGenerator->getHtmlData($asset);
+
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($htmlData);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream($this->currentEntity->getName() . ' - Karta majetku ' . $asset->getName());
     }
 
     public function actionMovementsExport(int $assetId): void

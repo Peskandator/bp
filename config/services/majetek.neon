@@ -2,6 +2,7 @@ services:
     - App\Majetek\Components\AssetFormJsonGenerator
     - App\Majetek\Components\MovementGenerator
     - App\Majetek\Components\ExportDialsDataGenerator
+    - App\Majetek\Components\InventoryCardHtmlGenerator
     - App\Majetek\Latte\Filters\FloatFilter
 
     - App\Majetek\Forms\AssetFormFactory

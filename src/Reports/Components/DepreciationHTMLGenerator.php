@@ -87,6 +87,11 @@ class DepreciationHTMLGenerator
                 foreach ($assetData as $columnName => $val) {
                     $columnCounter++;
 
+                    $value = $val;
+                    if (is_float($value)) {
+                        $value = $this->floatFilter->__invoke($value);
+                    }
+
                     if ($depreciationId === 'summing') {
                         if ($columnCounter === 1) {
                             $data .= '<td style="border-top: solid 1px black; border-left-color: black">';
@@ -95,7 +100,7 @@ class DepreciationHTMLGenerator
                         } else {
                             $data .= '<td style="border-top: solid 1px black">';
                         }
-                        $data .= '<b>' . $val . '</b>';
+                        $data .= '<b>' . $value . '</b>';
                         $data .= '</td>';
                         continue;
                     }
@@ -106,7 +111,7 @@ class DepreciationHTMLGenerator
                     } else {
                         $data .= '<td>';
                     }
-                    $data .= $val;
+                    $data .= $value;
                     $data .= '</td>';
                 }
                 $data .= '</tr>';

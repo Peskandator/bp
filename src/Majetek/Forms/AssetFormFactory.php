@@ -431,7 +431,6 @@ class AssetFormFactory
 
             if ($isAssetIncluded) {
                 $movements = $asset->getMovements();
-
                 /**
                  * @var Movement $movement
                  */
