@@ -24,7 +24,7 @@
                     <div class="table-responsive px-3 card-body">
                         {foreach $depreciationsGrouped as $groupName => $group}
                             <h5>{if $groupName !== 'all'}{$groupName}{/if}</h5>
-                            <table class="table table-bordered mt-3">
+                            <table class="table table-bordered js-table">
                                 <thead>
                                 <tr>
                                     {foreach $columns as $column}

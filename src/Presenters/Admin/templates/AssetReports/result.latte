@@ -24,23 +24,23 @@
                     <div class="table-responsive px-3 card-body">
                         {foreach $assetsGrouped as $groupName => $group}
                             <h5>{if $groupName !== 'all'}{$groupName}{/if}</h5>
-                            <table class="table table-bordered mt-3">
+                            <table class="table table-bordered js-table">
                             <thead>
                             {if $firstRow['tax'] > 0 || $firstRow['accounting'] > 0}
-                                <tr>
-                                    {for $i = 0; $i < $firstRow['before']; $i++}
-                                        <th></th>
-                                    {/for}
-                                    {if $firstRow['tax'] > 0}
-                                        <th colspan="{$firstRow['tax']}" style="font-size: 20px">Daňové</th>
-                                    {/if}
-                                    {if $firstRow['accounting'] > 0}
-                                        <th colspan="{$firstRow['accounting']}" style="font-size: 20px">Účetní</th>
-                                    {/if}
-                                    {for $i = 0; $i < $firstRow['after']; $i++}
-                                        <th></th>
-                                    {/for}
-                                </tr>
+                            <tr>
+                                {for $i = 0; $i < $firstRow['before']; $i++}
+                                    <th data-dt-order="disable"></th>
+                                {/for}
+                                {if $firstRow['tax'] > 0}
+                                    <th data-dt-order="disable" colspan="{$firstRow['tax']}" style="font-size: 20px">Daňové</th>
+                                {/if}
+                                {if $firstRow['accounting'] > 0}
+                                    <th data-dt-order="disable" colspan="{$firstRow['accounting']}" style="font-size: 20px">Účetní</th>
+                                {/if}
+                                {for $i = 0; $i < $firstRow['after']; $i++}
+                                    <th data-dt-order="disable"></th>
+                                {/for}
+                            </tr>
                             {/if}
                             <tr>
                                 {foreach $columns as $column}

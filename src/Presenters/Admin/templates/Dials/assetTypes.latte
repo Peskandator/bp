@@ -30,14 +30,14 @@
                                 <div n:foreach="$form['step']->getErrors() as $error" class="alert alert-danger custom-alert mt-2"><b>Krok -</b> {$error}</div>
                             </div>
                         </form>
-                        <table class="table table-bordered mt-3">
+                        <table class="table table-bordered js-table">
                             <thead>
                                 <tr>
                                     <th>Druh</th>
                                     <th>Text</th>
                                     <th>Číselná řada</th>
                                     <th>Krok</th>
-                                    <th>Akce</th>
+                                    <th data-dt-order="disable">Akce</th>
                                 </tr>
                             </thead>
                             <tbody>
