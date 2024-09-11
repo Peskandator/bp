@@ -12,7 +12,7 @@ final class AssetColumns
             'name' => 'Název',
             'type' => 'Typ',
             'inventory_number' => 'Inventární číslo',
-            'entry_date' => 'Datum zařazení',
+            'entry_date' => 'Rok zařazení',
             'category' => 'Kategorie',
             'entry_price' => 'Vstupní cena',
             'increased_price' => 'Zvýšená vstupní cena',

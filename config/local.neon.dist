@@ -1,5 +1,5 @@
 parameters:
-    debugMode: true
+    debugMode: false
     database:
         host:
         name:

@@ -48,10 +48,12 @@ class CreateEntityAction
 
     protected function createDialsDefaults(AccountingEntity $entity): void
     {
-        $this->entityManager->persist(new AssetType($entity, 1, AssetTypesCodes::DEPRECIABLE, 10000000, 1));
-        $this->entityManager->persist(new AssetType($entity, 2, AssetTypesCodes::NONDEPRECIABLE, 20000000, 1));
-        $this->entityManager->persist(new AssetType($entity, 3, AssetTypesCodes::SMALL, 30000000, 1));
-        $this->entityManager->persist(new AssetType($entity, 4, AssetTypesCodes::LEASING, 40000000, 1));
+        $assetTypes = AssetTypesCodes::NAMES;
+
+        $this->entityManager->persist(new AssetType($entity, 1, $assetTypes[AssetTypesCodes::DEPRECIABLE], 10000000, 1));
+        $this->entityManager->persist(new AssetType($entity, 2, $assetTypes[AssetTypesCodes::NONDEPRECIABLE], 20000000, 1));
+        $this->entityManager->persist(new AssetType($entity, 3, $assetTypes[AssetTypesCodes::SMALL], 30000000, 1));
+        $this->entityManager->persist(new AssetType($entity, 4, $assetTypes[AssetTypesCodes::LEASING], 40000000, 1));
 
         $depreciationGroup1 = new DepreciationGroup($entity, DepreciationMethod::UNIFORM, 1, null, 3, null, 1,20, 40, 33.3);
         $depreciationGroup2 = new DepreciationGroup($entity, DepreciationMethod::UNIFORM, 2, null, 5, null, 1,11, 22.25, 20);

@@ -15,7 +15,7 @@ class Bootstrap
 		$appDir = dirname(__DIR__);
 
         $root = dirname(__DIR__);
-        $configurator->setDebugMode(true);
+        $configurator->setDebugMode(false);
         $configurator->addParameters($parameters = [
             'rootDir' => $root,
             'publicDir' => $root . '/www',
@@ -27,7 +27,7 @@ class Bootstrap
 
 		//$configurator->setDebugMode('secret@23.75.345.200'); // enable for your remote IP
 
-        $configurator->enableTracy($parameters['logDir']);
+//        $configurator->enableTracy($parameters['logDir']);
         $configurator->setTimeZone('Europe/Prague');
         $configurator->setTempDirectory($parameters['tempDir']);
 

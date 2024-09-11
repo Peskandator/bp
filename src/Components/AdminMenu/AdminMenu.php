@@ -98,7 +98,7 @@ class AdminMenu extends Control
     private function buildDepreciationsItems(): array
     {
         $items[] = $this->createMenuItem(
-            'Odpisy',
+            'Přehled',
             $this->getPresenter()->lazyLink(':Admin:Depreciations:default'),
             [],
             $this->getCurrentLinkCallable()
