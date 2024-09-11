@@ -55,6 +55,7 @@ class AssetReportsFilter
          * @var Asset $asset
          */
         foreach ($assets as $asset) {
+
             if ($this->currentEntity->getId() !== $asset->getEntity()->getId()) {
                 continue;
             }
@@ -67,11 +68,11 @@ class AssetReportsFilter
                 continue;
             }
 
-            if ($allowedCategories && count($allowedCategories) > 0 && !in_array($asset->getCategory()->getId(), $allowedCategories)) {
+            if ($asset->getCategory() && $allowedCategories && count($allowedCategories) > 0 && !in_array($asset->getCategory()->getId(), $allowedCategories)) {
                 continue;
             }
 
-            if ($allowedPlaces && count($allowedPlaces) > 0 && !in_array($asset->getPlace()->getId(), $allowedPlaces)) {
+            if ($asset->getPlace() && $allowedPlaces && count($allowedPlaces) > 0 && !in_array($asset->getPlace()->getId(), $allowedPlaces)) {
                 continue;
             }
 
