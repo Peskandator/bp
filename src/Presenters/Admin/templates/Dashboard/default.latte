@@ -4,5 +4,88 @@
 
     <H1>DASHBOARD</H1>
 
+    <div class="card mb-3">
+        <div class="card-body mx-2">
+            <div class="row">
+                <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                    <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-dark"
+                            onclick="window.location.href = {link :Admin:EntitiesOverview:default};"
+                    >
+                        <i class="fa fa-light fa-file-invoice-dollar btn-icon-wrapper"></i>
+                        Účetní jednotky
+                    </button>
+                </div>
+                <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                    <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-dark"
+                            onclick="window.location.href = {link :Admin:Profile:default};"
+                    >
+                        <i class="fa fa-sticky-note btn-icon-wrapper"></i>
+                        Profil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {if $entityId && $entityId !== null}
+        <div class="card">
+        <div class="card-body mx-2">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                        <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-danger"
+                                onclick="window.location.href = {link :Admin:EntitiesOverview:manageUsers $entityId};"
+                        >
+                            <i class="fa fa-users btn-icon-wrapper"></i>
+                            Správa uživatelů
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                        <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-primary"
+                                onclick="window.location.href = {link :Admin:Assets:default};"
+                        >
+                            <i class="fa fa-sticky-note btn-icon-wrapper"></i>
+                            Majetek
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                        <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-warning"
+                                onclick="window.location.href = {link :Admin:Depreciations:default};"
+                        >
+                            <i class="fa fa-file-invoice-dollar btn-icon-wrapper"></i>
+                            Odpisy
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                        <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-success"
+                                onclick="window.location.href = {link :Admin:AssetReports:default};"
+                        >
+                            <i class="fa fa-list btn-icon-wrapper"></i>
+                            Sestavy majetku
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                        <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-success"
+                                onclick="window.location.href = {link :Admin:DepreciationReports:default};"
+                        >
+                            <i class="fa fa-list btn-icon-wrapper"></i>
+                            Sestavy odpisů
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mb-3 mt-3">
+                        <button class="btn-icon-vertical mb-3 btn-transition dashboard-button btn btn-outline-secondary"
+                                onclick="window.location.href = {link :Admin:Accounting:depreciations};"
+                        >
+                            <i class="fa fa-pencil btn-icon-wrapper"></i>
+                            Zaúčtování odpisů
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+    {/if}
 {/block}
 

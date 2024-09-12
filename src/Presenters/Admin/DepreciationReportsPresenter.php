@@ -87,7 +87,7 @@ final class DepreciationReportsPresenter extends BaseAccountingEntityPresenter
         $dompdf->loadHtml($htmlData);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
-        $dompdf->stream($this->currentEntity->getName() . ' - Sestava majetku');
+        $dompdf->stream($this->currentEntity->getName() . ' - Sestava odpisů');
     }
 
     protected function createComponentFilterDepreciationsForReportForm(): Form

@@ -23,5 +23,11 @@ final class DashboardPresenter extends BaseAdminPresenter
                 'Dashboard',
                 null)
         );
+
+        if (isset($this->currentEntity) && $this->currentEntity !== null) {
+            $this->template->entityId = $this->currentEntityId;
+        } else {
+            $this->template->entityId = null;
+        }
     }
 }

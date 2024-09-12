@@ -358,7 +358,7 @@ class AccountingEntity
     {
         $availableYears = [];
         $depreciationsTax = $this->getTaxDepreciations();
-        $depreciationsAccounting = $this->getTaxDepreciations();
+        $depreciationsAccounting = $this->getAccountingDepreciations();
 
         /**
          * @var DepreciationTax $depreciation
@@ -385,7 +385,7 @@ class AccountingEntity
     public function getAvailableYearsAccounting(): array
     {
         $availableYears = [];
-        $depreciationsAccounting = $this->getTaxDepreciations();
+        $depreciationsAccounting = $this->getAccountingDepreciations();
 
         /**
          * @var DepreciationAccounting $depreciation

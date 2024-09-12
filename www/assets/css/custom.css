@@ -225,3 +225,9 @@ label.custom-control-label::after {
     border-top: 1px solid rgba(0, 0, 0, 0.175);
 }
 
+.dashboard-button {
+    display: block;
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
