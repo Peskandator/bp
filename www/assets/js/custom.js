@@ -3,8 +3,8 @@
 import depreciations from './depreciations.js';
 import assetForm from './assetPage.js';
 import dials from './dials.js';
-import movement from './movements';
-import accounting from './accounting';
+import movement from './movements.js';
+import accounting from './accounting.js';
 
 $(document).ready(function(){
     depreciations();
