@@ -8,6 +8,7 @@ export default function() {
     });
 
     $(`#js-edit-accounting-data-form-submit`).click(function (e) {
+        $(`#js-accounting-export-input`).val('');
         $(`.js-edit-accounting-data-form`).submit();
     });
 
