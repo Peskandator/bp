@@ -1,0 +1,7 @@
+parameters:
+    debugMode: false
+    database:
+        host: database
+        name: bp
+        user: bp
+        password: test

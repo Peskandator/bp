@@ -1,0 +1,35 @@
+services:
+  php:
+    container_name: bp
+    image: bp_php
+    build: build/php
+    volumes:
+      - ../:/var/www/html
+    ports:
+      - 80:80
+    environment:
+      - NETTE_DEBUG=1
+    links:
+      - database
+    restart: always
+  database:
+    container_name: bp_db
+    image: bp_db
+    build: build/database
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=bp
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=bp
+    restart: always
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=database
+      - PMA_USER=bp
+      - PMA_PASSWORD=test
+    restart: always
