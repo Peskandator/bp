@@ -15,7 +15,7 @@ class Bootstrap
 		$appDir = dirname(__DIR__);
 
         $root = dirname(__DIR__);
-        $configurator->setDebugMode(false);
+        $configurator->setDebugMode(true);
         $configurator->addParameters($parameters = [
             'rootDir' => $root,
             'publicDir' => $root . '/www',

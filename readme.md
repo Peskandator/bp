@@ -22,7 +22,7 @@ $ composer install (inside docker: docker exec pos composer install)
 $ php bin/console doctrine:database:create # will take database name from config file (in docker is created)
 $ php bin/console migrations:migrate
 
-Make directories `var/temp/` and `var/log/` writable. (chmod -R 777 <folder>)
+Make directories `var/temp` and `var/log` writable. (sudo chmod -R 777 <folder>)
 ```
 
 Web Server Setup
