@@ -11,7 +11,6 @@ services:
       - NETTE_DEBUG=1
     links:
       - database
-    restart: always
   database:
     container_name: bp_db
     image: bp_db
@@ -23,13 +22,16 @@ services:
       - MYSQL_USER=bp
       - MYSQL_PASSWORD=test
       - MYSQL_DATABASE=bp
-    restart: always
+    volumes:
+      - bp-datavolume:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin
+    container_name: phpmyadmin_bp
     ports:
       - 8080:80
     environment:
       - PMA_HOST=database
       - PMA_USER=bp
       - PMA_PASSWORD=test
-    restart: always
+volumes:
+  bp-datavolume:

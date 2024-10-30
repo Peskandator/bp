@@ -2,3 +2,9 @@ docker compose -p bp up -d --build --force-recreate
 docker compose down
 
 docker kill $(docker ps -q)
+
+docker container prune
+
+docker build
+
+docker system prune --all --force --volumes
