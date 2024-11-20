@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - name: php
+        image: bp_php
+        env:
+        - name: NETTE_DEBUG
+          value: "1"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /var/www/html
+      volumes:
+      - name: html-volume
+        hostPath:
+          path: /path/to/your/html
+          type: Directory
