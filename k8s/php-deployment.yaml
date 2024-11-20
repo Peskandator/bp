@@ -15,6 +15,7 @@ spec:
       containers:
       - name: php
         image: bp_php
+        imagePullPolicy: Never
         env:
         - name: NETTE_DEBUG
           value: "1"

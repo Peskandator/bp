@@ -15,6 +15,7 @@ spec:
       containers:
       - name: mysql
         image: bp_db
+        imagePullPolicy: Never
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "root"
