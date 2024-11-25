@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Metrics\HttpMetricsMiddleware;
+use Exception;
 use Nette\Bootstrap\Configurator;
-
+use Nette\Http\Request;
+use Nette\Http\Response;
+use Redis;
 
 class Bootstrap
 {
@@ -40,6 +44,25 @@ class Bootstrap
 		$configurator->addConfig($appDir . '/config/common.neon');
 		$configurator->addConfig($appDir . '/config/services.neon');
 		$configurator->addConfig($appDir . '/config/local.neon');
+
+
+//        $redis = new Redis();
+//        try {
+//            $redis->connect('redis', 6379); // 'redis' odpovídá názvu služby v docker-compose.yml
+//            bdump("Připojení k Redis bylo úspěšné!");
+//        } catch (Exception $e) {
+//            bdump("Nelze se připojit k Redis: " . $e->getMessage());
+//        }
+
+        $container = $configurator->createContainer();
+
+        /** @var Request $httpRequest */
+        $httpRequest = $container->getService('http.request');
+        /** @var Response $httpResponse */
+        $httpResponse = $container->getService('http.response');
+
+        $httpMetricsMiddleware = $container->getByType(HttpMetricsMiddleware::class);
+        $httpMetricsMiddleware->__invoke($httpRequest, $httpResponse);
 
 		return $configurator;
 	}

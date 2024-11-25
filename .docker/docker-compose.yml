@@ -9,8 +9,13 @@ services:
       - 80:80
     environment:
       - NETTE_DEBUG=1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
     links:
       - database
+      - redis
   database:
     container_name: bp_db
     image: bp_db
@@ -33,5 +38,14 @@ services:
       - PMA_HOST=database
       - PMA_USER=bp
       - PMA_PASSWORD=test
+  redis:
+    image: redis:7.4.1
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
 volumes:
   bp-datavolume:
+  redis_data:

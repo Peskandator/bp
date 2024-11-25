@@ -52,6 +52,8 @@ services:
     - App\Majetek\Action\EditDepreciationGroupAction
     - App\Majetek\Action\EditCategoryAction
 
+    - App\Metrics\HttpMetricsMiddleware
+
     - App\Console\Command\RenameFilesCommand
 
     - Shuchkin\SimpleXLSXGen
