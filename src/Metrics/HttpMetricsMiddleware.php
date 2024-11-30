@@ -20,7 +20,7 @@ class HttpMetricsMiddleware
         $this->registry = new CollectorRegistry($adapter);
     }
 
-    public function __invoke(IRequest $request, IResponse $response)
+    public function __invoke(IRequest $request, IResponse $response): void
     {
         $histogram = $this->registry->getOrRegisterHistogram(
             'http',
@@ -31,7 +31,7 @@ class HttpMetricsMiddleware
 
         $histogram->observe(1, [strval($response->getCode())]);
 
-        return $response;
+//        return $response;
     }
 
     public function renderMetrics(): string
