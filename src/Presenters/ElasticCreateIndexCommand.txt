@@ -1,0 +1,47 @@
+command pro vytvoření indexu:
+
+    curl -X PUT -u elastic:test http://localhost:9200/michelin -H "Content-Type: application/json" -d '{
+      "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 1
+      },
+      "mappings": {
+        "properties": {
+          "name": {
+            "type": "text"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "pin": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "geo_point"
+              }
+            }
+          },
+          "city": {
+            "type": "text"
+          },
+          "region": {
+            "type": "text"
+          },
+          "zipCode": {
+            "type": "keyword"
+          },
+          "cuisine": {
+            "type": "text"
+          },
+          "price": {
+            "type": "text"
+          },
+          "url": {
+            "type": "text"
+          },
+          "star": {
+            "type": "integer"
+          }
+        }
+      }
+    }'
