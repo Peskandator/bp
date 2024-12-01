@@ -14,11 +14,9 @@ services:
     depends_on:
       - redis
       - database
-      - elasticsearch
     links:
       - database
       - redis
-      - elasticsearch
     networks:
       - bp-network
 
@@ -82,10 +80,28 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - bp-network
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=test
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - bp-network
 volumes:
   bp-datavolume:
   redis_data:
-  es_data:
+  elastic_data:
 
 networks:
   bp-network:
