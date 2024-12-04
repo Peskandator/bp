@@ -22,16 +22,16 @@ class HttpMetricsMiddleware
 
     public function __invoke(IRequest $request, IResponse $response): void
     {
-        $histogram = $this->registry->getOrRegisterHistogram(
+        $statusCode = $response->getCode();
+
+        $counter = $this->registry->getOrRegisterCounter(
             'http',
-            'status_codes',
-            'Histogram of HTTP response status codes',
+            'status_codes_total',
+            'Total number of HTTP responses by status code',
             ['code']
         );
 
-        $histogram->observe(1, [strval($response->getCode())]);
-
-//        return $response;
+        $counter->inc([$statusCode]);
     }
 
     public function renderMetrics(): string
