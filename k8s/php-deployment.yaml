@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deployment
+  labels:
+    app: php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+        - name: php
+          image: bp_php
+          ports:
+            - containerPort: 80
+          env:
+            - name: NETTE_DEBUG
+              value: "1"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+          volumeMounts:
+            - mountPath: ../:/var/www/html
+              name: php-volume
+      volumes:
+        - name: php-volume
+          hostPath:
+            path: /k8s
+
