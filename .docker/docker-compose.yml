@@ -22,7 +22,7 @@ services:
 
   database:
     container_name: bp_db
-    image: bp_db
+    image: mariadb:latest
     build: build/database
     ports:
       - 3306:3306

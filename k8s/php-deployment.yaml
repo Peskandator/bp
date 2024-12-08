@@ -14,18 +14,10 @@ spec:
     spec:
       containers:
       - name: php
-        image: bp_php
-        imagePullPolicy: Never
+        image: registry.gitlab.com/bp-sojka/mppa/pucil-majetek:latest
+        imagePullPolicy: Always
         env:
         - name: NETTE_DEBUG
           value: "1"
         ports:
         - containerPort: 80
-        volumeMounts:
-        - name: html-volume
-          mountPath: /var/www/html
-      volumes:
-      - name: html-volume
-        hostPath:
-          path: /path/to/your/html
-          type: Directory
