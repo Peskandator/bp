@@ -13,14 +13,14 @@ spec:
         app: phpmyadmin
     spec:
       containers:
-      - name: phpmyadmin
-        image: phpmyadmin
-        env:
-        - name: PMA_HOST
-          value: "database"
-        - name: PMA_USER
-          value: "bp"
-        - name: PMA_PASSWORD
-          value: "test"
-        ports:
-        - containerPort: 80
+        - name: phpmyadmin
+          image: phpmyadmin
+          env:
+            - name: PMA_HOST
+              value: "database"
+            - name: PMA_USER
+              value: "bp"
+            - name: PMA_PASSWORD
+              value: "test"
+          ports:
+            - containerPort: 80

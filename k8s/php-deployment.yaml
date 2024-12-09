@@ -13,11 +13,15 @@ spec:
         app: php
     spec:
       containers:
-      - name: php
-        image: registry.gitlab.com/bp-sojka/mppa/pucil-majetek:latest
-        imagePullPolicy: Always
-        env:
-        - name: NETTE_DEBUG
-          value: "1"
-        ports:
-        - containerPort: 80
+        - name: php
+          image: registry.gitlab.com/bp-sojka/mppa/pucil-majetek:latest
+          imagePullPolicy: Always
+          env:
+            - name: NETTE_DEBUG
+              value: "1"
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - containerPort: 80
