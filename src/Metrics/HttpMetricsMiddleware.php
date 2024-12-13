@@ -14,16 +14,21 @@ class HttpMetricsMiddleware
 {
     private CollectorRegistry $registry;
 
-    public function __construct()
+    public function __construct(
+        private IResponse $response
+    )
     {
         $adapter = new Redis(['host' => 'redis', 'port' => 6379]);
         $this->registry = new CollectorRegistry($adapter);
     }
 
-    public function __invoke(IRequest $request, IResponse $response): void
+    public function __invoke(): void
     {
-        $statusCode = $response->getCode();
+        $this->incrementCounter($this->response->getCode());
+    }
 
+    protected function incrementCounter(int $statusCode): void
+    {
         $counter = $this->registry->getOrRegisterCounter(
             'http',
             'status_codes_total',
@@ -38,5 +43,10 @@ class HttpMetricsMiddleware
     {
         $renderer = new RenderTextFormat();
         return $renderer->render($this->registry->getMetricFamilySamples());
+    }
+
+    public function invokeFromBadRequestException(int $statusCode)
+    {
+        $this->incrementCounter($statusCode);
     }
 }

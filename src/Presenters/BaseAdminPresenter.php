@@ -11,11 +11,14 @@ use App\Entity\Asset;
 use App\Entity\User;
 use App\Majetek\ORM\AccountingEntityRepository;
 use App\Majetek\ORM\AssetRepository;
+use App\Metrics\HttpMetricsMiddleware;
 use App\Utils\CurrentUser;
 use App\Utils\FlashMessageType;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Presenter;
+use Nette\Http\Request;
+use Nette\Http\Response;
 
 abstract class BaseAdminPresenter extends Presenter
 {
@@ -27,23 +30,33 @@ abstract class BaseAdminPresenter extends Presenter
     private AdminMenuFactoryInterface $adminMenuFactory;
     private BreadcrumbFactoryInterface $breadcrumbFactory;
     private AssetRepository $assetRepository;
+    private HttpMetricsMiddleware $httpMetricsMiddleware;
 
 
     public function injectBaseDeps(
         AccountingEntityRepository $entityRepository,
-        AssetRepository $assetRepository
+        AssetRepository $assetRepository,
+        HttpMetricsMiddleware $httpMetricsMiddleware
     ) {
         $this->entityRepository = $entityRepository;
         $this->assetRepository = $assetRepository;
+        $this->httpMetricsMiddleware = $httpMetricsMiddleware;
     }
 
     public function injectAdminMenuFactory(
         AdminMenuFactoryInterface $adminMenuFactory,
-        BreadcrumbFactoryInterface $breadcrumbFactory
+        BreadcrumbFactoryInterface $breadcrumbFactory,
+
     )
     {
         $this->adminMenuFactory = $adminMenuFactory;
         $this->breadcrumbFactory = $breadcrumbFactory;
+    }
+
+    protected function startup(): void
+    {
+        parent::startup();
+        $this->httpMetricsMiddleware->__invoke();
     }
 
     public function beforeRender()
