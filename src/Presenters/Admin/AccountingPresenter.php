@@ -102,7 +102,6 @@ final class AccountingPresenter extends BaseAccountingEntityPresenter
 
         $fileName = $this->currentEntity->getName() . ' - Pohyby k zaúčtování.csv';
         $rows = $this->getAccountingDataForExport($accountingDataForYear);
-        bdump($rows);
         $csvResponse = new CsvResponse($fileName, $rows);
         $this->sendResponse($csvResponse);
     }

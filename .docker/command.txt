@@ -8,3 +8,43 @@ docker container prune
 docker build
 
 docker system prune --all --force --volumes
+
+
+---------------
+
+Kubernet:
+
+stáhnout minikube (na linux):
+https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download
+
+alias kubectl="minikube kubectl --"
+
+
+Apply všechny soubory v k8s:
+
+kubectl apply -f php-deployment.yaml
+
+Zobrazení:
+
+    kubectl get pods
+    kubectl get deployments
+    kubectl get services
+
+
+Debug:
+    kubectl get events --all-namespaces  --sort-by='.metadata.creationTimestamp'
+
+Reset podu (vytvoří se novej): (název vzít z kubectl get pods)
+    kubectl delete pod <název>
+
+
+Takhle se to nasměřuje aplikaci na localhost:9999, grafana 3000 a prometheus na 9090
+
+    kubectl port-forward service/php 9999:80
+
+    kubectl port-forward service/prometheus 9090:9090
+
+    kubectl port-forward service/grafana 3000:3000
+
+
+
