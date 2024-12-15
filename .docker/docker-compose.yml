@@ -22,8 +22,7 @@ services:
 
   database:
     container_name: bp_db
-    image: mariadb:latest
-    build: build/database
+    image: mariadb:11.6.2
     ports:
       - 3306:3306
     environment:
@@ -72,7 +71,7 @@ services:
     networks:
       - bp-network
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.0.1
     container_name: prometheus
     ports:
       - "9090:9090"
